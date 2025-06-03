@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen Interactivo: Dirección Ágil de Proyectos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .question-card {
+            transition: all 0.3s ease-in-out;
+        }
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); /* updated shadow */
+        }
+        .correct-answer-text { /* Renamed from correct-answer to avoid conflict if used elsewhere */
+            color: #10B981; /* Tailwind green-500 */
+            font-weight: 600;
+        }
+        .incorrect-answer-user {
+            color: #EF4444; /* Tailwind red-500 */
+            text-decoration: line-through;
+            font-weight: 600;
+        }
+        .feedback-item {
+            border-left-width: 4px;
+            padding-left: 1rem; /* Added padding for better visual separation */
+        }
+        .feedback-incorrect { /* For the item border */
+            border-left-color: #EF4444; /* Tailwind red-500 */
+        }
+        /* Custom radio button style */
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1.25em;
+            height: 1.25em;
+            border: 2px solid #64748B; /* slate-500 */
+            border-radius: 50%;
+            outline: none;
+            margin-right: 0.5em;
+            vertical-align: middle; /* Align radio with label text */
+            transition: all 0.2s ease-in-out;
+        }
+        input[type="radio"]:checked {
+            background-color: #38BDF8; /* sky-400 */
+            border-color: #0EA5E9; /* sky-500 */
+        }
+        input[type="radio"]:checked::before {
+            content: '';
+            display: block;
+            width: 0.65em;
+            height: 0.65em;
+            margin: auto;
+            border-radius: 50%;
+            background-color: white;
+            transform: translate(1.8px, 1.8px); /* Adjust for better centering based on border */
+        }
+        input[type="radio"]:hover {
+            border-color: #38BDF8; /* sky-400 */
+        }
+        label {
+             vertical-align: middle; /* Align label text with custom radio */
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 selection:bg-sky-500 selection:text-white">
+
+    <div class="w-full max-w-3xl bg-slate-800 shadow-2xl rounded-xl p-6 sm:p-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl sm:text-4xl font-bold text-sky-400">Examen: Dirección Ágil de Proyectos</h1>
+            <p class="text-slate-400 mt-2">Selecciona la mejor respuesta para cada pregunta.</p>
+        </header>
+
+        <form id="quizForm" class="space-y-8">
+            </form>
+
+        <div class="mt-10 text-center">
+            <button id="submitButton" class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-opacity-75">
+                Enviar Respuestas
+            </button>
+        </div>
+
+        <div id="resultsContainer" class="mt-10 hidden">
+            <h2 class="text-2xl sm:text-3xl font-bold text-sky-400 mb-6 text-center">Resultados del Examen</h2>
+            <div id="score" class="text-xl sm:text-2xl font-semibold mb-8 p-4 bg-slate-700 rounded-lg text-center shadow-md"></div>
+            
+            <h3 class="text-xl font-semibold text-amber-400 mb-4">Preguntas incorrectas o no respondidas:</h3>
+            <div id="feedback" class="space-y-6">
+                </div>
+             <div class="mt-10 text-center">
+                <button id="restartButton" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-opacity-75">
+                    Reiniciar Examen
+                </button>
+            </div>
+        </div> 
+    </div> 
+
+    <script>
+        // --- Definición de Preguntas ---
+        // IMPORTANTE: Revisa y actualiza 'correctAnswerIndex' para cada pregunta.
+        // El índice 0 es la opción 'a', 1 es 'b', 2 es 'c', 3 es 'd'.
+        // Actualmente, todas están configuradas para que la opción 'a' (índice 0) sea la correcta como placeholder.
+        const questions = [
+            {
+                questionText: "¿Cuál de los siguientes NO es un principio clave de Lean UX según las fuentes?",
+                options: [
+                    "Enfoque iterativo y colaborativo.",
+                    "Desarrollo basado en especificaciones detalladas previas.",
+                    "Creación de Productos Mínimos Viables (MVP).",
+                    "Obtención de retroalimentación constante."
+                ],
+                correctAnswerIndex: 1 // Ejemplo: 'b' es la correcta
+            },
+            {
+                questionText: "Según Lean UX, ¿en qué se debe medir el progreso del proyecto?",
+                options: [
+                    "En la cantidad de funcionalidades entregadas (output).",
+                    "En la finalización de toda la documentación requerida.",
+                    "En el impacto en el usuario y los objetivos del negocio (resultado/outcome).",
+                    "En el cumplimiento estricto del plan inicial."
+                ],
+                correctAnswerIndex: 2 // Ejemplo: 'c' es la correcta
+            },
+            {
+                questionText: "¿Cuál es el objetivo principal del Diseño Colaborativo en Lean UX?",
+                options: [
+                    "Reducir la necesidad de comunicación formal.",
+                    "Generar ideas de soluciones conjuntamente y construir un entendimiento compartido.",
+                    "Asegurar que solo los diseñadores definan la solución.",
+                    "Crear artefactos de alta fidelidad lo más rápido posible."
+                ],
+                correctAnswerIndex: 1 // Ejemplo: 'b' es la correcta
+            },
+            {
+                questionText: "Según las fuentes, ¿cuál es la función principal de un Producto Mínimo Viable (MVP) en Lean UX?",
+                options: [
+                    "Lanzar un producto completo al mercado rápidamente.",
+                    "Probar una hipótesis y aprender de la manera más eficiente posible.",
+                    "Maximizar la cantidad de funcionalidades en la primera entrega.",
+                    "Minimizar la interacción con los usuarios hasta el lanzamiento final."
+                ],
+                correctAnswerIndex: 1 // Ejemplo: 'b' es la correcta
+            },
+            {
+                questionText: "¿Qué significa la \"Visión Impulsada por Resultados\" en Lean UX?",
+                options: [
+                    "Enfocarse en entregar la mayor cantidad de funcionalidades posibles (outputs).",
+                    "Cambiar la perspectiva de requisitos a suposiciones y de entregables a resultados (outcomes).",
+                    "Priorizar la finalización de tareas por encima del impacto.",
+                    "Definir el éxito por el cumplimiento del alcance inicial."
+                ],
+                correctAnswerIndex: 1 // Ejemplo: 'b' es la correcta
+            },
+            {
+                questionText: "La retroalimentación continua del usuario en Lean UX es fundamental para:",
+                options: [
+                    "Validar o invalidar supuestos e hipótesis.",
+                    "Asegurar que el plan inicial se sigue sin desviaciones.",
+                    "Retrasar la entrega hasta tener un producto perfecto.",
+                    "Justificar la documentación extensiva."
+                ],
+                correctAnswerIndex: 0 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál de los siguientes principios de Lean UX se relaciona con la reducción de actividades que no añaden valor?",
+                options: [
+                    "Entendimiento compartido.",
+                    "Permiso para fallar.",
+                    "Eliminar el desperdicio.",
+                    "Trabajar en pequeños lotes."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "Según las fuentes, ¿cómo se transforman las suposiciones en Lean UX para poder ser validadas?",
+                options: [
+                    "En requisitos detallados.",
+                    "En planes de proyecto exhaustivos.",
+                    "En hipótesis testeables con métricas o señales.",
+                    "En documentación extensa."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es una de las características clave del Diseño Colaborativo en Lean UX?",
+                options: [
+                    "La participación exclusiva de diseñadores y desarrolladores.",
+                    "El enfoque en artefactos de alta fidelidad.",
+                    "La conversación como herramienta principal de comunicación.",
+                    "La definición de roles jerárquicos claros."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué promueve el principio de \"Permiso para fallar\" en Lean UX?",
+                options: [
+                    "La aceptación de errores sin análisis posterior.",
+                    "Aceptar el fallo como parte natural del proceso de aprendizaje.",
+                    "Evitar riesgos a toda costa.",
+                    "Penalizar los errores para mejorar la disciplina."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es una de las principales razones citadas en las fuentes por las que \"Agile ha perdido su esencia\" en muchas organizaciones?",
+                options: [
+                    "Falta de frameworks ágiles disponibles.",
+                    "Aplicación superficial de los procesos sin tocar la cultura.",
+                    "Exceso de enfoque en los principios ágiles.",
+                    "Demasiada flexibilidad en la aplicación de las metodologías."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "Según el artículo mencionado, para \"ser ágil de verdad\", se necesita:",
+                options: [
+                    "Copiar frameworks sin entender el \"para qué\".",
+                    "Liderazgos que bloqueen al equipo.",
+                    "Cambios culturales reales, no recetas de manual.",
+                    "Usar la etiqueta Agile como eslogan."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "La \"paradoja de la predictibilidad\" sugiere que la mejor manera de lograr predictibilidad en el desarrollo de un proyecto es:",
+                options: [
+                    "Definir todos los requisitos por adelantado.",
+                    "Tener una baja tolerancia a los cambios.",
+                    "Comenzar pronto, aprender constantemente, diferir el compromiso y entregar pronto.",
+                    "Asumir que los cimientos del proyecto son firmes."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "En el contexto de los ciclos de vida de proyecto según PMI Agile, ¿cuál enfoque es tanto iterativo como incremental?",
+                options: [
+                    "Ciclo de vida predictivo.",
+                    "Ciclo de vida incremental.",
+                    "Ciclo de vida iterativo.",
+                    "Ciclo de vida ágil."
+                ],
+                correctAnswerIndex: 3 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es el objetivo principal de un ciclo de vida predictivo según las fuentes?",
+                options: [
+                    "Valor para el cliente.",
+                    "Velocidad.",
+                    "Gestión del coste.",
+                    "Solución correcta."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR! (o 3, depende de la fuente)
+            },
+            {
+                questionText: "¿Qué tipo de proyectos se benefician más de los enfoques Ágiles según PMI Agile?",
+                options: [
+                    "Proyectos con alta certeza en los requisitos y bajo riesgo.",
+                    "Proyectos con requisitos fijos y equipo estable.",
+                    "Proyectos con alta incertidumbre, riesgo, alta tasa de cambio o requisitos poco claros.",
+                    "Proyectos donde la planificación inicial es exhaustiva."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué enfoque tradicional intenta definir y diseñar todos los aspectos de un producto antes de comenzar su desarrollo, y que se busca evitar en la integración de Lean UX con Ágil?",
+                options: [
+                    "MVP.",
+                    "BDUF (Big Design Up Front).",
+                    "Ciclo de vida iterativo.",
+                    "Diseño colaborativo."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "Según las fuentes, ¿qué valora más el Manifiesto Ágil?",
+                options: [
+                    "Procesos y herramientas sobre individuos e interacciones.",
+                    "Documentación extensiva sobre software funcionando.",
+                    "Colaboración con el cliente sobre negociación de contratos.",
+                    "Seguir un plan sobre respuesta ante el cambio."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR! (Manifiesto Ágil: Individuos e interacciones SOBRE procesos y herramientas, Software funcionando SOBRE documentación extensiva, Colaboración con el cliente SOBRE negociación contractual, Respuesta ante el cambio SOBRE seguir un plan. La opción C es una de ellas)
+            },
+            {
+                questionText: "¿Cuál es la mayor prioridad según el primer principio que guía la práctica ágil?",
+                options: [
+                    "Cumplir el plan inicial.",
+                    "Minimizar los cambios.",
+                    "Satisfacer al cliente mediante la entrega temprana y continua de producto/servicio valioso.",
+                    "Finalizar el proyecto a tiempo y dentro del presupuesto original."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué principio ágil sugiere aceptar los requisitos cambiantes, incluso en etapas tardías del desarrollo?",
+                options: [
+                    "Simplicidad.",
+                    "Respuesta ante el cambio.",
+                    "Desarrollo sostenible.",
+                    "Producto funcionando."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es la medida principal del progreso en un proyecto ágil?",
+                options: [
+                    "La documentación completada.",
+                    "El porcentaje de tareas terminadas.",
+                    "El producto/servicio funcionando.",
+                    "El cumplimiento de los hitos del plan."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "Según los principios ágiles, ¿de dónde emergen las mejores arquitecturas, requisitos y diseños?",
+                options: [
+                    "De la alta dirección.",
+                    "De equipos autoorganizados (autogestionados).",
+                    "De un comité de arquitectura.",
+                    "De la documentación exhaustiva inicial."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué principio ágil destaca la importancia de reflexionar a intervalos regulares sobre cómo ser más efectivo y ajustar el comportamiento?",
+                options: [
+                    "Atención continua a la excelencia técnica.",
+                    "Simplicidad.",
+                    "Retrospectiva.",
+                    "Entrega frecuente."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es una de las ventajas de la participación activa de los usuarios/cliente en un proyecto ágil?",
+                options: [
+                    "El equipo no necesita autoorganizarse.",
+                    "Los requisitos emergentes pueden ser priorizados basándose en sus necesidades.",
+                    "El cliente dicta todas las decisiones técnicas.",
+                    "Se elimina la necesidad de retroalimentación continua."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué característica debe tener idealmente el equipo de desarrollo en un entorno ágil según las fuentes?",
+                options: [
+                    "Ser un equipo grande (>10 miembros).",
+                    "Tener jerarquías internas claras.",
+                    "Ser auto-gestionado y multifuncional.",
+                    "Centrarse en una sola disciplina."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "En un proyecto ágil, los requisitos evolucionan, pero ¿qué elemento suele ser fijo?",
+                options: [
+                    "El alcance.",
+                    "El plazo.",
+                    "El coste.",
+                    "La tecnología a utilizar."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR! (A menudo plazo y coste son fijos, alcance variable)
+            },
+            {
+                questionText: "¿Qué significa \"Terminado\" (\"Done\") en el contexto ágil, especialmente en Scrum?",
+                options: [
+                    "La funcionalidad está desarrollada.",
+                    "La funcionalidad está desarrollada y probada.",
+                    "La funcionalidad está desarrollada, probada, con estilos aplicados y aceptada por el cliente.", // Esta es una DoD muy completa
+                    "La funcionalidad está desarrollada y documentada exhaustivamente."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR! (Depende de la DoD, pero C es una buena opción genérica)
+            },
+            {
+                questionText: "La Regla del 80/20 aplicada en contextos ágiles sugiere:",
+                options: [
+                    "Que el 80% del esfuerzo genera el 20% de los resultados.",
+                    "Enfocarse en el 20% del esfuerzo que genera el 80% de los resultados.",
+                    "Que el 80% de los usuarios usa el 20% de las funcionalidades.",
+                    "Completar el 80% de las funcionalidades antes de lanzar."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR! (Principio de Pareto)
+            },
+            {
+                questionText: "¿Cuál es el objetivo principal de enfocarse en la entrega frecuente de producto?",
+                options: [
+                    "Aumentar la burocracia.",
+                    "Permitir la planificación de eventos relacionados como lanzamientos y campañas de marketing.",
+                    "Retrasar el aprendizaje.",
+                    "Reducir la comunicación con los stakeholders."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR! (También para obtener feedback temprano)
+            },
+            {
+                questionText: "En la comparación Ágil vs Predictiva, ¿qué metodología tiene un alcance no cerrado y precio variable?",
+                options: [
+                    "Predictiva.",
+                    "Ágil.",
+                    "Ambas.",
+                    "Ninguna."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué tipo de trabajo se caracteriza por procedimientos claros que han tenido éxito en proyectos similares y suele tener bajos niveles de incertidumbre?",
+                options: [
+                    "Trabajo en incertidumbre.",
+                    "Trabajo definido.",
+                    "Trabajo exploratorio.",
+                    "Trabajo ágil."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es una característica de los proyectos con alta incertidumbre?",
+                options: [
+                    "Requisitos firmes y estables.",
+                    "Bajo ratio de cambio.",
+                    "Alto ratio de cambio, complejidad y riesgo.",
+                    "Planificación detallada al principio."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál de los siguientes NO es un rol en el marco de trabajo Scrum según las fuentes?",
+                options: [
+                    "Product Owner.",
+                    "Scrum Master.",
+                    "Analista de Negocio.",
+                    "Equipo de Desarrollo."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Quién es responsable de maximizar el valor del producto y gestionar el Product Backlog en Scrum?",
+                options: [
+                    "El Equipo de Desarrollo.",
+                    "El Scrum Master.",
+                    "El Product Owner.",
+                    "El Jefe de Proyecto."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es el objetivo del Scrum Master?",
+                options: [
+                    "Dirigir al equipo y asignar tareas.",
+                    "Representar los intereses del cliente.",
+                    "Servir al equipo y al Product Owner, eliminando obstáculos y asegurando que se sigan las prácticas Scrum.",
+                    "Entregar incrementos de producto funcionales."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es el tamaño ideal recomendado para un Equipo de Desarrollo en Scrum?",
+                options: [
+                    "Menos de 3 personas.",
+                    "Entre 3 y 9 personas.",
+                    "Más de 10 personas.",
+                    "No hay un tamaño recomendado fijo."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué artefacto de Scrum es una lista priorizada de requisitos (funcionalidades, mejoras, etc.) que representa la visión y expectativas del cliente?",
+                options: [
+                    "Sprint Backlog.",
+                    "Incremento.",
+                    "Product Backlog.",
+                    "Burndown chart."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cómo se expresa un requisito de negocio visto desde el punto de vista de un usuario en Scrum?",
+                options: [
+                    "Como un caso de uso detallado.",
+                    "Como una historia de usuario (\"Como [quien], quiero [el qué] con el objetivo de [el por qué]\").",
+                    "Como una especificación técnica.",
+                    "Como un diagrama de Gantt."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál de los siguientes NO es un factor para priorizar elementos en el Product Backlog?",
+                options: [
+                    "Valor o importancia para el negocio.",
+                    "Urgencia.",
+                    "Riesgo.",
+                    "El estado de ánimo del equipo."
+                ],
+                correctAnswerIndex: 3 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué artefacto de Scrum es una lista de los trabajos (tareas) que el equipo debe realizar durante un Sprint para construir el incremento previsto?",
+                options: [
+                    "Product Backlog.",
+                    "Sprint Backlog.",
+                    "Incremento.",
+                    "Definición de Terminado (Definition of Done)."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Quién es el principal responsable de crear y mantener el Product Backlog priorizado?",
+                options: [
+                    "El Scrum Master.",
+                    "El Equipo de Desarrollo.",
+                    "El Product Owner.",
+                    "El cliente directamente."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es el objetivo principal de la reunión de Planificación del Sprint?",
+                options: [
+                    "Mostrar el incremento al cliente.",
+                    "Reflexionar sobre cómo mejorar el proceso.",
+                    "Determinar qué elementos del Product Backlog se desarrollarán en el Sprint y desglosarlos en tareas.",
+                    "Actualizar el Burndown chart."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es la duración típica recomendada para un Sprint en Scrum según las fuentes?",
+                options: [
+                    "Unos pocos días.",
+                    "De 1 a 8 semanas.", // Generalmente 1-4 semanas
+                    "Varios meses.",
+                    "Un año."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR! (Guía Scrum dice 1 mes o menos)
+            },
+            {
+                questionText: "¿Qué se actualiza diariamente en la reunión de seguimiento del Sprint (Daily Scrum)?",
+                options: [
+                    "El plan del proyecto a largo plazo.",
+                    "El esfuerzo pendiente en la pila del sprint (Sprint Backlog) y los impedimentos encontrados.",
+                    "Las nuevas funcionalidades a añadir al Product Backlog.",
+                    "El presupuesto restante del proyecto."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es el objetivo de la reunión de Revisión del Sprint?",
+                options: [
+                    "Planificar el próximo Sprint en detalle.",
+                    "Reflexionar sobre el desempeño del equipo.",
+                    "Presentar el incremento generado al product owner, cliente y stakeholders para obtener feedback.",
+                    "Asignar tareas a los miembros del equipo."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es el propósito de la reunión de Retrospectiva en Scrum?",
+                options: [
+                    "Revisar el Product Backlog.",
+                    "Mejorar continuamente el proceso y el producto entregado.",
+                    "Presentar el trabajo completado.",
+                    "Negociar contratos."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué se mide en un Burndown chart?",
+                options: [
+                    "El trabajo realizado.",
+                    "El trabajo pendiente de realizar.",
+                    "La velocidad del equipo.",
+                    "El número de errores encontrados."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "En Scrum, el \"Incremento\" es:",
+                options: [
+                    "Una lista de requisitos futuros.",
+                    "El resultado de cada Sprint, una parte completa y operativa del producto.",
+                    "El plan para el próximo Sprint.",
+                    "La documentación generada durante el Sprint."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Quién debe asistir a la reunión de Planificación del Sprint?",
+                options: [
+                    "Solo el Product Owner y el Scrum Master.",
+                    "Solo el Equipo de Desarrollo.",
+                    "El Product Owner, el Scrum Master y el Equipo de Desarrollo.",
+                    "El cliente y los stakeholders."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué se recomienda hacer durante la reunión diaria de seguimiento del Sprint (Daily Scrum)?",
+                options: [
+                    "Discutir detalladamente soluciones técnicas.",
+                    "Realizar la reunión sentados en una sala de reuniones.",
+                    "Mantener la reunión breve, no más de 15 minutos, y si es posible, de pie.",
+                    "Planificar las tareas del día."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué se utiliza como unidad de tiempo para cada incremento de producto en la gestión ágil?",
+                options: [
+                    "El Mes.",
+                    "El Sprint.",
+                    "La Hora.",
+                    "La Iteración." // Sprint es un tipo de Iteración
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR! (Sprint es común, Iteración es más general)
+            },
+            {
+                questionText: "¿Cuál es la diferencia entre \"Tiempo real\" y \"Tiempo ideal\" según las fuentes?",
+                options: [
+                    "Tiempo real es el tiempo de trabajo continuo, tiempo ideal incluye interrupciones.",
+                    "Tiempo real incluye interrupciones, tiempo ideal es el tiempo de trabajo continuo sin interrupciones.",
+                    "Tiempo real es el trabajo realizado, tiempo ideal es el trabajo pendiente.",
+                    "Son sinónimos."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál de las siguientes NO es una técnica de estimación ágil mencionada en las fuentes?",
+                options: [
+                    "Tallas de Camiseta (T-Shirt Sizing).",
+                    "Método del Valor Ganado (Earned Value Management).", // EVM es más tradicional
+                    "Planning Poker.",
+                    "Affinity Estimating."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "En Planning Poker, ¿qué hacen los miembros del equipo después de que el cliente lee una historia de usuario y el equipo hace preguntas?",
+                options: [
+                    "El Scrum Master asigna el esfuerzo basado en su experiencia.",
+                    "El Product Owner decide el esfuerzo.",
+                    "Cada miembro piensa en el esfuerzo y todos muestran sus tarjetas simultáneamente.",
+                    "Votan secuencialmente para no influenciarse."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es una de las principales reglas de Kanban?",
+                options: [
+                    "Mantener un Product Backlog no priorizado.",
+                    "Limitar el \"trabajo en curso\" (Work In Progress - WIP).",
+                    "Realizar Daily Scrums de 15 minutos.",
+                    "Trabajar en Sprints de duración fija."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué se visualiza en un tablero Kanban?",
+                options: [
+                    "Los roles del equipo.",
+                    "El trabajo y las fases del ciclo de producción o flujo de trabajo.",
+                    "El presupuesto del proyecto.",
+                    "Los riesgos identificados."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "En Kanban, ¿qué mide el \"Lead Time\"?",
+                options: [
+                    "El tiempo que se tarda en terminar cada tarea, desde que se hace una petición hasta que se hace la entrega.",
+                    "El tiempo que el equipo dedica a reuniones.",
+                    "El tiempo que una tarea permanece en la fase de \"en curso\".",
+                    "La cantidad de trabajo completado por día."
+                ],
+                correctAnswerIndex: 0 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué mide el \"Cycle Time\" en Kanban?",
+                options: [
+                    "El tiempo total del proyecto.",
+                    "El tiempo que el trabajo sobre una tarea comienza hasta que termina.",
+                    "El tiempo de espera entre tareas.",
+                    "El tiempo que una tarea pasa en la cola de espera."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "Según las fuentes, ¿cómo suelen estructurarse los contratos en enfoques Predictivos?",
+                options: [
+                    "Basados en la colaboración y compartir riesgos.",
+                    "Como un mecanismo adversarial que establece soluciones legales si algo falla.",
+                    "Centrados en la generación de valor adaptable.",
+                    "Permiten un alcance variable."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Con qué choca la naturaleza cambiante de los proyectos cuando se aplican contratos Predictivos?",
+                options: [
+                    "Con el enfoque en la colaboración.",
+                    "Con la negociación de contratos.",
+                    "Con los requisitos fijos, precios y plazos definidos en estos contratos.",
+                    "Con la transparencia."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es la clave en todos los contratos ágiles según las fuentes?",
+                options: [
+                    "Fijar un alcance cerrado y precio fijo.",
+                    "Establecer mecanismos legales estrictos para gestionar fallos.",
+                    "Fomentar la transparencia, la confianza y la colaboración entre cliente y proveedor.",
+                    "Maximizar los beneficios del proveedor."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "En los contratos basados en Tiempo y Materiales (T&M) en enfoques ágiles, ¿quién suele recaer el riesgo?",
+                options: [
+                    "El proveedor.",
+                    "Se comparte a partes iguales.",
+                    "El cliente.",
+                    "Depende de cláusulas específicas de desempeño."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué tipo de contrato ágil define un coste objetivo y reparte las desviaciones respecto a este coste entre las partes?",
+                options: [
+                    "Tiempo y Materiales (T&M).",
+                    "Alcance No Vinculante / Precio Fijo.",
+                    "Coste Objetivo (Target Cost).",
+                    "Contrato Win-Win."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "El concepto \"Win-Win\" en contratos ágiles se refiere a un acuerdo donde:",
+                options: [
+                    "El cliente siempre obtiene más valor que el proveedor.",
+                    "Ambas partes pueden satisfacer sus expectativas de producto, alcance, plazos y aspectos económicos.",
+                    "El proveedor gana si el proyecto termina antes de tiempo.",
+                    "El riesgo recae principalmente en el cliente."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es uno de los principios de la agilidad según las fuentes?", // Esta pregunta es similar a una anterior sobre el Manifiesto Ágil
+                options: [
+                    "Procesos y herramientas sobre individuos e interacciones.",
+                    "Documentación extensiva sobre software funcionando.",
+                    "Individuos e interacciones sobre procesos y herramientas.",
+                    "Negociación de contratos sobre colaboración con el cliente."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "La integración de Lean UX en metodologías ágiles como Scrum se menciona como un corolario, ¿qué implica esto?",
+                options: [
+                    "La necesidad de evitar la comunicación con stakeholders.",
+                    "La adopción de enfoques tradicionales de diseño (BDUF).",
+                    "La necesidad de adaptar la metodología a cada contexto específico.",
+                    "Un enfoque estricto en seguir procesos fijos."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es el objetivo principal de la planificación a corto plazo en la metodología ágil (como en un sprint)?",
+                options: [
+                    "Definir el alcance completo del proyecto.",
+                    "Minimizar los cambios.",
+                    "Permitir la flexibilidad y adaptación a medida que surgen requisitos.",
+                    "Crear un camino crítico detallado."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "Según las fuentes, ¿por qué los equipos de proyecto actuales están emprendiendo cada vez más trabajo de alta incertidumbre?",
+                options: [
+                    "Porque los procedimientos claros son menos comunes.",
+                    "Porque el trabajo definible se automatiza.",
+                    "Porque se prefiere la documentación extensiva.",
+                    "Porque los enfoques predictivos han fallado."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "En Scrum, ¿cuál es la duración recomendada para las tareas individuales dentro del Sprint Backlog?",
+                options: [
+                    "Entre 1 y 4 horas.",
+                    "Entre 2 y 16 horas de trabajo.", // A menudo se dice que no más de 1-2 días
+                    "Un día completo de trabajo.",
+                    "No hay un rango de tiempo recomendado."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR! (Guía Scrum no especifica esto, pero es una práctica común)
+            },
+            {
+                questionText: "¿Quién participa en la reunión de Revisión del Sprint?",
+                options: [
+                    "Solo el Equipo de Desarrollo.",
+                    "El Product Owner, cliente, stakeholders, y el equipo.",
+                    "Solo el Scrum Master y el Product Owner.",
+                    "El Product Owner y el Equipo de Desarrollo."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué técnica de estimación ágil clasifica las historias de usuario en categorías de tamaño como XS, S, M, L, XL?",
+                options: [
+                    "Planning Poker.",
+                    "Affinity Estimating.",
+                    "Tallas de Camiseta (T-Shirt Sizing).",
+                    "Bucket System."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué técnica de estimación ágil agrupa historias de usuario por similitud en tamaño y complejidad?",
+                options: [
+                    "Planning Poker.",
+                    "Affinity Estimating.",
+                    "Tallas de Camiseta (T-Shirt Sizing).",
+                    "Bucket System."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué técnica de estimación ágil utiliza cartas con valores para estimar el esfuerzo relativo de cada historia de usuario en un proceso iterativo de consenso?",
+                options: [
+                    "Tallas de Camiseta (T-Shirt Sizing).",
+                    "Affinity Estimating.",
+                    "Bucket System.",
+                    "Planning Poker."
+                ],
+                correctAnswerIndex: 3 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "En Kanban, ¿qué sucede si el WIP (Work In Progress) es muy bajo?",
+                options: [
+                    "Las tareas se hacen rápido, pero el equipo puede estar ocioso y el plazo de entrega puede ser alto.",
+                    "Existe el riesgo de empezar muchas tareas y terminar pocas.",
+                    "Las tareas se acumulan en las colas.",
+                    "Es fácil encontrar el WIP correcto."
+                ],
+                correctAnswerIndex: 0 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué debe incluir la \"Definición de Completado\" acordada entre el cliente y el equipo?",
+                options: [
+                    "Solo la codificación terminada.",
+                    "Lo necesario para asegurar que el incremento de producto es potencialmente entregable al cliente y cumple sus criterios de calidad.",
+                    "La documentación completa del proyecto.",
+                    "Las condiciones de satisfacción de cada requisito por separado."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "En la Planificación del Sprint, ¿en qué se basa la determinación de qué elementos del Product Backlog se desarrollarán?",
+                options: [
+                    "En la disponibilidad técnica del equipo.",
+                    "En las prioridades de negocio del cliente.", // Y la capacidad del equipo
+                    "En el número de tareas que caben en el Sprint.",
+                    "En los riesgos identificados previamente."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué documento se genera al finalizar cada Sprint en Scrum?",
+                options: [
+                    "Un plan de proyecto actualizado.",
+                    "Un incremento de producto funcional.",
+                    "El Product Backlog completo.",
+                    "Un informe de progreso para la dirección."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Quién es el responsable de eliminar los obstáculos que bloquean al Equipo de Desarrollo en Scrum?",
+                options: [
+                    "El Product Owner.",
+                    "El Scrum Master.",
+                    "El Jefe de Proyecto.",
+                    "El cliente."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué enfoque de ciclo de vida es útil cuando los clientes están dispuestos a recibir subconjuntos de la solución general en entregas frecuentes y más pequeñas?",
+                options: [
+                    "Predictivo.",
+                    "Iterativo.",
+                    "Incremental.",
+                    "Ágil (Iterativo e Incremental)."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR! (Incremental por sí solo. Ágil es Iterativo e Incremental)
+            },
+            {
+                questionText: "¿Qué enfoque de ciclo de vida permite la retroalimentación sobre el trabajo inacabado y tiene como objetivo la corrección de la solución?",
+                options: [
+                    "Predictivo.",
+                    "Iterativo.",
+                    "Incremental.",
+                    "Ágil (Iterativo e Incremental)."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR! (Iterativo por sí solo. Ágil es Iterativo e Incremental)
+            },
+            {
+                questionText: "¿Qué artefacto de Scrum descompone las funcionalidades seleccionadas del Product Backlog en las tareas necesarias para un Sprint?",
+                options: [
+                    "Product Backlog.",
+                    "Sprint Backlog.",
+                    "Incremento.",
+                    "User Story."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Quién decide el contenido del Product Backlog en Scrum?",
+                options: [
+                    "El Equipo de Desarrollo.",
+                    "El Scrum Master.",
+                    "El Product Owner.",
+                    "El cliente."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es la primera parte de la reunión de Planificación del Sprint?",
+                options: [
+                    "Desglosar elementos en tareas.",
+                    "Asignar tareas a personas.",
+                    "Determinar qué elementos de la pila de producto se desarrollarán en el Sprint.",
+                    "Actualizar el Burndown chart."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR! (El "Qué")
+            },
+            {
+                questionText: "¿Qué se hace al finalizar la reunión diaria de seguimiento del Sprint?",
+                options: [
+                    "Se planifica el próximo Sprint.",
+                    "Se actualiza el gráfico de avance del sprint (burndown).", // Se actualiza *durante* o *después*, no como parte final de la reunión en sí.
+                    "Se realiza la Revisión del Sprint.",
+                    "Se prioriza el Product Backlog."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR! (El Scrum Master puede hacerlo, o el equipo)
+            },
+            {
+                questionText: "¿Qué se muestra en la reunión de Revisión del Sprint?",
+                options: [
+                    "Diapositivas de PowerPoint sobre el progreso.",
+                    "El propio producto generado (el incremento).",
+                    "Un informe detallado de costes.",
+                    "El plan para el próximo Sprint."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es el objetivo de la fase \"Generar ideas\" en una Retrospectiva de Sprint?",
+                options: [
+                    "Recopilar datos sobre lo que sucedió.",
+                    "Decidir qué acciones se tomarán.",
+                    "Brainstorming sobre qué ha ido bien, qué mejorar, qué se puede hacer o probar.",
+                    "Cerrar la reunión."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué factor de proyecto influye en la adaptación a enfoques ágiles, relacionado con la confianza y la autonomía para tomar decisiones?",
+                options: [
+                    "Equipo.",
+                    "Proyecto.",
+                    "Cultura.",
+                    "Tecnología."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "Un equipo multifuncional en un entorno ágil está compuesto por:",
+                options: [
+                    "Personas de la misma habilidad y función.",
+                    "Personas de diferentes habilidades y funciones.",
+                    "Solo desarrolladores y testers.",
+                    "Solo responsables de negocio."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué valor del Manifiesto Ágil prioriza el \"Producto/servicio funcionando\"?",
+                options: [
+                    "Sobre documentación extensiva.",
+                    "Sobre individuos e interacciones.",
+                    "Sobre colaboración con el cliente.",
+                    "Sobre responder ante el cambio."
+                ],
+                correctAnswerIndex: 0 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es el método más eficiente y efectivo de comunicar información al equipo de desarrollo y entre sus miembros, según un principio ágil?",
+                options: [
+                    "Documentación escrita.",
+                    "Correos electrónicos.",
+                    "La conversación cara a cara.",
+                    "Videoconferencias."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué aspecto mejora la agilidad según el noveno principio ágil?",
+                options: [
+                    "La documentación exhaustiva.",
+                    "La atención continua a la excelencia técnica y al buen diseño.",
+                    "El control estricto del alcance.",
+                    "La minimización del contacto con el cliente."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "El principio ágil de \"Simplicidad\" se define como:",
+                options: [
+                    "Evitar cualquier complejidad en el diseño.",
+                    "Maximizar la cantidad de trabajo no realizado (eliminando desperdicio).",
+                    "Reducir la comunicación.",
+                    "Utilizar herramientas sencillas."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cuál es una de las ventajas de que el equipo de proyecto esté facultado para tomar decisiones?",
+                options: [
+                    "Reduce la responsabilidad del equipo.",
+                    "Asegura que es su responsabilidad entregar el producto.", // Y aumenta la velocidad, motivación...
+                    "Aumenta la interferencia externa.",
+                    "Centraliza la toma de decisiones."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "En un proyecto ágil, si bien los requisitos pueden evolucionar, ¿qué flexibilidad existe con las funcionalidades?",
+                options: [
+                    "Las funcionalidades también son fijas.",
+                    "Las funcionalidades son variables para adaptarse al plazo fijo.",
+                    "Las funcionalidades se definen completamente al principio.",
+                    "Las funcionalidades se minimizan para cumplir el plazo."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Cómo se gestiona la evolución de las funcionalidades en Scrum, según las fuentes?",
+                options: [
+                    "Mediante reuniones mensuales con la dirección.",
+                    "Mediante reuniones diarias cortas.", // Daily no es para esto, es para sincronizar
+                    "Mediante un proceso formal de control de cambios.", // No tan formal como en predictivo
+                    "Se prohíben los cambios una vez iniciado el proyecto."
+                ],
+                correctAnswerIndex: 0 // Placeholder - ¡VERIFICAR! (Se gestiona a través del Product Backlog y las reuniones de Sprint, especialmente Sprint Review y Planning)
+            },
+            {
+                questionText: "¿Cuál es el objetivo del Liderazgo de Servicio en un entorno ágil?",
+                options: [
+                    "Controlar y dictar al equipo.",
+                    "Promover la autoconciencia, escuchar, servir al equipo y coachear.",
+                    "Tomar todas las decisiones clave.",
+                    "Minimizar la interacción con el equipo."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué ocurre si el WIP (Work In Progress) en Kanban es muy alto?",
+                options: [
+                    "Las tareas se hacen más rápido.",
+                    "Existe el riesgo de empezar muchas tareas y terminar pocas.",
+                    "El equipo está ocioso.",
+                    "Se reduce el Lead Time."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "En Kanban, si se observa que hay tareas sobre las que nadie trabaja durante mucho tiempo, ¿qué podría indicar sobre el WIP de esa fase?",
+                options: [
+                    "Que el WIP probablemente es bajo.",
+                    "Que el WIP probablemente es alto.", // Podría ser un cuello de botella, o WIP alto en fases anteriores
+                    "Que el Lead Time es bajo.",
+                    "Que el Cycle Time es alto."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "Un contrato ágil con cláusula \"Change for Free\" implica:",
+                options: [
+                    "Que cualquier cambio es gratuito.",
+                    "Cambios de requisitos sin coste adicional si se mantiene el esfuerzo total, intercambiando funcionalidad.",
+                    "Que el cliente puede cambiar el alcance sin previo aviso.",
+                    "Que el proveedor asume todos los costes de los cambios."
+                ],
+                correctAnswerIndex: 1 // Placeholder - ¡VERIFICAR!
+            },
+            {
+                questionText: "¿Qué significa \"Money for Nothing\" en un contrato ágil?",
+                options: [
+                    "El proveedor recibe dinero sin hacer nada.",
+                    "El cliente recibe el producto gratis si no está satisfecho.",
+                    "Posibilidad de finalización anticipada por el cliente, ahorrando parte del coste restante.",
+                    "El proveedor paga al cliente por cada error encontrado."
+                ],
+                correctAnswerIndex: 2 // Placeholder - ¡VERIFICAR!
+            }
+        ];
+
+        const quizForm = document.getElementById('quizForm');
+        const submitButton = document.getElementById('submitButton');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const scoreEl = document.getElementById('score');
+        const feedbackEl = document.getElementById('feedback');
+        const restartButton = document.getElementById('restartButton');
+
+        // --- Cargar Preguntas ---
+        function loadQuestions() {
+            quizForm.innerHTML = ''; // Limpiar preguntas anteriores si las hubiera
+            questions.forEach((q, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card bg-slate-700/50 p-5 sm:p-6 rounded-lg shadow-lg border border-slate-700';
+
+                const questionTextEl = document.createElement('p');
+                questionTextEl.className = 'text-lg font-semibold mb-4 text-sky-300';
+                questionTextEl.textContent = `${index + 1}. ${q.questionText}`;
+                questionCard.appendChild(questionTextEl);
+
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'space-y-3';
+
+                q.options.forEach((option, optionIndex) => {
+                    const optionId = `q${index}_opt${optionIndex}`;
+                    
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'flex items-center';
+
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.id = optionId;
+                    radioInput.name = `question_${index}`;
+                    radioInput.value = optionIndex.toString();
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    label.textContent = option;
+                    label.className = 'text-slate-300 hover:text-sky-300 cursor-pointer';
+
+                    optionDiv.appendChild(radioInput);
+                    optionDiv.appendChild(label);
+                    optionsContainer.appendChild(optionDiv);
+                });
+
+                questionCard.appendChild(optionsContainer);
+                quizForm.appendChild(questionCard);
+            });
+        }
+
+        // --- Event Listener para Enviar ---
+        submitButton.addEventListener('click', () => {
+            let score = 0;
+            feedbackEl.innerHTML = ''; // Limpiar feedback anterior
+            let hasIncorrectAnswers = false;
+
+            questions.forEach((q, index) => {
+                const selectedOptionInput = document.querySelector(`input[name="question_${index}"]:checked`);
+                
+                if (selectedOptionInput) {
+                    const userAnswerIndex = parseInt(selectedOptionInput.value);
+                    if (userAnswerIndex === q.correctAnswerIndex) {
+                        score++;
+                    } else {
+                        hasIncorrectAnswers = true;
+                        const feedbackItem = document.createElement('div');
+                        feedbackItem.className = 'feedback-item feedback-incorrect p-4 bg-slate-700 rounded-md shadow';
+                        
+                        const questionP = document.createElement('p');
+                        questionP.className = 'font-semibold text-md text-sky-300 mb-1';
+                        questionP.textContent = `Pregunta ${index + 1}: ${q.questionText}`;
+                        
+                        const userAnswerP = document.createElement('p');
+                        userAnswerP.innerHTML = `Tu respuesta: <span class="incorrect-answer-user">${q.options[userAnswerIndex]}</span>`;
+                        userAnswerP.className = 'text-sm text-slate-300';
+
+                        const correctAnswerP = document.createElement('p');
+                        correctAnswerP.innerHTML = `Respuesta correcta: <span class="correct-answer-text">${q.options[q.correctAnswerIndex]}</span>`;
+                        correctAnswerP.className = 'text-sm text-slate-300';
+
+                        feedbackItem.appendChild(questionP);
+                        feedbackItem.appendChild(userAnswerP);
+                        feedbackItem.appendChild(correctAnswerP);
+                        feedbackEl.appendChild(feedbackItem);
+                    }
+                } else {
+                    // No respondida
+                    hasIncorrectAnswers = true;
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = 'feedback-item feedback-incorrect p-4 bg-slate-700 rounded-md shadow';
+
+                    const questionP = document.createElement('p');
+                    questionP.className = 'font-semibold text-md text-sky-300 mb-1';
+                    questionP.textContent = `Pregunta ${index + 1}: ${q.questionText}`;
+
+                    const userAnswerP = document.createElement('p');
+                    userAnswerP.innerHTML = `Tu respuesta: <span class="incorrect-answer-user">No respondida</span>`;
+                    userAnswerP.className = 'text-sm text-slate-300';
+                    
+                    const correctAnswerP = document.createElement('p');
+                    correctAnswerP.innerHTML = `Respuesta correcta: <span class="correct-answer-text">${q.options[q.correctAnswerIndex]}</span>`;
+                    correctAnswerP.className = 'text-sm text-slate-300';
+
+                    feedbackItem.appendChild(questionP);
+                    feedbackItem.appendChild(userAnswerP);
+                    feedbackItem.appendChild(correctAnswerP);
+                    feedbackEl.appendChild(feedbackItem);
+                }
+            });
+
+            scoreEl.textContent = `Tu puntuación: ${score} de ${questions.length}`;
+            if (!hasIncorrectAnswers) {
+                 feedbackEl.innerHTML = '<p class="text-green-400 font-semibold text-center">¡Felicidades! Todas tus respuestas son correctas.</p>';
+            }
+
+            resultsContainer.classList.remove('hidden');
+            submitButton.classList.add('hidden');
+            window.scrollTo({ top: resultsContainer.offsetTop - 20, behavior: 'smooth' });
+        });
+
+        // --- Event Listener para Reiniciar ---
+        restartButton.addEventListener('click', () => {
+            quizForm.reset(); // Resetea las selecciones de radio
+            resultsContainer.classList.add('hidden');
+            submitButton.classList.remove('hidden');
+            feedbackEl.innerHTML = '';
+            scoreEl.textContent = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // --- Carga inicial ---
+        loadQuestions();
+    </script>
+
+</body>
+</html>
