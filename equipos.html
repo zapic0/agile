@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen Interactivo: Gestión de Equipos de Trabajo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .question-card {
+            transition: all 0.3s ease-in-out;
+        }
+        .question-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); /* updated shadow */
+        }
+        .correct-answer-text { 
+            color: #10B981; /* Tailwind green-500 */
+            font-weight: 600;
+        }
+        .incorrect-answer-user {
+            color: #EF4444; /* Tailwind red-500 */
+            text-decoration: line-through;
+            font-weight: 600;
+        }
+        .feedback-item {
+            border-left-width: 4px;
+            padding-left: 1rem; 
+        }
+        .feedback-incorrect { 
+            border-left-color: #EF4444; /* Tailwind red-500 */
+        }
+        /* Custom radio button style */
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 1.25em;
+            height: 1.25em;
+            border: 2px solid #64748B; /* slate-500 */
+            border-radius: 50%;
+            outline: none;
+            margin-right: 0.5em;
+            vertical-align: middle; 
+            transition: all 0.2s ease-in-out;
+        }
+        input[type="radio"]:checked {
+            background-color: #38BDF8; /* sky-400 */
+            border-color: #0EA5E9; /* sky-500 */
+        }
+        input[type="radio"]:checked::before {
+            content: '';
+            display: block;
+            width: 0.65em;
+            height: 0.65em;
+            margin: auto;
+            border-radius: 50%;
+            background-color: white;
+            transform: translate(1.8px, 1.8px); 
+        }
+        input[type="radio"]:hover {
+            border-color: #38BDF8; /* sky-400 */
+        }
+        label {
+             vertical-align: middle; 
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 to-slate-800 text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 selection:bg-sky-500 selection:text-white">
+
+    <div class="w-full max-w-3xl bg-slate-800 shadow-2xl rounded-xl p-6 sm:p-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl sm:text-4xl font-bold text-sky-400">Examen: Gestión de Equipos de Trabajo</h1>
+            <p class="text-slate-400 mt-2">Lee cada pregunta cuidadosamente y selecciona la mejor opción de respuesta.</p>
+        </header>
+
+        <form id="quizForm" class="space-y-8">
+            </form>
+
+        <div class="mt-10 text-center">
+            <button id="submitButton" class="bg-sky-500 hover:bg-sky-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-opacity-75">
+                Enviar Respuestas
+            </button>
+        </div>
+
+        <div id="resultsContainer" class="mt-10 hidden">
+            <h2 class="text-2xl sm:text-3xl font-bold text-sky-400 mb-6 text-center">Resultados del Examen</h2>
+            <div id="score" class="text-xl sm:text-2xl font-semibold mb-8 p-4 bg-slate-700 rounded-lg text-center shadow-md"></div>
+            
+            <h3 class="text-xl font-semibold text-amber-400 mb-4">Preguntas incorrectas o no respondidas:</h3>
+            <div id="feedback" class="space-y-6">
+                </div>
+             <div class="mt-10 text-center">
+                <button id="restartButton" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-opacity-75">
+                    Reiniciar Examen
+                </button>
+            </div>
+        </div> 
+    </div> 
+
+    <script>
+        // --- Definición de Preguntas ---
+        const questions = [
+            {
+                questionText: "¿Cuáles de los siguientes aspectos NO es considerado por Herzberg como auténticamente motivantes?",
+                options: [
+                    "Formación continua para el desarrollo de la carrera profesional",
+                    "Reconocimiento por la labor efectuada",
+                    "Buenas condiciones físicas de trabajo",
+                    "Sensación de Logro"
+                ],
+                correctAnswerIndex: 2 
+            },
+            {
+                questionText: "De acuerdo con la teoría de las relaciones humanas, ¿cuál de las siguientes afirmaciones es correcta?",
+                options: [
+                    "El nivel de rendimiento de un trabajador se tiende a ajustar al nivel de su equipo de trabajo, como parte de su integración en el mismo",
+                    "El poder dentro del entorno grupal es la motivación principal en los trabajos colectivos.",
+                    "El rendimiento de un equipo es mayor cuando las relaciones personales son buenas fuera del ambiente de trabajo.",
+                    "La relación personal con los directivos es la fuente principal de motivación para el trabajo en grupo."
+                ],
+                correctAnswerIndex: 0
+            },
+            {
+                questionText: "Un rasgo deseable del líder debería ser:",
+                options: [
+                    "Desconfianza preventiva",
+                    "Orgulloso de su experiencia",
+                    "Autoconfianza",
+                    "Todos los anteriores"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Si se pretende motivar por establecimiento de objetivos, estos deben ser:",
+                options: [
+                    "Muchos, Diversos y Medibles",
+                    "Pocos, Sencillos de alcanzar y Cualitativos",
+                    "Muchos, Fáciles y Medibles",
+                    "Pocos, Complicados de alcanzar y Medibles"
+                ],
+                correctAnswerIndex: 3
+            },
+            {
+                questionText: "De acuerdo con la teoría X/Y de McGregor, la teoría X indica que el trabajo se realiza a disgusto. Si considero que los miembros del equipo son básicamente X, el liderazgo deberá ser:",
+                options: [
+                    "Centrado en mejorar la relación personal",
+                    "Se deben plantear objetivos y delegar responsabilidades",
+                    "Se debe controlar cuidadosamente la ejecución de las tareas para aprovechar toda su capacidad de trabajo.",
+                    "Ninguna de las anteriores"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "La teoría de Hersey del liderazgo situacional propugna que cada estilo de liderazgo se debería adecuar a:",
+                options: [
+                    "Cada persona y mantenerse en el tiempo, para establecer claramente unas pautas de comportamiento que motiven el trabajo",
+                    "Las distintas situaciones laborales y al clima económico",
+                    "La evolución profesional y de relación dentro del equipo de cada persona, cambiando a lo largo del tiempo",
+                    "Las relaciones entre las personas"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "El 'Proyecto Aristotle' llevado a cabo por Google destaca la importancia de:",
+                options: [
+                    "La seguridad psicológica",
+                    "El liderazgo participativo",
+                    "Las actividades extralaborales como mecanismo de cohesión",
+                    "La delegación de tareas"
+                ],
+                correctAnswerIndex: 0
+            },
+            {
+                questionText: "El término \"normas grupales\" en el contexto de trabajo en equipo se refiere a:",
+                options: [
+                    "Documento que recoge las normas de comportamiento dentro del equipo",
+                    "Conjunto de normas no escritas que gobiernan el funcionamiento de un equipo",
+                    "Conjunto de instrucciones sobre comportamiento que transmite el jefe de proyecto en la reunión de inicio del proyecto",
+                    "Conjunto de normas éticas"
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "De acuerdo con el modelo de Roles de Belbin, un punto débil del rol Cerebro es:",
+                options: [
+                    "Demasiado obsesionado con los detalles",
+                    "Resistente al cambio",
+                    "Individualista",
+                    "Hipercrítico"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Según el modelo de Belbin, ¿qué tipo de perfil estará automotivado simplemente por asignarle tareas de su ámbito de trabajo?",
+                options: [
+                    "Monitor-evaluador",
+                    "Coordinador",
+                    "Especialista",
+                    "Cohesionador"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Conforme a la teoría MBTI, ¿qué característica de personalidad marca cómo tomar decisiones?",
+                options: [
+                    "Extroversión-introversión",
+                    "Sensitivos-Intuitivos",
+                    "Racionales-Emocionales",
+                    "Calificadores-Perceptivos"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Cuál de los siguientes NO es un tipo de personalidad según la tipología MBTI?",
+                options: [
+                    "INTJ",
+                    "ESFP",
+                    "IRFP",
+                    "ENFJ"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Si en el test 'Reading the mind in the Eyes' obtengo una puntuación alta, representa:",
+                options: [
+                    "Soy una persona con liderazgo",
+                    "Soy una persona motivadora",
+                    "Soy una persona empática",
+                    "Ninguna de las anteriores"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "En el ciclo de vida de un equipo, ¿a qué etapa nos estamos refiriendo si decimos que los miembros son conscientes de que están obligados a entenderse si quieren sacar el proyecto adelante?",
+                options: [
+                    "Inicio.",
+                    "Acoplamiento.",
+                    "Madurez.",
+                    "Agotamiento."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "El ser un experto técnico en la temática del proyecto le da al director del proyecto:",
+                options: [
+                    "Una capacidad para poder hacerse cargo de las tareas más complejas si estas son críticas para el cumplimiento del plazo o del presupuesto del proyecto",
+                    "Una fuente de poder por su conocimiento de la materia que hace que los miembros del equipo confíen en sus decisiones y tiendan a seguirlas",
+                    "Una fuente de poder por su conocimiento de la materia que se extingue rápidamente y que debe ser sustituida por otra en un plazo menor de un mes",
+                    "Una capacidad de hacerse cargo de (texto incompleto en fuente, se asume que sería una opción menos precisa)"
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "Cuando ante una toma de decisiones en un proyecto, el Director dice \"Tenemos que tomar la decisión por consenso. Si votamos, y queda empate, nos seguimos reuniendo hasta llegar a un consenso, da lo mismo el tiempo que tardemos\" ¿Qué estilo de liderazgo está empleando de acuerdo con el continuo de Tannenbaum?",
+                options: [
+                    "Liderazgo democrático",
+                    "Liderazgo participativo",
+                    "Liderazgo autocrático",
+                    "Su comportamiento no se corresponde con ningún estilo de liderazgo adecuado, sino con una perversión del liderazgo"
+                ],
+                correctAnswerIndex: 3
+            },
+            {
+                questionText: "En el modelo de motivación mediante estímulos de Vroom aplicada al entorno de trabajo, la eficacia de la realimentación depende de:",
+                options: [
+                    "Que resulta altamente probable que el esfuerzo realizado se transforme en el resultado deseado",
+                    "Que la recompensa se adecue a las necesidades del trabajador",
+                    "Que la probabilidad de que se obtenga la recompensa en el caso de realizar bien la tarea sea elevada",
+                    "Todas las anteriores son correctas"
+                ],
+                correctAnswerIndex: 3
+            },
+            {
+                questionText: "Según el modelo de Herzberg, los factores higiénicos, como un salario adecuado, o la buena relación con tu jefe son:",
+                options: [
+                    "La fuente de la verdadera motivación",
+                    "Elementos que, de faltar, producirían desmotivación",
+                    "Multiplicadores de la actividad",
+                    "Relacionados con la pulcritud y el orden"
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "Una de las labores principales del Director de Proyecto (DP) es \"Gestionar lo complejo\". ¿Qué implica esta labor?",
+                options: [
+                    "Alinear personas y liderar el cambio.",
+                    "Decidir objetivos, descomponer en trabajos y asignar recursos.",
+                    "Proporcionar reconocimiento y apoyo al equipo.",
+                    "Ser policía y paraguas para el equipo."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "Según el PMI, ¿qué significa \"demostrar y adoptar comportamientos de liderazgo\"?",
+                options: [
+                    "Asumir toda la autoridad formal en el proyecto.",
+                    "Dar soporte a las necesidades individuales y de equipo buscando el éxito del proyecto.",
+                    "Mantener un estilo de liderazgo autocrático en todo momento.",
+                    "Delegar todas las responsabilidades del proyecto al equipo."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Cuál es una de las principales dificultades que enfrenta un Director de Proyecto (DP) junior?",
+                options: [
+                    "Tener demasiada autoridad sin responsabilidad.",
+                    "La dificultad para permitir que otros hagan las cosas a su modo.",
+                    "La facilidad para desconectar de la disciplina técnica.",
+                    "Gestionar únicamente la parte administrativa del proyecto."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "Warren Bennis afirmó que \"Managers are people who do things right, while leaders are people who do the right thing\". ¿Qué implica esta distinción para el rol del Director de Proyecto?",
+                options: [
+                    "El DP debe ser solo un manager, enfocado en la eficiencia.",
+                    "El DP debe ser solo un líder, priorizando la visión sin preocuparse por la ejecución.",
+                    "El DP necesita equilibrar ambas funciones, haciendo las cosas correctas y de la manera correcta.",
+                    "El DP debe delegar completamente las responsabilidades de liderazgo."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Qué se considera un rasgo clave de liderazgo para un DP, relacionado con la capacidad de mantener la ecuanimidad y juzgar opiniones sin prejuicios?",
+                options: [
+                    "Autoconfianza",
+                    "Racionalmente apasionado",
+                    "Independencia emocional y de criterio",
+                    "Generosidad"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Cuál de las siguientes afirmaciones sobre el liderazgo natural y el desarrollo de liderazgo es correcta?",
+                options: [
+                    "Los líderes naturales no necesitan ninguna formación formal para dirigir eficazmente.",
+                    "La instrucción y orientación son cruciales para que un líder natural desarrolle una aplicación eficaz.",
+                    "Los programas de desarrollo de liderazgo son inútiles para aquellos sin una capacidad innata para dirigir.",
+                    "La experiencia es la única fuente de buen conocimiento en liderazgo."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "Según las fuentes, ¿cuál es una de las \"otras fuentes de poder\" de un líder, más allá de la autoridad formal?",
+                options: [
+                    "Las sanciones y los castigos.",
+                    "La capacidad de ilusionar/motivar.",
+                    "La posición jerárquica dentro de la organización.",
+                    "El control total sobre los recursos financieros."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "En el estilo de liderazgo autocrático, ¿quién asume la mayor parte de la responsabilidad y la toma de decisiones?",
+                options: [
+                    "Los empleados del equipo.",
+                    "El líder del proyecto.",
+                    "Se comparte equitativamente entre el líder y los empleados.",
+                    "El cliente del proyecto."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Cuál es el estilo de liderazgo más adecuado para equipos recién formados o en situaciones de conflicto?",
+                options: [
+                    "Participativo",
+                    "Democrático",
+                    "Autocrático",
+                    "Delegativo"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Según la Teoría X/Y de McGregor, ¿qué visión de los empleados corresponde a la Teoría Y?",
+                options: [
+                    "Los empleados son perezosos y evitan el trabajo.",
+                    "Los empleados necesitan ser controlados y castigados para trabajar.",
+                    "Los empleados se interesan en nuevas responsabilidades y conocimientos.",
+                    "El trabajo se realiza a disgusto y con presión."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "El Liderazgo Situacional de Hersey & Blanchard propone que la elección del estilo de liderazgo debe adaptarse a:",
+                options: [
+                    "El tamaño del equipo.",
+                    "La madurez o nivel de desarrollo del equipo o individuo.",
+                    "El tipo de proyecto (técnico o no técnico).",
+                    "La cultura organizacional de la empresa."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Cuál de los siguientes NO es un estilo de liderazgo adaptativo sugerido por el Hays Group/Goleman?",
+                options: [
+                    "Visionario",
+                    "Directivo",
+                    "Pace Setting",
+                    "Burocrático"
+                ],
+                correctAnswerIndex: 3
+            },
+            {
+                questionText: "Según la Teoría de las Expectativas de Vroom, la motivación surge de tres factores. ¿Cuáles son?",
+                options: [
+                    "Logro, Afinidad y Poder.",
+                    "Expectativa, Instrumentalidad y Valencia.",
+                    "Factores higiénicos y Factores motivadores.",
+                    "Refuerzo positivo, Negativo y Castigo."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Qué necesidad se satisface según McClelland cuando un individuo prefiere tareas con riesgos limitados y le encanta recibir reconocimiento periódico?",
+                options: [
+                    "Afinidad",
+                    "Poder",
+                    "Logro",
+                    "Seguridad"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Según la Teoría de la Equidad de Adams, ¿qué factor es clave para la motivación?",
+                options: [
+                    "La cantidad absoluta de la recompensa recibida.",
+                    "La percepción de justicia en la comparación entre el trabajo (inputs) y el beneficio (outputs) propios y los de otros.",
+                    "La relación directa entre el esfuerzo y el resultado.",
+                    "El nivel de control sobre la propia tarea."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Cuál de las siguientes acciones del DP es una expectativa del equipo para sentirse motivado?",
+                options: [
+                    "Pedir hacer trabajos de baja calidad.",
+                    "Recompensar el buen desempeño con más trabajo.",
+                    "Preocuparse por el desarrollo profesional (promoción, formación).",
+                    "Asignar tareas sin explicar claramente qué se tiene que hacer."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Qué factor ha identificado Google como clave para el éxito del equipo, refiriéndose a un clima de confianza interpersonal y respeto mutuo donde las personas se sienten cómodas siendo ellas mismas?",
+                options: [
+                    "Dependencia",
+                    "Claridad de la estructura",
+                    "Seguridad psicológica",
+                    "Impacto"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Según el modelo de Belbin, ¿qué rol se caracteriza por aportar imaginación y nuevas ideas, siendo fuente de propuestas originales, pero pudiendo ser demasiado absorto en sus pensamientos y con dificultades para comunicarse eficazmente?",
+                options: [
+                    "Implementador",
+                    "Investigador de Recursos",
+                    "Cerebro",
+                    "Monitor-Evaluador"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Qué dimensión del MBTI describe cómo las personas prefieren focalizar su atención y derivar su energía?",
+                options: [
+                    "Sensación – Intuición",
+                    "Pensamiento – Sentimiento",
+                    "Extraversión – Introversión",
+                    "Juicio – Percepción"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Un Director de Proyecto que es \"proactivo\" se caracteriza por:",
+                options: [
+                    "Ser rápido en la respuesta y realizar propuestas.",
+                    "Evitar el control excesivo.",
+                    "Delegar todas las tareas complejas.",
+                    "Esperar a que los problemas surjan para reaccionar."
+                ],
+                correctAnswerIndex: 0
+            },
+            {
+                questionText: "¿Cuál de las siguientes no es una labor clave del Director de Proyecto como líder?",
+                options: [
+                    "Planificador",
+                    "Organizador",
+                    "Negociador",
+                    "Realizador Técnico"
+                ],
+                correctAnswerIndex: 3
+            },
+            {
+                questionText: "Según el PMI, ¿qué busca el liderazgo efectivo?",
+                options: [
+                    "Asegurar que el DP sea la única fuente de autoridad.",
+                    "Evitar cualquier conflicto dentro del equipo.",
+                    "El éxito del Proyecto y contribuir a que se alcancen balances positivos.",
+                    "Minimizar la comunicación entre los miembros del equipo."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Una de las \"desventajas\" de ser un DP, según la fuente, es:",
+                options: [
+                    "Mayor sensación de logro.",
+                    "Trabajo más variado.",
+                    "Soportar la ambigüedad y el desconocimiento.",
+                    "Ser una promoción."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Qué tipo de inteligencia se asocia con un mayor éxito en el liderazgo?",
+                options: [
+                    "Inteligencia Técnica",
+                    "Inteligencia Financiera",
+                    "Inteligencia Emocional",
+                    "Inteligencia Logística"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Cuál de las siguientes es una fuente de poder basada en la posición?",
+                options: [
+                    "Buen hacer.",
+                    "Conocimiento experto técnico.",
+                    "Autoridad formal.",
+                    "Capacidad de ilusionar/motivar."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Un estilo de liderazgo participativo se caracteriza por:",
+                options: [
+                    "El director asume toda la responsabilidad.",
+                    "Cada componente es responsable de su parte y consulta al líder solo en decisiones estratégicas.",
+                    "El líder se ocupa solo de la logística y no interviene en las decisiones.",
+                    "Se presiona y castiga al equipo para cumplir."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "Según la Rejilla de Likert/Blake, ¿qué dos ejes se utilizan para definir los estilos de liderazgo?",
+                options: [
+                    "Orientado a tarea y Orientado a las personas.",
+                    "Autocrático y Democrático.",
+                    "Liderazgo transaccional y Liderazgo transformacional.",
+                    "Estilo visionario y Estilo directivo."
+                ],
+                correctAnswerIndex: 0
+            },
+            {
+                questionText: "¿Cuál es un punto débil del rol Implementador según Belbin?",
+                options: [
+                    "Demasiado obsesionado con los detalles.",
+                    "Resistente al cambio.",
+                    "Individualista.",
+                    "Hipercrítico."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Qué dimensión del MBTI se relaciona con cómo las personas procesan la información, creyendo en lo cierto y concreto o en la inspiración y la inferencia?",
+                options: [
+                    "Extraversión – Introversión",
+                    "Sensación – Intuición",
+                    "Pensamiento – Sentimiento",
+                    "Juicio – Percepción"
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Qué papel de Belbin se encarga de coordinar a las personas para alcanzar el objetivo del equipo, siendo maduro y seguro de sí mismo?",
+                options: [
+                    "Impulsor",
+                    "Cohesionador",
+                    "Coordinador",
+                    "Finalizador"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Según el modelo de Herzberg, ¿cuál de los siguientes es un \"factor motivador\"?",
+                options: [
+                    "Salario.",
+                    "Condiciones físicas de trabajo.",
+                    "Logro.",
+                    "Relación con el jefe."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Cuál de las siguientes afirmaciones sobre la motivación intrínseca y extrínseca es correcta?",
+                options: [
+                    "Son mutuamente excluyentes, no pueden coexistir.",
+                    "La motivación extrínseca es siempre superior a la intrínseca.",
+                    "Ambos tipos son aditivos y pueden complementarse.",
+                    "La motivación intrínseca solo aparece por obligación."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Un DP \"racionalmente apasionado\" es aquel que:",
+                options: [
+                    "Toma decisiones impulsivas basadas en sus emociones.",
+                    "Defiende con ardor sus propuestas pero escucha los argumentos contrarios.",
+                    "Evita cualquier implicación emocional en los objetivos del proyecto.",
+                    "Solo actúa por interés propio."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Qué aspecto de la gestión de equipos es una \"Core practice\" científicamente probada para apoyar la efectividad del equipo, según McKinsey?",
+                options: [
+                    "La limitación de la comunicación entre miembros.",
+                    "La eliminación de todos los conflictos internos.",
+                    "Kickoffs potentes que establecen metas y roles claros.",
+                    "Evitar la retroalimentación continua."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Según el modelo de Belbin, ¿qué rol se orienta principalmente a las TAREAS?",
+                options: [
+                    "Cohesionador",
+                    "Especialista",
+                    "Investigador de Recursos",
+                    "Cerebro"
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "La \"Generosidad\" como rasgo de un DP implica:",
+                options: [
+                    "Siempre delegar las tareas más difíciles.",
+                    "Asumir la responsabilidad por los resultados del equipo y ser el primero en asumir sacrificios.",
+                    "Otorgar recompensas monetarias excesivas.",
+                    "Permitir que el equipo tome todas las decisiones sin supervisión."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Qué significa el concepto de \"paraguas\" en el rol del DP?",
+                options: [
+                    "Que el DP se protege a sí mismo de los problemas.",
+                    "Que el DP es responsable de la protección física del equipo.",
+                    "Que el DP protege a su equipo de presiones externas o críticas injustas.",
+                    "Que el DP es la única persona que puede tomar decisiones en situaciones de crisis."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "El concepto de \"KITA\" (Kick In The A**) en el modelo de Herzberg se refiere a:",
+                options: [
+                    "Motivadores auténticos que generan satisfacción a largo plazo.",
+                    "Motivadores superficiales o de corto plazo basados en recompensas o castigos externos.",
+                    "La necesidad de logro en los empleados.",
+                    "La importancia de las relaciones humanas en el equipo."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Cuál de los siguientes es un punto débil del rol Cohesionador, según Belbin?",
+                options: [
+                    "Puede resultar obsesivo.",
+                    "Es indeciso en momentos de crisis.",
+                    "Prescinde de los sentimientos de la gente.",
+                    "Se resiste a delegar."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "Según el enfoque conductista, ¿qué efecto tiene el \"castigo\" si se usa mucho?",
+                options: [
+                    "Aumenta la conducta deseada permanentemente.",
+                    "Reduce la conducta indeseada temporalmente, pero puede inhibir el desempeño.",
+                    "Genera un aumento de la motivación intrínseca.",
+                    "Fomenta la creatividad y la innovación."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Qué expectativa tiene un miembro del equipo de su DP en relación con la asignación de trabajo?",
+                options: [
+                    "Que le pidan hacer trabajos de baja calidad.",
+                    "Que se le encarguen tareas no necesarias o inútiles.",
+                    "Que se tengan en cuenta sus expectativas y experiencia.",
+                    "Que se le recompense con más trabajo por el buen desempeño."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Cuál de las siguientes NO es una labor del DP en el ámbito de \"Liderar el cambio\"?",
+                options: [
+                    "Definir la \"visión\".",
+                    "Desarrollar estrategias a largo plazo.",
+                    "Asignar recursos y descomponer trabajos.",
+                    "Fomentar valores y alinear personas."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Un principio del Project Management Institute (PMI) es \"Ser un gestor diligente, respetuoso y cuidadoso\". ¿Qué implica esto?",
+                options: [
+                    "Centrarse únicamente en los plazos y el presupuesto.",
+                    "Adoptar una actitud pasiva y esperar instrucciones.",
+                    "Aplicar un comportamiento cuidadoso y aplicado en sus responsabilidades.",
+                    "Demostrar autoridad en todo momento."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Cuál de las siguientes acciones ayudaría a un DP junior a mitigar la dificultad de \"evitar controlar demasiado\"?",
+                options: [
+                    "Asumir siempre las labores más complejas.",
+                    "Favorecer a los que hacen las cosas exactamente como él.",
+                    "Confiar en el equipo y practicar la delegación.",
+                    "Desconectarse completamente de la disciplina técnica."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Según Hersey y Blanchard, ¿qué componente se incluye en el nivel de \"Madurez (Readiness)\" del equipo o individuo?",
+                options: [
+                    "Solo la habilidad.",
+                    "Solo la voluntad (confianza, compromiso, motivación).",
+                    "La habilidad y la voluntad.",
+                    "El nivel salarial."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "En la visión de los estilos adaptativos (Hays Group/Goleman), ¿qué estilo de liderazgo se sugiere evitar?",
+                options: [
+                    "Visionario",
+                    "Participativo",
+                    "Directivo",
+                    "Coaching"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Qué implica el estilo de liderazgo \"Servant Leadership\" (Liderazgo de Servicio)?",
+                options: [
+                    "El líder se centra en su propio beneficio.",
+                    "El líder se centra en servir a los miembros del equipo y a la organización.",
+                    "El líder solo delega tareas y se desentiende.",
+                    "El líder ejerce un control estricto y autocrático."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "Según McClelland, una persona que quiere pertenecer a un grupo y se comporta como el resto del grupo espera que lo haga, tiene una necesidad dominante de:",
+                options: [
+                    "Logro",
+                    "Afinidad",
+                    "Poder",
+                    "Reconocimiento"
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Cuál es una de las \"tres C\" para el éxito del trabajo en equipo según la lista de Tom Peters?",
+                options: [
+                    "Competencia",
+                    "Consecución",
+                    "Comunicación",
+                    "Creación"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Según el modelo de Belbin, un punto débil del rol Finalizador es:",
+                options: [
+                    "Demasiado optimista.",
+                    "Carece de iniciativa.",
+                    "Se resiste a delegar.",
+                    "Prescinde de los sentimientos de la gente."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Qué característica de personalidad MBTI describe cómo se toman decisiones, valorando lo lógico y la justicia o la empatía y la armonía?",
+                options: [
+                    "Extraversión-Introversion",
+                    "Sensación-Intuición",
+                    "Pensamiento-Sentimiento",
+                    "Juicio-Percepción"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Cuál de las siguientes es una de las \"cinco C\" del trabajo en equipo, según Tom Peters?",
+                options: [
+                    "Coherencia",
+                    "Confiabilidad",
+                    "Confianza",
+                    "Control"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Un DP con \"objetivos claros\" se caracteriza por:",
+                options: [
+                    "Controlar que todo se haga sirviendo a los objetivos del proyecto.",
+                    "Ser reacio a cortar trabajos que supongan esfuerzos excesivos.",
+                    "Delegar la definición de objetivos al equipo.",
+                    "Mantener la visión a largo plazo sin prestar atención al siguiente paso."
+                ],
+                correctAnswerIndex: 0
+            },
+            {
+                questionText: "¿Qué implica la labor del DP de \"Alinear personas\"?",
+                options: [
+                    "Proporcionar reconocimiento y apoyo.",
+                    "Desarrollar estrategias a largo plazo.",
+                    "Asegurar que los miembros del equipo comprendan y compartan la visión y los objetivos del proyecto.",
+                    "Gestionar los recursos humanos de la empresa."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Según el PMI, ¿puede cualquier miembro del equipo mostrar comportamientos de liderazgo?",
+                options: [
+                    "No, solo el Director de Proyecto puede ser un líder.",
+                    "Sí, cualquier miembro del equipo puede mostrar comportamientos de liderazgo.",
+                    "Solo los miembros con autoridad formal pueden mostrar liderazgo.",
+                    "El liderazgo se limita a la fase de planificación del proyecto."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Qué significa el \"optimismo racional\" como rasgo de un líder?",
+                options: [
+                    "Ser siempre positivo, ignorando las dificultades.",
+                    "Transmitir confianza al equipo y al cliente, siendo consciente de las dificultades.",
+                    "Enfocarse en la búsqueda de responsables cuando surge un problema.",
+                    "Creer que todas las crisis son escollos insuperables."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Cuál de las siguientes es una fuente de poder para un DP basada en el \"conocimiento experto técnico\"?",
+                options: [
+                    "La autoridad formal.",
+                    "La capacidad de ilusionar/motivar.",
+                    "El buen hacer en la materia.",
+                    "La legitimidad del rol."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Un estilo de liderazgo \"democrático\" se caracteriza por:",
+                options: [
+                    "El líder toma todas las decisiones y asume la responsabilidad.",
+                    "Cada componente es responsable de su parte y solo consulta en decisiones estratégicas.",
+                    "Todos se implican en los resultados y cada cual responde de su ámbito de decisión.",
+                    "El líder no tiene que consultar sus decisiones con los miembros del equipo."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Cuál es un punto débil del rol Investigador de Recursos según Belbin?",
+                options: [
+                    "Es hipercrítico.",
+                    "Es resistente al cambio.",
+                    "Puede perder oportunidades por falta de seguimiento.",
+                    "Tiende a delegar su trabajo personal."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Qué dimensión del MBTI se relaciona con cómo las personas tratan con el mundo exterior, prefiriendo tomar decisiones y terminar cosas o dejar las opciones abiertas y adaptarse?",
+                options: [
+                    "Extraversión – Introversión",
+                    "Sensación – Intuición",
+                    "Pensamiento – Sentimiento",
+                    "Juicio – Percepción"
+                ],
+                correctAnswerIndex: 3
+            },
+            {
+                questionText: "¿Qué factor NO es clave para el éxito de un equipo según los \"Chaos factors of success\"?",
+                options: [
+                    "Emotional maturity.",
+                    "Technical know-how.",
+                    "High salaries.",
+                    "Management component."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Cuál de los siguientes es un rol mental según la clasificación de Belbin?",
+                options: [
+                    "Impulsor",
+                    "Cohesionador",
+                    "Cerebro",
+                    "Implementador"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Cuál de los siguientes NO es un rol social según la clasificación de Belbin?",
+                options: [
+                    "Coordinador",
+                    "Investigador de Recursos",
+                    "Cohesionador",
+                    "Finalizador"
+                ],
+                correctAnswerIndex: 3
+            },
+            {
+                questionText: "¿Qué enfoque de la motivación utiliza el \"refuerzo positivo\" para aumentar la probabilidad de una conducta deseada?",
+                options: [
+                    "Teoría de las Expectativas.",
+                    "Teoría de la Equidad.",
+                    "Enfoque conductista.",
+                    "Modelo de Herzberg."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Un equipo con \"Seguridad Psicológica\" se caracteriza por:",
+                options: [
+                    "Evitar cualquier tipo de desacuerdo para mantener la armonía.",
+                    "Un clima de confianza interpersonal donde las personas se sienten cómodas expresando ideas sin temor.",
+                    "La toma de decisiones por parte de un único líder.",
+                    "La priorización de la eficiencia sobre el bienestar de los miembros."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Qué implica la \"Modestia\" como rasgo de liderazgo en un DP?",
+                options: [
+                    "No aceptar nunca críticas.",
+                    "Creerse superior al resto del equipo.",
+                    "Aceptar las propias limitaciones y estar abierto a aprender de otros.",
+                    "Evitar cualquier tipo de esfuerzo heroico."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Cuál es una de las labores de un DP como \"Entrenador\"?",
+                options: [
+                    "Asignar los recursos financieros.",
+                    "Proporcionar reconocimiento y apoyo.",
+                    "Detectar desviaciones y solventarlas.",
+                    "Gestionar lo complejo."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "Según el PMI, ¿el liderazgo efectivo se adapta a la situación?",
+                options: [
+                    "No, debe ser consistente y unificado en todo momento.",
+                    "Sí, el liderazgo efectivo se adapta a la situación.",
+                    "Solo en proyectos grandes y complejos.",
+                    "Solo cuando el equipo es inexperto."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Cuál de las siguientes es una desventaja de ser DP junior relacionada con la gestión de personas?",
+                options: [
+                    "Asumir las labores más complejas.",
+                    "Compatibilizar su nueva situación con antiguos compañeros.",
+                    "Ser experto en una técnica.",
+                    "No favorecer a los que hacen las cosas como él las haría."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Qué estilo de liderazgo de Hersey y Blanchard se asocia con el nivel de madurez M1 (Incapaz, Desmotivado o Inseguro)?",
+                options: [
+                    "Persuadir (Entrenar)",
+                    "Delegar",
+                    "Participar (Empoderar)",
+                    "Decir (Mandar)"
+                ],
+                correctAnswerIndex: 3
+            },
+            {
+                questionText: "¿Qué tipo de motivación surge del disfrute de la actividad en sí misma?",
+                options: [
+                    "Motivación extrínseca",
+                    "Motivación por expectativa",
+                    "Motivación intrínseca",
+                    "Motivación por logro"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Una de las expectativas de los miembros del equipo hacia su DP es que:",
+                options: [
+                    "No se les dé retroalimentación.",
+                    "Se les pida hacer trabajos de baja calidad.",
+                    "Se les haga sentir importantes y se permanezca accesible.",
+                    "Se les recompense con más trabajo."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Según el \"Project Aristotle\" de Google, además de la seguridad psicológica, ¿cuál es otro factor clave para el éxito del equipo?",
+                options: [
+                    "La competencia individual de cada miembro.",
+                    "La capacidad de depender unos de otros para completar tareas requeridas (Dependability).",
+                    "La frecuencia de reuniones sociales fuera del trabajo.",
+                    "La uniformidad en los estilos de comunicación."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Cuál es la orientación principal del rol Especialista de Belbin?",
+                options: [
+                    "Personas",
+                    "Ideas",
+                    "Tareas",
+                    "Coordinación"
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Qué tipo de personalidad MBTI se describe como \"Vision de futuro\", \"Autoconfianza\", \"Estratégico\", pero \"No es un constructor\"?",
+                options: [
+                    "ENTP",
+                    "INTJ",
+                    "INFJ",
+                    "INTP"
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "Según la teoría de los atributos o personalista, el liderazgo se centra en:",
+                options: [
+                    "Las conductas del líder.",
+                    "Las cualidades innatas o rasgos de personalidad del líder.",
+                    "Los grandes eventos.",
+                    "El aprendizaje activo."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "¿Cuál de las siguientes NO es una labor del DP en el ámbito de \"Controlar\"?",
+                options: [
+                    "Seguimiento de resultados.",
+                    "Detectar desviaciones.",
+                    "Fomentar valores.",
+                    "Solventar desviaciones."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "¿Cuál de las siguientes características NO se asocia con los líderes que tienen alta inteligencia emocional?",
+                options: [
+                    "Empatía.",
+                    "Mayor éxito.",
+                    "Ser introvertidos.",
+                    "Extroversión (según algunos estudios como indicador)."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "En el modelo de Liderazgo Situacional, la \"voluntad\" del equipo incluye:",
+                options: [
+                    "Conocimiento y capacidad.",
+                    "Habilidad grupal.",
+                    "Confianza, compromiso y motivación.",
+                    "La experiencia técnica."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Según Herzberg, los \"KITA\" (Kick In The A**) psicológicos negativos son:",
+                options: [
+                    "Motivadores de largo plazo.",
+                    "Recompensas por buen desempeño.",
+                    "Críticas y manipulaciones emocionales para \"mover\" al trabajador.",
+                    "Programas de relaciones humanas."
+                ],
+                correctAnswerIndex: 2
+            },
+            {
+                questionText: "Cuando se aplica el enfoque conductista, ¿qué se espera del \"refuerzo positivo\"?",
+                options: [
+                    "Eliminar una conducta indeseada.",
+                    "Aumentar la probabilidad de una conducta deseada.",
+                    "Aplicar un estímulo desagradable.",
+                    "Reducir la conducta temporalmente."
+                ],
+                correctAnswerIndex: 1
+            },
+            {
+                questionText: "Según Google, un equipo logra \"Estructura y claridad\" cuando:",
+                options: [
+                    "Los miembros no tienen roles específicos.",
+                    "Cada individuo entiende su rol y cómo contribuye a los objetivos del equipo.",
+                    "Las metas son ambiguas y se definen sobre la marcha.",
+                    "El líder toma todas las decisiones de forma autocrática."
+                ],
+                correctAnswerIndex: 1
+            }
+        ];
+
+        const quizForm = document.getElementById('quizForm');
+        const submitButton = document.getElementById('submitButton');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const scoreEl = document.getElementById('score');
+        const feedbackEl = document.getElementById('feedback');
+        const restartButton = document.getElementById('restartButton');
+
+        // --- Cargar Preguntas ---
+        function loadQuestions() {
+            quizForm.innerHTML = ''; // Limpiar preguntas anteriores si las hubiera
+            questions.forEach((q, index) => {
+                const questionCard = document.createElement('div');
+                questionCard.className = 'question-card bg-slate-700/50 p-5 sm:p-6 rounded-lg shadow-lg border border-slate-700';
+
+                const questionTextEl = document.createElement('p');
+                questionTextEl.className = 'text-lg font-semibold mb-4 text-sky-300';
+                questionTextEl.textContent = `${index + 1}. ${q.questionText}`;
+                questionCard.appendChild(questionTextEl);
+
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'space-y-3';
+
+                q.options.forEach((option, optionIndex) => {
+                    const optionId = `q${index}_opt${optionIndex}`;
+                    
+                    const optionDiv = document.createElement('div');
+                    optionDiv.className = 'flex items-center';
+
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.id = optionId;
+                    radioInput.name = `question_${index}`;
+                    radioInput.value = optionIndex.toString();
+                    
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    label.textContent = option;
+                    label.className = 'text-slate-300 hover:text-sky-300 cursor-pointer';
+
+                    optionDiv.appendChild(radioInput);
+                    optionDiv.appendChild(label);
+                    optionsContainer.appendChild(optionDiv);
+                });
+
+                questionCard.appendChild(optionsContainer);
+                quizForm.appendChild(questionCard);
+            });
+        }
+
+        // --- Event Listener para Enviar ---
+        submitButton.addEventListener('click', () => {
+            let score = 0;
+            feedbackEl.innerHTML = ''; // Limpiar feedback anterior
+            let hasIncorrectAnswers = false;
+
+            questions.forEach((q, index) => {
+                const selectedOptionInput = document.querySelector(`input[name="question_${index}"]:checked`);
+                
+                if (selectedOptionInput) {
+                    const userAnswerIndex = parseInt(selectedOptionInput.value);
+                    if (userAnswerIndex === q.correctAnswerIndex) {
+                        score++;
+                    } else {
+                        hasIncorrectAnswers = true;
+                        const feedbackItem = document.createElement('div');
+                        feedbackItem.className = 'feedback-item feedback-incorrect p-4 bg-slate-700 rounded-md shadow';
+                        
+                        const questionP = document.createElement('p');
+                        questionP.className = 'font-semibold text-md text-sky-300 mb-1';
+                        questionP.textContent = `Pregunta ${index + 1}: ${q.questionText}`;
+                        
+                        const userAnswerP = document.createElement('p');
+                        userAnswerP.innerHTML = `Tu respuesta: <span class="incorrect-answer-user">${q.options[userAnswerIndex]}</span>`;
+                        userAnswerP.className = 'text-sm text-slate-300';
+
+                        const correctAnswerP = document.createElement('p');
+                        correctAnswerP.innerHTML = `Respuesta correcta: <span class="correct-answer-text">${q.options[q.correctAnswerIndex]}</span>`;
+                        correctAnswerP.className = 'text-sm text-slate-300';
+
+                        feedbackItem.appendChild(questionP);
+                        feedbackItem.appendChild(userAnswerP);
+                        feedbackItem.appendChild(correctAnswerP);
+                        feedbackEl.appendChild(feedbackItem);
+                    }
+                } else {
+                    // No respondida
+                    hasIncorrectAnswers = true;
+                    const feedbackItem = document.createElement('div');
+                    feedbackItem.className = 'feedback-item feedback-incorrect p-4 bg-slate-700 rounded-md shadow';
+
+                    const questionP = document.createElement('p');
+                    questionP.className = 'font-semibold text-md text-sky-300 mb-1';
+                    questionP.textContent = `Pregunta ${index + 1}: ${q.questionText}`;
+
+                    const userAnswerP = document.createElement('p');
+                    userAnswerP.innerHTML = `Tu respuesta: <span class="incorrect-answer-user">No respondida</span>`;
+                    userAnswerP.className = 'text-sm text-slate-300';
+                    
+                    const correctAnswerP = document.createElement('p');
+                    correctAnswerP.innerHTML = `Respuesta correcta: <span class="correct-answer-text">${q.options[q.correctAnswerIndex]}</span>`;
+                    correctAnswerP.className = 'text-sm text-slate-300';
+
+                    feedbackItem.appendChild(questionP);
+                    feedbackItem.appendChild(userAnswerP);
+                    feedbackItem.appendChild(correctAnswerP);
+                    feedbackEl.appendChild(feedbackItem);
+                }
+            });
+
+            scoreEl.textContent = `Tu puntuación: ${score} de ${questions.length}`;
+            if (!hasIncorrectAnswers && questions.length > 0) { // Añadida comprobación para evitar mensaje si no hay preguntas
+                 feedbackEl.innerHTML = '<p class="text-green-400 font-semibold text-center">¡Felicidades! Todas tus respuestas son correctas.</p>';
+            } else if (questions.length === 0) {
+                 feedbackEl.innerHTML = '<p class="text-amber-400 font-semibold text-center">No hay preguntas cargadas en el examen.</p>';
+            }
+
+
+            resultsContainer.classList.remove('hidden');
+            submitButton.classList.add('hidden');
+            // Scroll suave a los resultados
+            const resultsElement = document.getElementById('resultsContainer');
+            if (resultsElement) {
+                resultsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+
+        // --- Event Listener para Reiniciar ---
+        restartButton.addEventListener('click', () => {
+            quizForm.reset(); 
+            resultsContainer.classList.add('hidden');
+            submitButton.classList.remove('hidden');
+            feedbackEl.innerHTML = '';
+            scoreEl.textContent = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // --- Carga inicial ---
+        loadQuestions();
+    </script>
+
+</body>
+</html>
