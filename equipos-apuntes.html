@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Gráfica de Liderazgo y Gestión de Equipos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .mnemonic {
+            background-color: #f0f9ff; /* Light blue background */
+            border-left: 4px solid #0ea5e9; /* Blue left border */
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+        }
+        .mnemonic-title {
+            font-weight: 600;
+            color: #0369a1; /* Darker blue */
+        }
+        .section-title {
+            border-bottom: 2px solid #fbbf24; /* Amber border */
+            padding-bottom: 8px;
+            margin-bottom: 24px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-title {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .nav-link {
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #0ea5e9; /* Sky blue */
+            background-color: #e0f2fe; /* Lighter sky blue */
+        }
+        h3 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        h4 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+         ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 1rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        /* Estilo para la barra de navegación fija */
+        #navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: white; /* Fondo blanco para que no se solape el contenido */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Sombra sutil */
+        }
+        .exam-link {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background-color: #10b981; /* Emerald green */
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+        .exam-link:hover {
+            background-color: #059669; /* Darker emerald green */
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <!-- Barra de Navegación -->
+    <nav id="navbar" class="p-4 mb-8">
+        <div class="container mx-auto">
+            <ul class="flex flex-wrap justify-center space-x-2 sm:space-x-4">
+                <li><a href="#rol_dp" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Rol del DP</a></li>
+                <li><a href="#estilos_liderazgo" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Estilos</a></li>
+                <li><a href="#rasgos_lider" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Rasgos</a></li>
+                <li><a href="#motivacion" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Motivación</a></li>
+                <li><a href="#comunicacion" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Comunicación</a></li>
+                <li><a href="#desarrollo_equipos" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Des. Equipos</a></li>
+                <li><a href="#roles_personalidad" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Roles y Personalidad</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 sm:p-8">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl sm:text-5xl font-bold text-sky-600">Guía Gráfica de Liderazgo y Gestión de Equipos</h1>
+            <p class="text-lg text-slate-600 mt-2">Un resumen visual de los conceptos clave y reglas mnemotécnicas.</p>
+            <a href="examen_liderazgo_interactivo.html" class="exam-link">¡Prueba tus conocimientos con el Examen Interactivo!</a>
+        </header>
+
+        <!-- Sección: Rol del DP -->
+        <section id="rol_dp" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title">El Rol del Director de Proyecto (DP)</h2>
+            <p class="mb-4">El Director de Proyecto (DP) no solo gestiona, sino que también lidera, combinando habilidades técnicas con habilidades interpersonales para guiar al equipo hacia el éxito del proyecto.</p>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h4 class="card-title">Labores Fundamentales del DP</h4>
+                    <ul class="list-disc pl-5">
+                        <li>Organizador</li>
+                        <li>Planificador</li>
+                        <li>Controlador</li>
+                        <li>Policía (supervisor)</li>
+                        <li>Solucionador de problemas</li>
+                        <li>Negociador</li>
+                        <li>Decisor</li>
+                        <li>Facilitador</li>
+                        <li>Entrenador</li>
+                        <li>Paraguas (protector)</li>
+                        <li>Persona de referencia</li>
+                    </ul>
+                    <div class="mnemonic">
+                        <p class="mnemonic-title">Regla Mnemotécnica (Labores del DP):</p>
+                        <p>"El DP es un <span class="font-semibold text-sky-700">O</span>rganizado <span class="font-semibold text-sky-700">P</span>lanificador que <span class="font-semibold text-sky-700">C</span>ontrola. A veces <span class="font-semibold text-sky-700">P</span>olicía, siempre <span class="font-semibold text-sky-700">S</span>oluciona y <span class="font-semibold text-sky-700">N</span>egocia. <span class="font-semibold text-sky-700">D</span>ecide <span class="font-semibold text-sky-700">F</span>acilitar, <span class="font-semibold text-sky-700">E</span>ntrenar, ser <span class="font-semibold text-sky-700">P</span>araguas y <span class="font-semibold text-sky-700">R</span>eferencia."</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="card-title">Manager vs. Líder</h4>
+                    <div class="p-4 bg-sky-50 rounded-lg shadow">
+                        <p><strong class="text-sky-700">Manager:</strong> Hace las cosas bien. Administra, controla, enfocado en sistemas y estructura. Corto plazo.</p>
+                        <p><strong class="text-sky-700">Líder:</strong> Hace las cosas correctas. Innova, inspira confianza, enfocado en personas. Largo plazo (visión).</p>
+                         <p class="mt-2 italic">"Los managers son personas que hacen las cosas bien, mientras que los líderes son personas que hacen lo correcto." - Warren Bennis</p>
+                    </div>
+                    <h4 class="card-title mt-6">Principios de Liderazgo (PMI)</h4>
+                     <p>El PMI destaca la importancia de demostrar comportamientos de liderazgo, adaptándose a la situación y motivando al equipo con honestidad e integridad.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección: Estilos de Liderazgo -->
+        <section id="estilos_liderazgo" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title">Estilos de Liderazgo</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="p-4 bg-amber-50 rounded-lg shadow">
+                    <h4 class="card-title text-amber-700">Continuo de Tannenbaum</h4>
+                    <ul class="list-disc pl-5">
+                        <li><strong>Autocrático:</strong> Líder toma decisiones.</li>
+                        <li><strong>Participativo:</strong> Líder involucra al equipo.</li>
+                        <li><strong>Democrático:</strong> Equipo toma decisiones (líder coordina).</li>
+                    </ul>
+                    <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia:</p>
+                        <p>"<span class="font-semibold text-amber-700">A</span>hora <span class="font-semibold text-amber-700">P</span>articipa <span class="font-semibold text-amber-700">D</span>emocráticamente."</p>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-teal-50 rounded-lg shadow">
+                    <h4 class="card-title text-teal-700">Teoría X/Y de McGregor</h4>
+                    <ul class="list-disc pl-5">
+                        <li><strong>Teoría X:</strong> Personas trabajan a disgusto, necesitan control.</li>
+                        <li><strong>Teoría Y:</strong> Personas disfrutan el trabajo, buscan responsabilidad.</li>
+                    </ul>
+                    <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia:</p>
+                        <p>"Teoría <span class="font-semibold text-teal-700">X</span>: ¡Qué e<span class="font-semibold text-teal-700">X</span>asperante! (control). Teoría <span class="font-semibold text-teal-700">Y</span>: ¡<span class="font-semibold text-teal-700">Y</span>es, qué bien! (confianza)."</p>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-indigo-50 rounded-lg shadow">
+                    <h4 class="card-title text-indigo-700">Rejilla de Likert/Blake (Grid Gerencial)</h4>
+                    <p class="mb-2">Interés por Personas vs. Interés por Objetivos/Tareas.</p>
+                    <ul class="list-disc pl-5">
+                        <li>(1,9) Club de campo (Paternalista)</li>
+                        <li>(9,9) Equipo</li>
+                        <li>(5,5) Punto medio</li>
+                        <li>(1,1) Empobrecido (Delego y olvido)</li>
+                        <li>(9,1) Autocrático (Tarea)</li>
+                    </ul>
+                     <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Orden: Club, Equipo, Tarea, Empobrecido, Medio):</p>
+                        <p>"<span class="font-semibold text-indigo-700">C</span>on <span class="font-semibold text-indigo-700">E</span>l <span class="font-semibold text-indigo-700">T</span>oro <span class="font-semibold text-indigo-700">E</span>nfermo, <span class="font-semibold text-indigo-700">M</span>ejor no salir."</p>
+                    </div>
+                     <p class="text-xs italic mt-2">Visual: Un gráfico de 2x2 ejes (Personas vs. Tarea).</p>
+                </div>
+            </div>
+
+            <h3 class="mt-8">Liderazgo Situacional (Hersey & Blanchard)</h3>
+            <div class="grid md:grid-cols-2 gap-6">
+                 <div class="p-4 bg-lime-50 rounded-lg shadow">
+                    <h4 class="card-title text-lime-700">Niveles de Madurez (Readiness) del Colaborador</h4>
+                    <ul class="list-disc pl-5">
+                        <li><strong>M1:</strong> Incapaz y Desmotivado/Inseguro.</li>
+                        <li><strong>M2:</strong> Incapaz pero con Voluntad/Confianza.</li>
+                        <li><strong>M3:</strong> Capaz pero Desmotivado/Inseguro.</li>
+                        <li><strong>M4:</strong> Capaz y Motivado/Confiado.</li>
+                    </ul>
+                    <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Madurez):</p>
+                        <p>"<span class="font-semibold text-lime-700">I</span>gnacio <span class="font-semibold text-lime-700">D</span>uda, <span class="font-semibold text-lime-700">I</span>gnacio <span class="font-semibold text-lime-700">V</span>a, <span class="font-semibold text-lime-700">C</span>lara <span class="font-semibold text-lime-700">D</span>uda, <span class="font-semibold text-lime-700">C</span>lara <span class="font-semibold text-lime-700">M</span>anda."</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-pink-50 rounded-lg shadow">
+                    <h4 class="card-title text-pink-700">Estilos de Liderazgo (Adaptados a Madurez)</h4>
+                     <ul class="list-disc pl-5">
+                        <li><strong>E1 (Dirigir/Decir):</strong> Para M1. Alta tarea, baja relación.</li>
+                        <li><strong>E2 (Persuadir/Entrenar):</strong> Para M2. Alta tarea, alta relación.</li>
+                        <li><strong>E3 (Participar/Empoderar):</strong> Para M3. Baja tarea, alta relación.</li>
+                        <li><strong>E4 (Delegar):</strong> Para M4. Baja tarea, baja relación.</li>
+                    </ul>
+                     <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Estilos):</p>
+                        <p>"<span class="font-semibold text-pink-700">D</span>ime, <span class="font-semibold text-pink-700">P</span>ersuade, <span class="font-semibold text-pink-700">P</span>articipa y <span class="font-semibold text-pink-700">D</span>elega."</p>
+                    </div>
+                    <p class="text-xs italic mt-2">Visual: Gráfico 2x2 (Comportamiento de Tarea vs. Comportamiento de Relación) con curva de eficacia.</p>
+                </div>
+            </div>
+            
+            <h4 class="card-title mt-6 text-purple-700">Estilos Adaptativos (Hays Group/Goleman)</h4>
+            <ul class="list-disc pl-5">
+                <li>Visionario: Guía a una visión futura.</li>
+                <li>Afiliativo: Crea armonía.</li>
+                <li>Participativo: Crea compromiso y creatividad.</li>
+                <li>Coaching: Fomenta desarrollo profesional.</li>
+                <li>Pace Setting (Timonel/Marcapasos): Exige excelencia en tareas.</li>
+                <li>Directivo: "Haz lo que digo".</li>
+            </ul>
+            <div class="mnemonic">
+                <p class="mnemonic-title">Mnemotecnia (Goleman):</p>
+                <p>"<span class="font-semibold text-purple-700">V</span>iendo <span class="font-semibold text-purple-700">A</span> <span class="font-semibold text-purple-700">P</span>aola <span class="font-semibold text-purple-700">C</span>ocinar <span class="font-semibold text-purple-700">P</span>ollo <span class="font-semibold text-purple-700">D</span>elicioso."</p>
+            </div>
+
+        </section>
+
+        <!-- Sección: Rasgos del Líder -->
+        <section id="rasgos_lider" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title">Rasgos Clave del Líder</h2>
+            <p>Las competencias de un líder se pueden agrupar en cómo dirige, decide, trabaja y se relaciona con el equipo.</p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-xl font-semibold mb-2 text-emerald-700">Cómo Dirige:</h4>
+                    <ul class="list-disc pl-5"><li>Objetivos claros</li><li>Proactivo</li><li>Optimista</li></ul>
+                    <div class="mnemonic"><p class="mnemonic-title">Mnemotecnia:</p><p>"<span class="font-semibold text-emerald-700">O</span>bserva, <span class="font-semibold text-emerald-700">P</span>ropón, <span class="font-semibold text-emerald-700">O</span>ptimiza."</p></div>
+
+                    <h4 class="text-xl font-semibold mb-2 mt-4 text-emerald-700">Cómo Decide:</h4>
+                    <ul class="list-disc pl-5"><li>Independencia emocional y de criterio</li><li>Racionalmente apasionado</li></ul>
+                    <div class="mnemonic"><p class="mnemonic-title">Mnemotecnia:</p><p>"<span class="font-semibold text-emerald-700">I</span>nteligencia <span class="font-semibold text-emerald-700">R</span>acional."</p></div>
+                </div>
+                <div>
+                    <h4 class="text-xl font-semibold mb-2 text-emerald-700">Cómo Trabaja:</h4>
+                    <ul class="list-disc pl-5"><li>Autoconfianza</li><li>Modesto</li></ul>
+                    <div class="mnemonic"><p class="mnemonic-title">Mnemotecnia:</p><p>"<span class="font-semibold text-emerald-700">A</span>unque <span class="font-semibold text-emerald-700">M</span>odesto."</p></div>
+
+                    <h4 class="text-xl font-semibold mb-2 mt-4 text-emerald-700">Cómo es con el Equipo:</h4>
+                    <ul class="list-disc pl-5"><li>Empatía (equipo de personas)</li><li>Generoso (efecto paraguas)</li></ul>
+                    <div class="mnemonic"><p class="mnemonic-title">Mnemotecnia:</p><p>"<span class="font-semibold text-emerald-700">E</span>scucha y <span class="font-semibold text-emerald-700">G</span>uarda (protege)."</p></div>
+                </div>
+            </div>
+             <h4 class="card-title mt-6 text-rose-700">Encuesta Opinion Research Corporation (Valores más importantes)</h4>
+            <ul class="list-disc pl-5">
+                <li>Liderar con el ejemplo (26%)</li>
+                <li>Ética y moral (19%)</li>
+                <li>Conocimiento técnico (17%)</li>
+                <li>Ecuanimidad/Independencia de criterio (14%)</li>
+                <li>Competencia e inteligencia (13%)</li>
+                <li>Reconocimiento de la labor del equipo (10%)</li>
+            </ul>
+            <div class="mnemonic">
+                <p class="mnemonic-title">Mnemotecnia (Encuesta ORC):</p>
+                <p>"<span class="font-semibold text-rose-700">L</span>a <span class="font-semibold text-rose-700">É</span>tica y <span class="font-semibold text-rose-700">C</span>onocimiento <span class="font-semibold text-rose-700">E</span>xigen <span class="font-semibold text-rose-700">C</span>ompetencia y <span class="font-semibold text-rose-700">R</span>econocimiento."</p>
+            </div>
+        </section>
+
+        <!-- Sección: Motivación -->
+        <section id="motivacion" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title">Motivación en el Equipo</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="p-4 bg-yellow-50 rounded-lg shadow">
+                    <h4 class="card-title text-yellow-700">Teoría de las Expectativas (Vroom)</h4>
+                    <ul class="list-disc pl-5"><li>Expectativa (esfuerzo -> rendimiento)</li><li>Instrumentalidad (rendimiento -> recompensa)</li><li>Valencia (valor de la recompensa)</li></ul>
+                    <div class="mnemonic"><p class="mnemonic-title">Mnemotecnia:</p><p>"<span class="font-semibold text-yellow-700">E</span>spero <span class="font-semibold text-yellow-700">I</span>nstrumentos <span class="font-semibold text-yellow-700">V</span>aliosos."</p></div>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg shadow">
+                    <h4 class="card-title text-green-700">Establecimiento de Metas (SMART)</h4>
+                    <ul class="list-disc pl-5"><li>Specific (Específico)</li><li>Measurable (Medible)</li><li>Achievable (Alcanzable)</li><li>Realistic (Realista)</li><li>Timeline (Temporal)</li></ul>
+                    <p class="text-xs italic mt-2">Ya es una mnemotecnia.</p>
+                </div>
+                <div class="p-4 bg-blue-50 rounded-lg shadow">
+                    <h4 class="card-title text-blue-700">Jerarquía de Necesidades (Maslow)</h4>
+                     <p class="text-center"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/MaslowsHierarchyOfNeeds.svg/400px-MaslowsHierarchyOfNeeds.svg.png" alt="Pirámide de Maslow" class="mx-auto my-2 rounded-lg shadow" style="max-height:150px;"></p>
+                    <ol class="list-decimal pl-5"><li>Fisiología</li><li>Seguridad</li><li>Afiliación (Social)</li><li>Reconocimiento (Estima)</li><li>Autorrealización</li></ol>
+                    <div class="mnemonic"><p class="mnemonic-title">Mnemotecnia:</p><p>"<span class="font-semibold text-blue-700">F</span>ui <span class="font-semibold text-blue-700">S</span>olo <span class="font-semibold text-blue-700">A</span> <span class="font-semibold text-blue-700">R</span>ecoger <span class="font-semibold text-blue-700">A</span>lgo."</p></div>
+                </div>
+                <div class="p-4 bg-purple-50 rounded-lg shadow">
+                    <h4 class="card-title text-purple-700">Teoría ERG (Alderfer)</h4>
+                    <ul class="list-disc pl-5"><li>Existence (Existencia)</li><li>Relatedness (Relación)</li><li>Growth (Crecimiento)</li></ul>
+                    <div class="mnemonic"><p class="mnemonic-title">Mnemotecnia:</p><p>"<span class="font-semibold text-purple-700">E</span>xiste <span class="font-semibold text-purple-700">R</span>elación para <span class="font-semibold text-purple-700">C</span>recer."</p></div>
+                </div>
+                <div class="p-4 bg-red-50 rounded-lg shadow">
+                    <h4 class="card-title text-red-700">Necesidades de McClelland</h4>
+                    <ul class="list-disc pl-5"><li>Logro</li><li>Afinidad (Afiliación)</li><li>Poder</li></ul>
+                    <div class="mnemonic"><p class="mnemonic-title">Mnemotecnia:</p><p>"<span class="font-semibold text-red-700">L</span>a <span class="font-semibold text-red-700">A</span>mistad da <span class="font-semibold text-red-700">P</span>oder."</p></div>
+                </div>
+                <div class="p-4 bg-orange-50 rounded-lg shadow">
+                    <h4 class="card-title text-orange-700">Teoría Bifactorial (Herzberg)</h4>
+                    <ul class="list-disc pl-5"><li><strong>Factores Higiénicos:</strong> Evitan insatisfacción (salario, condiciones). No motivan.</li><li><strong>Factores Motivadores:</strong> Generan satisfacción (logro, reconocimiento).</li></ul>
+                    <p class="text-xs italic mt-2">Visual: Dos columnas separadas para factores.</p>
+                </div>
+            </div>
+            <h4 class="card-title mt-6 text-cyan-700">¿Qué puede hacer un DP para motivar?</h4>
+            <ul class="list-disc pl-5">
+                <li>Tener en cuenta expectativas y experiencia.</li>
+                <li>Explicar claramente y retroalimentar.</li>
+                <li>Permanecer accesible y hacer sentir importante.</li>
+                <li>Preocuparse por el desarrollo profesional.</li>
+            </ul>
+            <div class="mnemonic"><p class="mnemonic-title">Mnemotecnia:</p><p>"<span class="font-semibold text-cyan-700">E</span>xpectativas <span class="font-semibold text-cyan-700">E</span>xplicadas, <span class="font-semibold text-cyan-700">A</span>cceso y <span class="font-semibold text-cyan-700">D</span>esarrollo."</p></div>
+             <h4 class="card-title mt-4 text-gray-700">¿Qué NO debe hacer un DP?</h4>
+            <ul class="list-disc pl-5">
+                <li>Pedir trabajos de baja calidad.</li>
+                <li>Encargar tareas innecesarias o inútiles.</li>
+                <li>Recompensar el buen trabajo con MÁS trabajo (sin otro reconocimiento).</li>
+            </ul>
+             <div class="mnemonic"><p class="mnemonic-title">Mnemotecnia:</p><p>"Evita la <span class="font-semibold text-gray-700">B</span>asura, lo <span class="font-semibold text-gray-700">I</span>nútil y el <span class="font-semibold text-gray-700">M</span>altrato (de recompensar con más carga)."</p></div>
+        </section>
+
+        <!-- Sección: Comunicación -->
+        <section id="comunicacion" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title">Comunicación Efectiva</h2>
+             <p class="mb-4">La comunicación es un proceso complejo vital para el éxito del proyecto. Conocer sus componentes y cómo mejorarla es esencial.</p>
+             <div class="p-4 bg-sky-50 rounded-lg shadow mb-6">
+                <h4 class="card-title text-sky-700">Proceso de Comunicación</h4>
+                <p>Componentes: Emisor, Receptor, Mensaje, Canal, Código, Contexto, Ruidos/Filtros, Feedback (Retroinformación).</p>
+                <div class="mnemonic">
+                    <p class="mnemonic-title">Mnemotecnia (Proceso de Comunicación):</p>
+                    <p>"<span class="font-semibold text-sky-700">E</span>l <span class="font-semibold text-sky-700">R</span>ey <span class="font-semibold text-sky-700">M</span>andó <span class="font-semibold text-sky-700">C</span>artas <span class="font-semibold text-sky-700">C</span>on <span class="font-semibold text-sky-700">C</span>uidado, <span class="font-semibold text-sky-700">R</span>ecibiendo <span class="font-semibold text-sky-700">F</span>eedback." (Emisor, Receptor, Mensaje, Canal, Código, Contexto, Ruido/Filtros, Feedback)</p>
+                </div>
+                <p class="text-xs italic mt-2">Visual: Diagrama de flujo del proceso de comunicación.</p>
+            </div>
+
+            <h4 class="card-title">Claves para Mejorar la Comunicación</h4>
+            <ul class="grid md:grid-cols-2 gap-x-8">
+                <li>Respetar al equipo y sus preocupaciones.</li>
+                <li>Escuchar eficazmente (contacto visual, sin interrupciones, resumir).</li>
+                <li>Dedicar tiempo para escuchar (incluso charlas informales).</li>
+                <li>Claridad en responsabilidades (a quién dirigirse).</li>
+                <li>Transmitir información con el método más adecuado.</li>
+                <li>Mantenerse cerca de la fuente de información (evitar efecto "teléfono roto").</li>
+                <li>Información centralizada, pública y disponible.</li>
+                <li>Ser específico (plazos, recursos, detalles).</li>
+                <li>Pedir retroalimentación para asegurar comprensión y mejorar.</li>
+            </ul>
+            <div class="mnemonic">
+                <p class="mnemonic-title">Mnemotecnia (Mejorar Comunicación - Principios Clave):</p>
+                <p>"<span class="font-semibold text-sky-700">R</span>espeto, <span class="font-semibold text-sky-700">E</span>scucha, <span class="font-semibold text-sky-700">T</span>iempo y <span class="font-semibold text-sky-700">C</span>laridad. <span class="font-semibold text-sky-700">M</span>étodo, <span class="font-semibold text-sky-700">F</span>uente, <span class="font-semibold text-sky-700">I</span>nfo <span class="font-semibold text-sky-700">E</span>specífica y <span class="font-semibold text-sky-700">R</span>espuesta."</p>
+            </div>
+        </section>
+
+        <!-- Sección: Desarrollo de Equipos -->
+        <section id="desarrollo_equipos" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title">Desarrollo de Equipos</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="p-4 bg-indigo-50 rounded-lg shadow">
+                    <h4 class="card-title text-indigo-700">Etapas en el Desarrollo de Equipos (Proyectos)</h4>
+                    <ol class="list-decimal pl-5">
+                        <li><strong>Inicio:</strong> Optimismo, ilusión, relaciones cordiales.</li>
+                        <li><strong>Primeras Dificultades:</strong> Tensión, roces, diferencias de carácter.</li>
+                        <li><strong>Acoplamiento:</strong> Obligados a entenderse, superan enfrentamientos, proyecto avanza.</li>
+                        <li><strong>Madurez:</strong> Equipo acoplado, productivo, controlan trabajo, se conocen.</li>
+                        <li><strong>Agotamiento:</strong> Pérdida de ilusión, rendimiento cae, posibles rivalidades, cierre.</li>
+                    </ol>
+                    <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Etapas Desarrollo):</p>
+                        <p>"<span class="font-semibold text-indigo-700">I</span>niciamos <span class="font-semibold text-indigo-700">D</span>ifícilmente, <span class="font-semibold text-indigo-700">A</span>coplando <span class="font-semibold text-indigo-700">M</span>aduras <span class="font-semibold text-indigo-700">A</span>gotadas."</p>
+                    </div>
+                </div>
+                 <div class="p-4 bg-teal-50 rounded-lg shadow">
+                    <h4 class="card-title text-teal-700">Las 5 C's del Trabajo en Equipo (Tom Peters)</h4>
+                    <ul class="list-disc pl-5">
+                        <li>Confianza</li>
+                        <li>Coordinación</li>
+                        <li>Comunicación</li>
+                        <li>Compromiso</li>
+                        <li>Complementariedad</li>
+                    </ul>
+                    <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Las 5 C's):</p>
+                        <p>"<span class="font-semibold text-teal-700">C</span>on <span class="font-semibold text-teal-700">C</span>oordinación, <span class="font-semibold text-teal-700">C</span>omunicación y <span class="font-semibold text-teal-700">C</span>ompromiso, la <span class="font-semibold text-teal-700">C</span>onfianza se <span class="font-semibold text-teal-700">C</span>omplementa."</p>
+                    </div>
+                     <p class="text-xs italic mt-2">Visual: Iconos para cada 'C' o un pentágono.</p>
+                </div>
+            </div>
+            <div class="mt-6 p-4 bg-lime-50 rounded-lg shadow">
+                <h4 class="card-title text-lime-700">Factores de Éxito del Equipo (Google - Proyecto Aristóteles)</h4>
+                <ul class="list-disc pl-5">
+                    <li>Seguridad psicológica (Psychological safety)</li>
+                    <li>Dependencia (Dependability)</li>
+                    <li>Estructura y claridad (Structure & clarity)</li>
+                    <li>Significado (Meaning)</li>
+                    <li>Impacto (Impact)</li>
+                </ul>
+                <div class="mnemonic">
+                    <p class="mnemonic-title">Mnemotecnia (Google Aristóteles):</p>
+                    <p>"La <span class="font-semibold text-lime-700">S</span>eguridad <span class="font-semibold text-lime-700">D</span>epende de la <span class="font-semibold text-lime-700">E</span>structura, el <span class="font-semibold text-lime-700">S</span>ignificado y el <span class="font-semibold text-lime-700">I</span>mpacto."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección: Roles y Personalidad -->
+        <section id="roles_personalidad" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title">Roles de Equipo y Personalidad</h2>
+            
+            <h3 class="text-2xl font-semibold text-rose-700 mb-3">Roles de Equipo de Belbin</h3>
+            <p class="mb-4">Un equipo eficaz suele tener un equilibrio de estos roles. Se agrupan en roles de Acción, Sociales y Mentales.</p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-6">
+                <div class="p-3 bg-rose-50 rounded-lg shadow">
+                    <h4 class="font-semibold text-rose-600">Roles de Acción:</h4>
+                    <ul class="text-sm"><li>Impulsor (IS)</li><li>Implementador (ID)</li><li>Finalizador (FI)</li></ul>
+                    <div class="mnemonic text-xs"><p class="mnemonic-title">Mnemotecnia:</p><p>"<span class="font-semibold text-rose-600">I</span>mplementa, <span class="font-semibold text-rose-600">I</span>mpulsa, <span class="font-semibold text-rose-600">F</span>inaliza."</p></div>
+                </div>
+                <div class="p-3 bg-sky-50 rounded-lg shadow">
+                    <h4 class="font-semibold text-sky-600">Roles Sociales:</h4>
+                    <ul class="text-sm"><li>Coordinador (CO)</li><li>Investigador de Recursos (IR)</li><li>Cohesionador (CH)</li></ul>
+                    <div class="mnemonic text-xs"><p class="mnemonic-title">Mnemotecnia:</p><p>"<span class="font-semibold text-sky-600">C</span>oordina, <span class="font-semibold text-sky-600">I</span>nvestiga, <span class="font-semibold text-sky-600">C</span>ohesiona."</p></div>
+                </div>
+                <div class="p-3 bg-amber-50 rounded-lg shadow">
+                    <h4 class="font-semibold text-amber-600">Roles Mentales:</h4>
+                    <ul class="text-sm"><li>Cerebro (CE)</li><li>Monitor-Evaluador (ME)</li><li>Especialista (ES)</li></ul>
+                    <div class="mnemonic text-xs"><p class="mnemonic-title">Mnemotecnia:</p><p>"<span class="font-semibold text-amber-600">C</span>erebro, <span class="font-semibold text-amber-600">M</span>onitor, <span class="font-semibold text-amber-600">E</span>specialista."</p></div>
+                </div>
+            </div>
+            <p class="text-xs italic">Visual: Un puzzle o diagrama de Venn mostrando los 9 roles y sus interacciones/agrupaciones.</p>
+
+            <h3 class="text-2xl font-semibold text-violet-700 mt-8 mb-3">Tipos de Personalidad MBTI</h3>
+            <p class="mb-4">El Indicador de Tipo Myers-Briggs (MBTI) se basa en 4 dicotomías para clasificar 16 tipos de personalidad. Mide preferencias, no habilidades.</p>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="p-4 bg-violet-50 rounded-lg shadow">
+                    <h4 class="font-semibold text-violet-600">Dimensiones (Preferencias):</h4>
+                    <ul class="list-disc pl-5">
+                        <li><strong>E</strong>xtraversión vs. <strong>I</strong>ntroversión (Dónde enfocamos atención)</li>
+                        <li><strong>S</strong>ensación vs. i<strong>N</strong>tuición (Cómo procesamos información)</li>
+                        <li><strong>T</strong>hinking (Pensamiento) vs. <strong>F</strong>eeling (Sentimiento) (Cómo tomamos decisiones)</li>
+                        <li><strong>J</strong>udging (Juicio) vs. <strong>P</strong>erceiving (Percepción) (Cómo tratamos con el mundo exterior)</li>
+                    </ul>
+                </div>
+                 <div class="p-4 bg-violet-100 rounded-lg shadow">
+                    <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Dimensiones MBTI):</p>
+                        <p>"Mi <span class="font-semibold text-violet-700">E</span>nergía <span class="font-semibold text-violet-700">S</span>e <span class="font-semibold text-violet-700">P</span>royecta <span class="font-semibold text-violet-700">J</span>uzgando." (Extraversión/Introversión, Sensación/iNtuición, Thinking(Pensamiento)/Feeling(Sentimiento), Judging(Juicio)/Percepción - adaptado para iniciales en español donde posible)</p>
+                        <p class="text-xs mt-1">O en inglés: "My <span class="font-semibold text-violet-700">E</span>lephant <span class="font-semibold text-violet-700">S</span>ees <span class="font-semibold text-violet-700">T</span>iny <span class="font-semibold text-violet-700">J</span>ellyfish." (E/I, S/N, T/F, J/P)</p>
+                    </div>
+                    <p class="text-xs italic mt-2">Visual: Un gráfico de 2x2 o cuatro selectores para mostrar las combinaciones.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+          <a href="https://zapic0.github.io/agile/equipos.html">Hacer el examen</a>
+          <a href="https://zapic0.github.io/agile/equipos-paginado.html">Hacer el examen paginado</a>
+          <a href="https://zapic0.github.io/agile/equipos-examen-originales.html">Hacer el examen con preguntas reales (últimas 20)</a>
+        </section>
+
+        <footer class="text-center mt-16 py-8 border-t border-slate-300">
+            <p class="text-slate-600">&copy; 2025 Resumen Gráfico de Liderazgo. Inspirado en apuntes del Máster Interuniversitario en Dirección de Proyectos.</p>
+        </footer>
+    </div>
+    <script>
+        // Script para suavizar el scroll en los enlaces de ancla
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

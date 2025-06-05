@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen Interactivo de Liderazgo y Gestión de Equipos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Un fondo ligeramente azulado */
+        }
+        .question-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1e3a8a; /* Azul oscuro */
+        }
+        .option-label {
+            display: block;
+            padding: 10px;
+            border: 1px solid #e2e8f0; /* Gris claro */
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .option-label:hover {
+            background-color: #e0f2fe; /* Azul muy claro al pasar el ratón */
+        }
+        .option-label.selected {
+            background-color: #bfdbfe; /* Azul claro seleccionado */
+            border-color: #3b82f6; /* Azul primario */
+        }
+        .option-label.correct {
+            background-color: #dcfce7; /* Verde claro */
+            border-color: #22c55e; /* Verde */
+            color: #15803d; /* Verde oscuro */
+        }
+        .option-label.incorrect {
+            background-color: #fee2e2; /* Rojo claro */
+            border-color: #ef4444; /* Rojo */
+            color: #b91c1c; /* Rojo oscuro */
+        }
+        .btn-primary {
+            background-color: #2563eb; /* Azul */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8; /* Azul más oscuro */
+        }
+        .btn-primary[disabled] {
+            background-color: #93c5fd; /* Azul más claro cuando está deshabilitado */
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background-color: #64748b; /* Gris */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #475569; /* Gris más oscuro */
+        }
+        .page-results {
+            background-color: #e0f2fe; /* Azul muy claro */
+            border: 1px solid #0ea5e9; /* Azul cielo */
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 20px;
+            background-color: #3b82f6;
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            border-radius: 8px 0 0 8px; /* Solo redondear lado izquierdo si no es 100% */
+            transition: width 0.3s ease-in-out;
+        }
+        .progress-bar.full {
+             border-radius: 8px; /* Redondear todos los lados si es 100% */
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+    <div class="container mx-auto max-w-3xl">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl sm:text-4xl font-bold text-sky-700">Examen Interactivo de Liderazgo y Gestión de Equipos</h1>
+            <p class="text-md text-slate-600 mt-2">Pon a prueba tus conocimientos.</p>
+        </header>
+
+        <div id="progressBarContainer" class="progress-bar-container">
+            <div id="progressBar" class="progress-bar" style="width: 0%;">0%</div>
+        </div>
+
+        <div id="quiz-container">
+            <!-- Las preguntas se cargarán aquí por JavaScript -->
+        </div>
+
+        <div id="navigation-buttons" class="mt-8 flex justify-between items-center">
+            <button id="prev-page-btn" class="btn-secondary" style="display: none;">Anterior</button>
+            <button id="next-page-btn" class="btn-primary">Siguiente Página</button>
+            <button id="resolve-page-btn" class="btn-primary" style="display: none;">Resolver Página</button>
+        </div>
+        
+        <div id="page-results-container" class="mt-6">
+            <!-- Los resultados de la página se mostrarán aquí -->
+        </div>
+
+        <div id="final-results-container" class="mt-10 p-6 bg-sky-100 rounded-lg shadow-md text-center" style="display: none;">
+            <h2 class="text-2xl font-semibold text-sky-700 mb-4">Resultados Finales del Examen</h2>
+            <p class="text-lg">Total de Preguntas: <span id="total-questions-final"></span></p>
+            <p class="text-lg text-green-600">Aciertos: <span id="total-correct-final"></span></p>
+            <p class="text-lg text-red-600">Fallos: <span id="total-incorrect-final"></span></p>
+            <p class="text-xl font-bold mt-4">Puntuación Final: <span id="final-score"></span>%</p>
+            <button id="restart-quiz-btn" class="btn-primary mt-6">Reiniciar Examen</button>
+        </div>
+         <a href="liderazgo_equipos_web.html" class="mt-8 inline-block text-sky-600 hover:text-sky-800 hover:underline">← Volver a la Guía de Apuntes</a>
+    </div>
+
+    <script>
+        const questionsPerPage = 20;
+        let currentPage = 1;
+        // Se recalculará totalPages después de cargar todas las preguntas
+        let totalPages = 0; 
+        let userAnswers = {}; 
+        let pageScores = {}; 
+        let questionsData = []; 
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function generateInitialQuestions() { // Renombrado de generateDetailedQuestions
+            const baseQuestions = [
+                // Rol del DP (5 preguntas)
+                {
+                    pregunta: "¿Cuál es una labor fundamental del DP relacionada con la supervisión y el cumplimiento de normas?",
+                    opciones: ["Policía (supervisor)", "Facilitador de recursos", "Entrenador técnico", "Negociador con stakeholders externos"],
+                    respuestaCorrecta: 0, tema: "Rol del DP"
+                },
+                {
+                    pregunta: "Según la distinción clásica, un líder se enfoca principalmente en:",
+                    opciones: ["Hacer las cosas correctas (eficacia)", "Hacer las cosas bien (eficiencia)", "Administrar los recursos existentes", "Controlar los procesos del sistema"],
+                    respuestaCorrecta: 0, tema: "Rol del DP"
+                },
+                {
+                    pregunta: "El PMI, en sus principios de gestión de proyectos, destaca que el liderazgo:",
+                    opciones: ["Puede ser demostrado por cualquier miembro del equipo", "Es una cualidad exclusiva del Director de Proyecto", "Se basa únicamente en la autoridad formal", "No necesita adaptarse a la situación"],
+                    respuestaCorrecta: 0, tema: "Rol del DP"
+                },
+                {
+                    pregunta: "La transición de un rol técnico a Director de Proyecto a menudo implica:",
+                    opciones: ["Menor involucramiento técnico directo y más gestión de personas", "Mayor especialización en una única área técnica", "Reducción de la responsabilidad general", "Menos necesidad de habilidades de comunicación"],
+                    respuestaCorrecta: 0, tema: "Rol del DP"
+                },
+                 {
+                    pregunta: "¿Cuál de las siguientes NO es una labor típica de un Director de Proyecto?",
+                    opciones: ["Ejecutar personalmente todas las tareas técnicas críticas", "Planificar el alcance y cronograma del proyecto", "Gestionar la comunicación con los interesados", "Resolver conflictos dentro del equipo"],
+                    respuestaCorrecta: 0, tema: "Rol del DP"
+                },
+                // Estilos de Liderazgo (7 preguntas)
+                {
+                    pregunta: "En el Continuo de Tannenbaum, un estilo donde el líder presenta el problema, recibe sugerencias y toma la decisión es más cercano a:",
+                    opciones: ["Participativo", "Autocrático puro", "Democrático puro (laissez-faire)", "Consultivo extremo, cediendo la decisión final"],
+                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
+                },
+                {
+                    pregunta: "La Teoría Y de McGregor asume que los empleados:",
+                    opciones: ["Encuentran el trabajo tan natural como el juego o el descanso", "Necesitan ser coaccionados y controlados para esforzarse", "Evitan la responsabilidad siempre que pueden", "Tienen relativamente poca ambición"],
+                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
+                },
+                {
+                    pregunta: "En la Rejilla Gerencial (Grid Gerencial) de Blake y Mouton, el estilo (9,9) representa un alto interés en:",
+                    opciones: ["Tanto en las personas como en la producción/tarea", "Principalmente en las personas, bajo en la tarea", "Principalmente en la tarea, bajo en las personas", "Bajo interés en ambos, personas y tarea"],
+                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
+                },
+                {
+                    pregunta: "Según Hersey y Blanchard, para un colaborador con madurez M1 (incapaz y no dispuesto/inseguro), el estilo de liderazgo más adecuado es:",
+                    opciones: ["E1 - Dirigir (alta tarea, baja relación)", "E2 - Persuadir (alta tarea, alta relación)", "E3 - Participar (baja tarea, alta relación)", "E4 - Delegar (baja tarea, baja relación)"],
+                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
+                },
+                {
+                    pregunta: "El estilo de liderazgo 'Coaching' según Goleman se centra en:",
+                    opciones: ["El desarrollo profesional a largo plazo de los miembros del equipo", "Establecer un ritmo de trabajo muy exigente", "Crear armonía y lazos emocionales", "Movilizar al equipo hacia una visión compartida"],
+                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
+                },
+                 {
+                    pregunta: "Un líder que toma todas las decisiones sin consultar al equipo está aplicando un estilo:",
+                    opciones: ["Autocrático", "Democrático", "Participativo", "Laissez-faire"],
+                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
+                },
+                {
+                    pregunta: "La Teoría X de McGregor sugiere que el líder debe:",
+                    opciones: ["Controlar y supervisar de cerca a los empleados", "Delegar ampliamente y fomentar la autonomía", "Centrarse en crear un ambiente de trabajo agradable", "Permitir que los empleados fijen sus propios objetivos"],
+                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
+                },
+                // Rasgos del Líder (4 preguntas)
+                {
+                    pregunta: "Tener 'Objetivos claros' como rasgo de un líder implica que este:",
+                    opciones: ["Sabe cuál es el siguiente paso y puede explicar su relevancia", "Es flexible y cambia los objetivos frecuentemente según las circunstancias", "Se enfoca más en el proceso que en los resultados finales", "Delega la definición de objetivos completamente al equipo"],
+                    respuestaCorrecta: 0, tema: "Rasgos del Líder"
+                },
+                {
+                    pregunta: "Un líder 'Racionalmente apasionado' es aquel que:",
+                    opciones: ["Defiende con argumentos sus propuestas pero escucha alternativas", "Se deja llevar únicamente por sus emociones al decidir", "Evita cualquier muestra de implicación emocional en el proyecto", "Prioriza la pasión sobre la lógica en todas las situaciones"],
+                    respuestaCorrecta: 0, tema: "Rasgos del Líder"
+                },
+                {
+                    pregunta: "La 'Empatía' en un líder se manifiesta principalmente en:",
+                    opciones: ["Entender y considerar los sentimientos y perspectivas del equipo", "Ser siempre el miembro más popular del equipo", "Evitar cualquier tipo de conflicto o desacuerdo", "Imponer sus propias emociones como guía para el grupo"],
+                    respuestaCorrecta: 0, tema: "Rasgos del Líder"
+                },
+                 {
+                    pregunta: "Un líder proactivo se caracteriza por:",
+                    opciones: ["Tomar la iniciativa y anticiparse a los problemas", "Esperar instrucciones claras antes de actuar", "Reaccionar solo cuando surgen crisis", "Evitar riesgos a toda costa"],
+                    respuestaCorrecta: 0, tema: "Rasgos del Líder"
+                },
+                // Motivación (5 preguntas)
+                {
+                    pregunta: "En la Teoría de las Expectativas de Vroom, la 'Instrumentalidad' se refiere a la percepción de que:",
+                    opciones: ["Un buen rendimiento conducirá a obtener una recompensa deseada", "El esfuerzo personal conducirá a un buen rendimiento", "La recompensa ofrecida es valiosa para el individuo", "Las necesidades básicas deben ser satisfechas primero"],
+                    respuestaCorrecta: 0, tema: "Motivación"
+                },
+                {
+                    pregunta: "Un objetivo SMART debe ser 'Achievable' (Alcanzable), lo que significa que:",
+                    opciones: ["Es realista y se puede lograr con los recursos disponibles", "Es extremadamente fácil para no desmotivar", "Es muy ambicioso, incluso si parece imposible", "Se puede medir cuantitativamente su progreso"],
+                    respuestaCorrecta: 0, tema: "Motivación"
+                },
+                {
+                    pregunta: "Según Maslow, las necesidades de 'Afiliación' o sociales incluyen:",
+                    opciones: ["La amistad, el afecto y la pertenencia a un grupo", "La seguridad física y de empleo", "El reconocimiento, el estatus y el respeto de los demás", "El desarrollo del propio potencial y la autorrealización"],
+                    respuestaCorrecta: 0, tema: "Motivación"
+                },
+                {
+                    pregunta: "Herzberg clasifica el 'salario' como un:",
+                    opciones: ["Factor higiénico", "Factor motivador intrínseco", "Factor de logro", "Factor de crecimiento personal"],
+                    respuestaCorrecta: 0, tema: "Motivación"
+                },
+                 {
+                    pregunta: "La Teoría de la Equidad de Adams sugiere que la motivación se ve afectada por:",
+                    opciones: ["La comparación entre los propios inputs/outputs y los de otros", "Únicamente el nivel absoluto de recompensa recibido", "La dificultad intrínseca de la tarea asignada", "La relación con el supervisor directo"],
+                    respuestaCorrecta: 0, tema: "Motivación"
+                },
+                // Comunicación (3 preguntas)
+                {
+                    pregunta: "El 'feedback' o retroinformación en el proceso de comunicación es crucial porque:",
+                    opciones: ["Permite al emisor saber si su mensaje fue comprendido correctamente", "Elimina completamente todos los ruidos del canal", "Asegura que el receptor siempre esté de acuerdo con el mensaje", "Hace que la comunicación sea un proceso unidireccional más eficiente"],
+                    respuestaCorrecta: 0, tema: "Comunicación"
+                },
+                {
+                    pregunta: "Una forma de mejorar la escucha eficaz es:",
+                    opciones: ["Resumir los puntos clave de la conversación para confirmar entendimiento", "Interrumpir frecuentemente para demostrar que se está prestando atención", "Evitar el contacto visual para no intimidar al interlocutor", "Pensar en la respuesta mientras la otra persona está hablando"],
+                    respuestaCorrecta: 0, tema: "Comunicación"
+                },
+                 {
+                    pregunta: "El efecto 'teléfono roto' en la comunicación se refiere a:",
+                    opciones: ["La distorsión de la información al pasar por múltiples intermediarios", "La pérdida total de la señal en un canal de comunicación", "La incapacidad de encontrar un canal de comunicación adecuado", "El uso excesivo de jerga técnica que dificulta la comprensión"],
+                    respuestaCorrecta: 0, tema: "Comunicación"
+                },
+                // Desarrollo de Equipos (3 preguntas)
+                {
+                    pregunta: "En las etapas de desarrollo de equipos en proyectos, la fase de 'Acoplamiento' se caracteriza por:",
+                    opciones: ["Los miembros son conscientes de que deben entenderse y superar enfrentamientos", "Predomina el optimismo y las relaciones son cordiales pero superficiales", "El equipo está altamente productivo y controla el trabajo fluidamente", "Comienza a perderse la ilusión y pueden resurgir rivalidades"],
+                    respuestaCorrecta: 0, tema: "Desarrollo de Equipos"
+                },
+                {
+                    pregunta: "Una de las 5 C's del trabajo en equipo según Tom Peters es la 'Complementariedad', que se refiere a que:",
+                    opciones: ["Los miembros aportan habilidades y conocimientos diversos que se suman", "Todos los miembros deben tener exactamente las mismas habilidades", "El equipo debe ser completamente homogéneo en pensamiento", "La competencia interna es el principal motor del equipo"],
+                    respuestaCorrecta: 0, tema: "Desarrollo de Equipos"
+                },
+                {
+                    pregunta: "El Proyecto Aristóteles de Google encontró que el factor más importante para la efectividad de un equipo era:",
+                    opciones: ["La seguridad psicológica", "La inteligencia promedio de los miembros", "La ubicación conjunta de todos los miembros", "La cantidad de experiencia individual de cada uno"],
+                    respuestaCorrecta: 0, tema: "Desarrollo de Equipos"
+                },
+                // Roles y Personalidad (4 preguntas)
+                {
+                    pregunta: "Según Belbin, el rol de 'Cerebro' (CE) se caracteriza por:",
+                    opciones: ["Aportar imaginación, creatividad y nuevas ideas", "Ser práctico y convertir ideas en planes de acción (Implementador)", "Preocuparse por los detalles y la finalización de tareas (Finalizador)", "Fomentar la armonía y las buenas relaciones (Cohesionador)"],
+                    respuestaCorrecta: 0, tema: "Roles y Personalidad"
+                },
+                {
+                    pregunta: "Una debilidad típica del rol 'Impulsor' (IS) de Belbin es que puede:",
+                    opciones: ["Ser propenso a la provocación e impaciente con los demás", "Ser indeciso en momentos de crisis", "Tener dificultades para delegar trabajo", "Ser demasiado optimista y perder el interés rápidamente"],
+                    respuestaCorrecta: 0, tema: "Roles y Personalidad"
+                },
+                {
+                    pregunta: "En la tipología MBTI, la preferencia 'Sensación' (S) frente a 'iNtuición' (N) indica que una persona tiende a:",
+                    opciones: ["Confiar en la información concreta y práctica obtenida a través de los sentidos", "Confiar en las posibilidades, la inspiración y el significado subyacente", "Tomar decisiones basándose en la lógica y el análisis impersonal", "Tomar decisiones basándose en los valores y el impacto en las personas"],
+                    respuestaCorrecta: 0, tema: "Roles y Personalidad"
+                },
+                {
+                    pregunta: "Una persona con preferencia MBTI por 'Judging' (J) tiende a preferir:",
+                    opciones: ["Un estilo de vida planificado, ordenado y con decisiones tomadas", "Un estilo de vida flexible, espontáneo y manteniendo opciones abiertas", "Enfocar su energía en el mundo exterior de las personas y las cosas", "Enfocar su energía en el mundo interior de las ideas y los conceptos"],
+                    respuestaCorrecta: 0, tema: "Roles y Personalidad"
+                }
+            ]; // Total 31 preguntas base
+            
+            let generatedQs = [];
+            // Generar 100 preguntas iniciales (5 páginas)
+            for(let i = 0; i < 100; i++) {
+                let baseQ = baseQuestions[i % baseQuestions.length];
+                let newQ = JSON.parse(JSON.stringify(baseQ)); 
+                newQ.id = `q${i+1}`;
+                //newQ.pagina = Math.floor(i / questionsPerPage) + 1; // Se asignará después
+                
+                newQ.pregunta = `${i+1}. (Gen) ${baseQ.pregunta.substring(baseQ.pregunta.indexOf(" ") + 1)}`; 
+                if (i < baseQuestions.length) newQ.pregunta = `${i+1}. ${baseQ.pregunta}`;
+
+                let correctAnswerText = newQ.opciones[newQ.respuestaCorrecta];
+                newQ.opciones = shuffleArray([...newQ.opciones]); // Crear copia para barajar
+                newQ.respuestaCorrecta = newQ.opciones.indexOf(correctAnswerText);
+                
+                generatedQs.push(newQ);
+            }
+            return generatedQs;
+        }
+
+        function getQuestionsFromPDF() {
+            // Estas son las preguntas extraídas del PDF que proporcionaste
+            const pdfQuestions = [
+                {
+                    pregunta: "El 'Proyecto Aristotle' llevado a cabo por Google destaca la importancia de:",
+                    opciones: ["El liderazgo participativo", "La comunicación y la empatía entre los miembros del equipo", "La delegación de tareas", "Las actividades extralaborales como mecanismo de cohesión"],
+                    respuestaCorrecta: 1, tema: "Desarrollo de Equipos" // Opción b)
+                },
+                {
+                    pregunta: "El término \"normas grupales\" en el contexto del trabajo en equipo se refiere a:",
+                    opciones: ["Conjunto de normas éticas", "Manual que recoge las normas de comportamiento dentro del equipo", "Conjunto de normas no escritas que gobiernan el funcionamiento de un equipo", "Conjunto de instrucciones sobre comportamiento que transmite el jefe de proyecto en la reunión de inicio del proyecto"],
+                    respuestaCorrecta: 2, tema: "Desarrollo de Equipos" // Opción c)
+                },
+                {
+                    pregunta: "Conforme a la teoría MBTI, ¿qué característica de personalidad marca hacia dónde enfocamos nuestra energía?",
+                    opciones: ["Extroversión-introversión", "Sensitivos-Intuitivos", "Racionales-Emocionales", "Calificadores-Perceptivos"],
+                    respuestaCorrecta: 0, tema: "Roles y Personalidad" // Opción a)
+                },
+                {
+                    pregunta: "Señale la respuesta INCORRECTA según la teoría de tipos de personalidad MBTI:",
+                    opciones: ["La distribución de perfiles de personalidad en algunas profesiones (por ejemplo, ingenierías) varía respecto a la distribución en una población normal", "Una persona emocional no es capaz de tomar decisiones racionalmente", "Las personas extrovertidas son más comunicativas que las introvertidas", "Los calificadores se pueden estresar en un ambiente de trabajo donde la toma de decisiones se va posponiendo continuamente"],
+                    respuestaCorrecta: 1, tema: "Roles y Personalidad" // Opción b) es la incorrecta
+                },
+                {
+                    pregunta: "El test 'Reading the mind in the Eyes' me sirve para conocer el grado de:",
+                    opciones: ["Empatía", "Motivación", "Liderazgo", "Comunicación"],
+                    respuestaCorrecta: 0, tema: "Comunicación" // Opción a)
+                },
+                {
+                    pregunta: "En el ciclo de vida de un equipo, ¿a qué etapa nos estamos refiriendo si decimos que los miembros son conscientes de que están obligados a entenderse si quieren sacar el proyecto adelante?",
+                    opciones: ["Inicio", "Acoplamiento", "Madurez", "Agotamiento"],
+                    respuestaCorrecta: 1, tema: "Desarrollo de Equipos" // Opción b)
+                },
+                {
+                    pregunta: "Cuáles de los siguientes aspectos NO es considerado por Herzberg como auténticamente motivantes",
+                    opciones: ["Formación continua para el desarrollo de la carrera profesional", "Reconocimiento por la labor efectuada", "Buenas condiciones físicas de trabajo", "Sensación de Logro"],
+                    respuestaCorrecta: 2, tema: "Motivación" // Opción c)
+                },
+                {
+                    pregunta: "De acuerdo con la teoría de las relaciones humanas, ¿cuál de las siguientes afirmaciones es correcta:",
+                    opciones: ["El nivel de rendimiento de un trabajador se tiende a ajustar al nivel de su equipo de trabajo, como parte de su integración en el mismo", "El poder dentro del entorno grupal es la motivación principal en los trabajos colectivos.", "El rendimiento de un equipo es inversamente proporcional al nivel de las relaciones personales fuera del ambiente de trabajo", "La relación personal con los directivos es la fuente principal de motivación para el trabajo en grupo"],
+                    respuestaCorrecta: 0, tema: "Motivación" // Opción a)
+                },
+                {
+                    pregunta: "Si se pretende motivar por establecimiento de objetivos, estos deben ser:",
+                    opciones: ["Muchos, Diversos y Medibles", "Pocos, Sencillos de alcanzar y Cualitativos", "Muchos, Fáciles y Medibles", "Pocos, Complicados de alcanzar y Medibles"],
+                    respuestaCorrecta: 3, tema: "Motivación" // Opción d)
+                },
+                {
+                    pregunta: "De acuerdo con la teoría X/Y de McGregor, la teoría X indica que el trabajo se realiza a disgusto. Si considero que los miembros del equipo son básicamente X, el liderazgo deberá ser:",
+                    opciones: ["Centrado en mejorar la relación personal", "Se deben plantear objetivos y delegar responsabilidades", "Se debe controlar cuidadosamente la ejecución de las tareas para aprovechar toda su capacidad de trabajo.", "Ninguna de las anteriores"],
+                    respuestaCorrecta: 2, tema: "Estilos de Liderazgo" // Opción c)
+                },
+                {
+                    pregunta: "La teoría de Hersey del liderazgo situacional propugna que cada estilo de liderazgo se debería adecuar a:",
+                    opciones: ["Cada persona y mantenerse en el tiempo, para establecer claramente unas pautas de comportamiento que motiven el trabajo", "Las distintas situaciones laborales y al clima económico", "La evolución profesional y de relación dentro del equipo de cada persona, cambiando a lo largo del tiempo", "Las relaciones entre las personas"],
+                    respuestaCorrecta: 2, tema: "Estilos de Liderazgo" // Opción c)
+                },
+                {
+                    pregunta: "Según el modelo de Herzberg, los factores higiénicos, como un salario adecuado, o la buena relación con tu jefe son:",
+                    opciones: ["La fuente de la verdadera motivación", "Elementos que, de faltar, producirían desmotivación", "Multiplicadores de la actividad", "Relacionados con la pulcritud y el orden"],
+                    respuestaCorrecta: 1, tema: "Motivación" // Opción b)
+                },
+                {
+                    pregunta: "De acuerdo con el modelo de Roles de Belbin, un punto débil del rol IMPLEMENTADOR es:",
+                    opciones: ["Demasiado obsesionado con los detalles", "Resistente al cambio", "Individualista", "Hipercrítico"],
+                    respuestaCorrecta: 1, tema: "Roles y Personalidad" // Opción b)
+                },
+                {
+                    pregunta: "Según el modelo de Belbin, ¿qué tipo de perfil estará automotivado simplemente por asignarle tareas de su ámbito de trabajo?",
+                    opciones: ["Monitor-evaluador", "Coordinador", "Especialista", "Cohesionador"],
+                    respuestaCorrecta: 2, tema: "Roles y Personalidad" // Opción c)
+                },
+                {
+                    pregunta: "El ser un experto técnico en la temática del proyecto le da al director del proyecto:",
+                    opciones: ["Una capacidad para poder hacerse cargo de las tareas más complejas si estas son criticas para el cumplimiento del plazo o del presupuesto del proyecto", "Una fuente de poder por su conocimiento de la materia que hace que los miembros del equipo confíen en sus decisiones y tiendan a seguirlas", "Una fuente de poder por su conocimiento de la materia que se extingue rápidamente y que debe ser sustituida por otra en un plazo menor de un mes", "Una capacidad de hacerse cargo de las tareas más complejas asegurando el resultado"],
+                    respuestaCorrecta: 1, tema: "Rol del DP" // Opción b)
+                },
+                {
+                    pregunta: "Cuando ante una toma de decisiones en un proyecto, el Director dice \"Tenemos que tomar la decisión por consenso. Si votamos, y queda empate, nos seguimos reuniendo hasta llegar a un consenso, da lo mismo el tiempo que tardemos\" ¿Qué estilo de liderazgo está empleando de acuerdo con el continuo de Tannenbaum?",
+                    opciones: ["Liderazgo democrático", "Liderazgo participativo", "Liderazgo autocrático", "Su comportamiento no se corresponde con ningún estilo de liderazgo adecuado, sino con una perversión del liderazgo"],
+                    respuestaCorrecta: 3, tema: "Estilos de Liderazgo" // Opción d) según corrección de la pag. 8 del PDF
+                },
+                {
+                     pregunta: "En el modelo de motivación mediante estímulos de Vroom aplicada al entorno de trabajo, la eficacia de la realimentación depende de:",
+                     opciones: ["Que resulta altamente probable que el esfuerzo realizado se transforme en el resultado deseado", "Que la recompensa se adecue a las necesidades del trabajador", "Que la probabilidad de que se obtenga la recompensa en el caso de realizar bien la tarea sea elevada", "Todas las anteriores son correctas"],
+                     respuestaCorrecta: 3, tema: "Motivación" // Opción d)
+                },
+                {
+                     pregunta: "Un rasgo deseable del líder debería ser:",
+                     opciones: ["Desconfianza preventiva", "Orgulloso de su experiencia", "Autoconfianza", "Todos los anteriores"],
+                     respuestaCorrecta: 2, tema: "Rasgos del Líder" // Opción c)
+                },
+                {
+                    pregunta: "Conforme a la teoría MBTI, ¿qué característica de personalidad marca como tomar decisiones?",
+                    opciones: ["Extroversión-introversión", "Sensitivos-Intuitivos", "Racionales-Emocionales", "Calificadores-Perceptivos"],
+                    respuestaCorrecta: 2, tema: "Roles y Personalidad" // Opción c)
+                },
+                {
+                    pregunta: "¿Cuál de los siguientes No es un tipo de personalidad según la tipología MBTI?:",
+                    opciones: ["INTJ", "ESFP", "IRFP", "ENFJ"],
+                    respuestaCorrecta: 2, tema: "Roles y Personalidad" // Opción c)
+                }
+            ];
+            // Asegurar que estas preguntas tengan IDs únicos y numeración correcta
+            return pdfQuestions.map((q, index) => {
+                let correctAnswerText = q.opciones[q.respuestaCorrecta];
+                let shuffledOptions = shuffleArray([...q.opciones]);
+                return {
+                    ...q,
+                    id: `q_pdf_${index+1}`, // ID único para preguntas del PDF
+                    pregunta: `${101 + index}. ${q.pregunta}`, // Numeración a partir de 101
+                    opciones: shuffledOptions,
+                    respuestaCorrecta: shuffledOptions.indexOf(correctAnswerText)
+                };
+            });
+        }
+        
+        // Cargar todas las preguntas
+        const initialGeneratedQuestions = generateInitialQuestions(); // 100 preguntas
+        const pdfBasedQuestions = getQuestionsFromPDF(); // ~20 preguntas
+        questionsData = [...initialGeneratedQuestions, ...pdfBasedQuestions];
+
+        // Asignar número de página a cada pregunta y actualizar totalPages
+        questionsData.forEach((q, index) => {
+            q.pagina = Math.floor(index / questionsPerPage) + 1;
+        });
+        totalPages = Math.ceil(questionsData.length / questionsPerPage);
+
+
+        const quizContainer = document.getElementById('quiz-container');
+        const prevPageBtn = document.getElementById('prev-page-btn');
+        const nextPageBtn = document.getElementById('next-page-btn');
+        const resolvePageBtn = document.getElementById('resolve-page-btn');
+        const pageResultsContainer = document.getElementById('page-results-container');
+        const finalResultsContainer = document.getElementById('final-results-container');
+        const progressBar = document.getElementById('progressBar');
+        const totalQuestionsFinalSpan = document.getElementById('total-questions-final');
+        const totalCorrectFinalSpan = document.getElementById('total-correct-final');
+        const totalIncorrectFinalSpan = document.getElementById('total-incorrect-final');
+        const finalScoreSpan = document.getElementById('final-score');
+
+
+        function displayPage(pageNumber) {
+            quizContainer.innerHTML = '';
+            if (!pageScores[pageNumber]) { 
+                 pageResultsContainer.innerHTML = '';
+            }
+            resolvePageBtn.style.display = 'block';
+            // finalResultsContainer.style.display = 'none'; // Ya no es necesario ocultarlo aquí así
+
+
+            const startIndex = (pageNumber - 1) * questionsPerPage;
+            const endIndex = Math.min(startIndex + questionsPerPage, questionsData.length); // Asegurar no exceder
+            const pageQuestions = questionsData.slice(startIndex, endIndex);
+
+            pageQuestions.forEach((q) => {
+                const questionElement = document.createElement('div');
+                questionElement.classList.add('question-card');
+                questionElement.setAttribute('id', `card-${q.id}`);
+                questionElement.innerHTML = `<p class="question-text">${q.pregunta}</p>`;
+                
+                const optionsList = document.createElement('div');
+                q.opciones.forEach((opcion, i) => {
+                    const optionId = `${q.id}-op${i}`;
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    label.textContent = opcion;
+                    label.classList.add('option-label');
+
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = q.id;
+                    radio.id = optionId;
+                    radio.value = i;
+                    radio.style.display = 'none'; 
+
+                    if (userAnswers[q.id] !== undefined && parseInt(userAnswers[q.id]) === i) {
+                        radio.checked = true;
+                        if (!pageScores[currentPage]) { 
+                           label.classList.add('selected');
+                        }
+                    }
+                    
+                    radio.addEventListener('change', () => {
+                        if (pageScores[currentPage]) return; 
+                        userAnswers[q.id] = radio.value;
+                        document.querySelectorAll(`input[name="${q.id}"]`).forEach(inp => {
+                            const lbl = document.querySelector(`label[for="${inp.id}"]`);
+                            if (lbl) lbl.classList.remove('selected');
+                        });
+                        label.classList.add('selected');
+                    });
+                    
+                    optionsList.appendChild(radio);
+                    optionsList.appendChild(label);
+                });
+                questionElement.appendChild(optionsList);
+                quizContainer.appendChild(questionElement);
+            });
+            
+            if (pageScores[pageNumber]) {
+                showCorrectionsForPage(pageNumber);
+                 // Si es la última página y ya está resuelta, también mostrar resultados finales
+                if (pageNumber === totalPages && Object.keys(pageScores).length === totalPages) {
+                    showFinalResults();
+                }
+            }
+
+
+            updateNavigationButtons();
+            updateProgressBar();
+        }
+        
+        function showCorrectionsForPage(pageNumber) {
+            const startIndex = (pageNumber - 1) * questionsPerPage;
+            const endIndex = Math.min(startIndex + questionsPerPage, questionsData.length);
+            const pageQuestions = questionsData.slice(startIndex, endIndex);
+
+            pageQuestions.forEach(q => {
+                const questionCard = document.getElementById(`card-${q.id}`);
+                if (!questionCard) return;
+                const optionLabels = questionCard.querySelectorAll('.option-label');
+                const userAnswer = userAnswers[q.id];
+
+                optionLabels.forEach((label, i) => {
+                    label.classList.remove('selected');
+                    const inputRadio = questionCard.querySelector(`#${q.id}-op${i}`);
+                    if(inputRadio) inputRadio.disabled = true; 
+
+                    if (i === q.respuestaCorrecta) {
+                        label.classList.add('correct');
+                    }
+                    if (userAnswer !== undefined && parseInt(userAnswer) === i && parseInt(userAnswer) !== q.respuestaCorrecta) {
+                        label.classList.add('incorrect');
+                    }
+                });
+            });
+            if(pageScores[pageNumber]){
+                const { correct, total } = pageScores[pageNumber];
+                 pageResultsContainer.innerHTML = `
+                <div class="page-results">
+                    <h3 class="text-xl font-semibold text-sky-700 mb-2">Resultados de la Página ${pageNumber}</h3>
+                    <p>Has acertado ${correct} de ${total} preguntas.</p>
+                </div>`;
+            }
+        }
+
+
+        function updateNavigationButtons() {
+            prevPageBtn.style.display = currentPage > 1 ? 'block' : 'none';
+            if (currentPage === totalPages) {
+                nextPageBtn.style.display = 'none';
+                resolvePageBtn.textContent = 'Resolver Examen y Ver Resultados Finales';
+            } else {
+                nextPageBtn.style.display = 'block';
+                nextPageBtn.textContent = 'Siguiente Página';
+                resolvePageBtn.textContent = 'Resolver Página';
+            }
+            if (pageScores[currentPage]) {
+                resolvePageBtn.disabled = true;
+            } else {
+                resolvePageBtn.disabled = false;
+            }
+        }
+        
+        function updateProgressBar() {
+            // Calcula el número de páginas completadas (resueltas)
+            const pagesCompleted = Object.keys(pageScores).length;
+            // El progreso se basa en la página actual para la navegación, no solo las resueltas
+            const navProgress = (currentPage / totalPages) * 100;
+            
+            progressBar.style.width = `${navProgress}%`;
+            progressBar.textContent = `${Math.round(navProgress)}%`;
+            
+            if (navProgress === 100) {
+                progressBar.classList.add('full');
+            } else {
+                progressBar.classList.remove('full');
+            }
+        }
+
+        function resolveCurrentPage() {
+            if (pageScores[currentPage]) return; 
+
+            let correctAnswers = 0;
+            const startIndex = (currentPage - 1) * questionsPerPage;
+            const endIndex = Math.min(startIndex + questionsPerPage, questionsData.length);
+            const pageQuestions = questionsData.slice(startIndex, endIndex);
+            let totalOnPage = pageQuestions.length;
+
+
+            pageQuestions.forEach(q => {
+                const userAnswer = userAnswers[q.id];
+                if (userAnswer !== undefined && parseInt(userAnswer) === q.respuestaCorrecta) {
+                    correctAnswers++;
+                }
+            });
+
+            pageScores[currentPage] = { correct: correctAnswers, total: totalOnPage };
+            showCorrectionsForPage(currentPage); 
+            
+            resolvePageBtn.disabled = true;
+
+            // Comprobar si todas las páginas han sido resueltas para mostrar resultados finales
+            if (Object.keys(pageScores).length === totalPages) {
+                showFinalResults();
+            } else if (currentPage === totalPages) {
+                 // Es la última página, el botón dice "Resolver Examen...",
+                 // así que mostramos los resultados finales. La función los calculará.
+                showFinalResults();
+            }
+        }
+
+        function showFinalResults() {
+            let totalCorrectOverall = 0;
+            let totalQuestionsOverall = 0;
+
+            for (let i = 1; i <= totalPages; i++) {
+                const startIndex = (i - 1) * questionsPerPage;
+                const endIndex = Math.min(startIndex + questionsPerPage, questionsData.length);
+                const numQuestionsOnPage = questionsData.slice(startIndex, endIndex).length;
+
+                if (pageScores[i]) {
+                    totalCorrectOverall += pageScores[i].correct;
+                    totalQuestionsOverall += pageScores[i].total; 
+                } else {
+                    // Si la página no fue explícitamente resuelta, se cuentan sus preguntas pero 0 aciertos.
+                    totalQuestionsOverall += numQuestionsOnPage;
+                }
+            }
+             // Asegurar que el total de preguntas sea el correcto
+            if (totalQuestionsOverall !== questionsData.length) {
+                totalQuestionsOverall = questionsData.length;
+            }
+
+
+            const totalIncorrectOverall = totalQuestionsOverall - totalCorrectOverall;
+            const finalScorePercentage = totalQuestionsOverall > 0 ? (totalCorrectOverall / totalQuestionsOverall) * 100 : 0;
+
+            totalQuestionsFinalSpan.textContent = totalQuestionsOverall;
+            totalCorrectFinalSpan.textContent = totalCorrectOverall;
+            totalIncorrectFinalSpan.textContent = totalIncorrectOverall;
+            finalScoreSpan.textContent = finalScorePercentage.toFixed(2);
+
+            const finalResultsContentClone = finalResultsContainer.cloneNode(true);
+            finalResultsContentClone.style.display = 'block';
+            
+            // Limpiar pageResultsContainer antes de añadir para evitar duplicados de resultados finales
+            const existingFinalResults = pageResultsContainer.querySelector('#final-results-container');
+            if (existingFinalResults) {
+                pageResultsContainer.removeChild(existingFinalResults);
+            }
+            // Añadir resultados de la página actual si existen
+            if(pageScores[currentPage]){
+                const { correct, total } = pageScores[currentPage];
+                const currentPageResultDiv = document.createElement('div');
+                currentPageResultDiv.classList.add('page-results');
+                currentPageResultDiv.innerHTML = `
+                    <h3 class="text-xl font-semibold text-sky-700 mb-2">Resultados de la Página ${currentPage}</h3>
+                    <p>Has acertado ${correct} de ${total} preguntas.</p>
+                `;
+                pageResultsContainer.innerHTML = ''; // Limpiar antes de añadir el de la página actual
+                pageResultsContainer.appendChild(currentPageResultDiv);
+            }
+
+
+            pageResultsContainer.appendChild(finalResultsContentClone);
+
+
+            resolvePageBtn.style.display = 'none'; 
+            nextPageBtn.style.display = 'none';
+            finalResultsContainer.style.display = 'none';
+            const restartBtnClone = pageResultsContainer.querySelector('#restart-quiz-btn');
+            if(restartBtnClone) {
+                 restartBtnClone.addEventListener('click', restartQuiz);
+            }
+        }
+
+        function restartQuiz() {
+            currentPage = 1;
+            userAnswers = {};
+            pageScores = {};
+            pageResultsContainer.innerHTML = ''; 
+            finalResultsContainer.style.display = 'none'; 
+            const clonedResults = pageResultsContainer.querySelector('#final-results-container');
+            if (clonedResults) {
+                pageResultsContainer.removeChild(clonedResults);
+            }
+            
+            // Barajar de nuevo todas las preguntas para un nuevo intento
+            questionsData.forEach(q => {
+                 if (q.id.startsWith('q_pdf_')) { // No barajar opciones de preguntas del PDF si ya están fijas
+                    // O si se desea barajar:
+                    // let correctAnswerText = q.opciones[q.respuestaCorrecta];
+                    // q.opciones = shuffleArray([...q.opciones]);
+                    // q.respuestaCorrecta = q.opciones.indexOf(correctAnswerText);
+                 } else { // Barajar opciones de preguntas generadas
+                    let correctAnswerText = q.opciones[q.respuestaCorrecta];
+                    q.opciones = shuffleArray([...q.opciones]);
+                    q.respuestaCorrecta = q.opciones.indexOf(correctAnswerText);
+                 }
+            });
+            
+            displayPage(currentPage);
+            resolvePageBtn.style.display = 'block'; 
+        }
+
+
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayPage(currentPage);
+            }
+        });
+
+        nextPageBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayPage(currentPage);
+            }
+        });
+
+        resolvePageBtn.addEventListener('click', () => {
+            resolveCurrentPage();
+        });
+        
+        document.getElementById('restart-quiz-btn').addEventListener('click', restartQuiz);
+
+        // Iniciar el examen
+        displayPage(currentPage);
+    </script>
+</body>
+</html>
