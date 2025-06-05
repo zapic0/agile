@@ -3,776 +3,1427 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Examen Interactivo de Liderazgo y Gestión de Equipos</title>
+    <title>Examen Interactivo: Liderazgo y Gestión de Equipos</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Un fondo ligeramente azulado */
         }
-        .question-card {
-            background-color: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .quiz-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #f9fafb;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .question-text {
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #1e3a8a; /* Azul oscuro */
+        .question-block {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
         }
         .option-label {
             display: block;
-            padding: 10px;
-            border: 1px solid #e2e8f0; /* Gris claro */
-            border-radius: 8px;
-            margin-bottom: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
             cursor: pointer;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
+            transition: background-color 0.2s;
         }
         .option-label:hover {
-            background-color: #e0f2fe; /* Azul muy claro al pasar el ratón */
+            background-color: #f3f4f6;
         }
         .option-label.selected {
-            background-color: #bfdbfe; /* Azul claro seleccionado */
-            border-color: #3b82f6; /* Azul primario */
+            background-color: #bfdbfe;
+            border-color: #3b82f6;
         }
         .option-label.correct {
-            background-color: #dcfce7; /* Verde claro */
-            border-color: #22c55e; /* Verde */
-            color: #15803d; /* Verde oscuro */
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
         }
         .option-label.incorrect {
-            background-color: #fee2e2; /* Rojo claro */
-            border-color: #ef4444; /* Rojo */
-            color: #b91c1c; /* Rojo oscuro */
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+        }
+        .option-input:checked + .option-label {
+            background-color: #bfdbfe;
+            border-color: #3b82f6;
+        }
+        .feedback-correct {
+            color: #10b981;
+            font-weight: bold;
+        }
+        .feedback-incorrect {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
         .btn-primary {
-            background-color: #2563eb; /* Azul */
+            background-color: #3b82f6;
             color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: background-color 0.2s ease;
         }
         .btn-primary:hover {
-            background-color: #1d4ed8; /* Azul más oscuro */
-        }
-        .btn-primary[disabled] {
-            background-color: #93c5fd; /* Azul más claro cuando está deshabilitado */
-            cursor: not-allowed;
+            background-color: #2563eb;
         }
         .btn-secondary {
-            background-color: #64748b; /* Gris */
+            background-color: #6b7280;
             color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: background-color 0.2s ease;
         }
         .btn-secondary:hover {
-            background-color: #475569; /* Gris más oscuro */
+            background-color: #4b5563;
         }
-        .page-results {
-            background-color: #e0f2fe; /* Azul muy claro */
-            border: 1px solid #0ea5e9; /* Azul cielo */
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 8px;
+        .btn-disabled {
+            background-color: #d1d5db;
+            cursor: not-allowed;
         }
         .progress-bar-container {
             width: 100%;
             background-color: #e5e7eb;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            overflow: hidden;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
         }
         .progress-bar {
-            height: 20px;
+            height: 10px;
             background-color: #3b82f6;
-            text-align: center;
-            line-height: 20px;
-            color: white;
-            border-radius: 8px 0 0 8px; /* Solo redondear lado izquierdo si no es 100% */
+            border-radius: 0.375rem;
             transition: width 0.3s ease-in-out;
-        }
-        .progress-bar.full {
-             border-radius: 8px; /* Redondear todos los lados si es 100% */
         }
     </style>
 </head>
-<body class="p-4 sm:p-8">
-    <div class="container mx-auto max-w-3xl">
-        <header class="text-center mb-10">
-            <h1 class="text-3xl sm:text-4xl font-bold text-sky-700">Examen Interactivo de Liderazgo y Gestión de Equipos</h1>
-            <p class="text-md text-slate-600 mt-2">Pon a prueba tus conocimientos.</p>
-        </header>
+<body class="bg-gray-100">
 
-        <div id="progressBarContainer" class="progress-bar-container">
-            <div id="progressBar" class="progress-bar" style="width: 0%;">0%</div>
+    <div class="quiz-container">
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Examen de Liderazgo y Gestión de Equipos</h1>
+
+        <div id="progress-indicator" class="text-center mb-2 text-gray-600"></div>
+        <div class="progress-bar-container">
+            <div id="progress-bar-fill" class="progress-bar"></div>
         </div>
 
-        <div id="quiz-container">
-            <!-- Las preguntas se cargarán aquí por JavaScript -->
+        <div id="quiz-area">
+            <!-- Las preguntas se cargarán aquí -->
         </div>
 
-        <div id="navigation-buttons" class="mt-8 flex justify-between items-center">
-            <button id="prev-page-btn" class="btn-secondary" style="display: none;">Anterior</button>
-            <button id="next-page-btn" class="btn-primary">Siguiente Página</button>
-            <button id="resolve-page-btn" class="btn-primary" style="display: none;">Resolver Página</button>
-        </div>
-        
-        <div id="page-results-container" class="mt-6">
+        <div id="feedback-area" class="mt-4 text-center">
             <!-- Los resultados de la página se mostrarán aquí -->
         </div>
 
-        <div id="final-results-container" class="mt-10 p-6 bg-sky-100 rounded-lg shadow-md text-center" style="display: none;">
-            <h2 class="text-2xl font-semibold text-sky-700 mb-4">Resultados Finales del Examen</h2>
-            <p class="text-lg">Total de Preguntas: <span id="total-questions-final"></span></p>
-            <p class="text-lg text-green-600">Aciertos: <span id="total-correct-final"></span></p>
-            <p class="text-lg text-red-600">Fallos: <span id="total-incorrect-final"></span></p>
-            <p class="text-xl font-bold mt-4">Puntuación Final: <span id="final-score"></span>%</p>
-            <button id="restart-quiz-btn" class="btn-primary mt-6">Reiniciar Examen</button>
+        <div class="navigation-buttons mt-8 flex justify-between items-center">
+            <button id="prev-btn" class="btn btn-secondary">Anterior</button>
+            <button id="correct-btn" class="btn btn-primary">Corregir Página</button>
+            <button id="next-btn" class="btn btn-primary">Siguiente</button>
         </div>
-         <a href="liderazgo_equipos_web.html" class="mt-8 inline-block text-sky-600 hover:text-sky-800 hover:underline">← Volver a la Guía de Apuntes</a>
+
+        <div id="total-score-area" class="mt-8 text-center text-2xl font-bold text-gray-800">
+            <!-- La puntuación total se mostrará aquí al final -->
+        </div>
     </div>
 
     <script>
-        const questionsPerPage = 20;
-        let currentPage = 1;
-        // Se recalculará totalPages después de cargar todas las preguntas
-        let totalPages = 0; 
-        let userAnswers = {}; 
-        let pageScores = {}; 
-        let questionsData = []; 
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
+        // --- INICIO DE LA SECCIÓN DE PREGUNTAS ---
+        const allQuestions = [
+            // Primeras 70 preguntas (ya proporcionadas y revisadas)
+            {
+                id: 1,
+                question: "El 'Proyecto Aristotle' llevado a cabo por Google destaca la importancia de (versión seguridad psicológica):",
+                options: [
+                    "El liderazgo participativo y la delegación de tareas.",
+                    "La seguridad psicológica en los equipos.",
+                    "Las actividades extralaborales como mecanismo de cohesión.",
+                    "La jerarquía clara y definida en los proyectos."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 2,
+                question: "El término \"normas grupales\" en el contexto del trabajo en equipo se refiere a:",
+                options: [
+                    "Un manual que recoge las normas de comportamiento dentro del equipo.",
+                    "Conjunto de normas éticas universales aplicadas al trabajo.",
+                    "Conjunto de normas no escritas que gobiernan el funcionamiento de un equipo.",
+                    "Instrucciones del jefe de proyecto en la reunión de inicio."
+                ],
+                correctAnswer: 2
+            },
+            {
+                id: 3,
+                question: "Conforme a la teoría MBTI, ¿qué característica de personalidad marca hacia dónde enfocamos nuestra energía?",
+                options: [
+                    "Extroversión (E) - Introversión (I)",
+                    "Sensación (S) - Intuición (N)",
+                    "Pensamiento (T) - Sentimiento (F)",
+                    "Juicio (J) - Percepción (P)"
+                ],
+                correctAnswer: 0
+            },
+            {
+                id: 4,
+                question: "Señale la respuesta INCORRECTA según la teoría de tipos de personalidad MBTI:",
+                options: [
+                    "La distribución de perfiles MBTI puede variar entre profesiones y la población general.",
+                    "Una persona con preferencia por el Sentimiento (F) es incapaz de tomar decisiones lógicas.",
+                    "Las personas extrovertidas (E) suelen ser más comunicativas externamente que las introvertidas (I).",
+                    "Los perfiles Calificadores (J) pueden estresarse si la toma de decisiones se pospone continuamente."
+                ],
+                correctAnswer: 1
+            },
+            {
+                id: 5,
+                question: "El test 'Reading the Mind in the Eyes' sirve para conocer el grado de:",
+                options: [
+                    "Empatía cognitiva.",
+                    "Capacidad de liderazgo.",
+                    "Motivación intrínseca.",
+                    "Habilidades de comunicación verbal."
+                ],
+                correctAnswer: 0
+            },
+            {
+                id: 6,
+                question: "En el ciclo de vida de un equipo (según Tuckman), ¿a qué etapa nos estamos refiriendo si decimos que los miembros son conscientes de que están obligados a entenderse si quieren sacar el proyecto adelante y establecen normas?",
+                options: [
+                    "Inicio (Forming)",
+                    "Conflicto/Enfrentamiento (Storming)",
+                    "Acoplamiento/Normalización (Norming)",
+                    "Desempeño (Performing)"
+                ],
+                correctAnswer: 2
+            },
+            {
+                id: 7,
+                question: "De acuerdo con el modelo de Roles de Belbin, un punto débil del rol IMPLEMENTADOR es:",
+                options: [
+                    "Demasiado obsesionado con los detalles y perfeccionista.",
+                    "Resistente al cambio y poco flexible ante nuevas ideas.",
+                    "Individualista y con dificultades para cooperar.",
+                    "Hipercrítico y puede desmotivar a otros."
+                ],
+                correctAnswer: 1
+            },
+            {
+                id: 8,
+                question: "Según el modelo de Belbin, ¿qué tipo de perfil estará automotivado simplemente por asignarle tareas de su ámbito de trabajo especializado?",
+                options: [
+                    "Monitor-Evaluador",
+                    "Coordinador",
+                    "Especialista",
+                    "Impulsor"
+                ],
+                correctAnswer: 2
+            },
+            {
+                id: 9,
+                question: "El ser un experto técnico en la temática del proyecto le da al director del proyecto principalmente:",
+                options: [
+                    "La capacidad de realizar personalmente las tareas más complejas.",
+                    "Una fuente de poder (poder de experto) que genera confianza en el equipo.",
+                    "Una excusa para no delegar tareas técnicas importantes.",
+                    "La obligación de resolver todos los problemas técnicos del equipo."
+                ],
+                correctAnswer: 1
+            },
+            {
+                id: 10,
+                question: "Según el modelo de Herzberg, ¿cuál de los siguientes aspectos NO es considerado como auténticamente motivante (factor de motivación)?",
+                options: [
+                    "Formación continua para el desarrollo de la carrera profesional.",
+                    "Reconocimiento por la labor efectuada.",
+                    "Buenas condiciones físicas de trabajo y un salario competitivo.",
+                    "Sensación de logro y responsabilidad en el trabajo."
+                ],
+                correctAnswer: 2
+            },
+            {
+                id: 11,
+                question: "De acuerdo con la teoría de las relaciones humanas (estudios de Hawthorne), ¿cuál de las siguientes afirmaciones es correcta?",
+                options: [
+                    "El nivel de rendimiento de un trabajador tiende a ajustarse al de su equipo como parte de su integración.",
+                    "El poder dentro del entorno grupal es la motivación principal en los trabajos colectivos.",
+                    "El rendimiento de un equipo es inversamente proporcional al nivel de las relaciones personales fuera del ambiente de trabajo.",
+                    "La relación personal con los directivos es la fuente principal de motivación para el trabajo en grupo."
+                ],
+                correctAnswer: 0 
+            },
+            {
+                id: 12,
+                question: "Si se pretende motivar por establecimiento de objetivos, estos deben ser:",
+                options: [
+                    "Muchos, Diversos y Medibles.",
+                    "Pocos, Sencillos de alcanzar y Cualitativos.",
+                    "Muchos, Fáciles y Medibles.",
+                    "Pocos, Complicados de alcanzar y Medibles."
+                ],
+                correctAnswer: 3 
+            },
+            {
+                id: 13,
+                question: "De acuerdo con la teoría X/Y de McGregor, si un líder considera que los miembros del equipo son básicamente 'X', el liderazgo deberá ser:",
+                options: [
+                    "Centrado en mejorar la relación personal.",
+                    "Orientado a plantear objetivos y delegar responsabilidades ampliamente.",
+                    "Controlador, supervisando cuidadosamente la ejecución de las tareas para aprovechar toda su capacidad de trabajo.",
+                    "Democrático, permitiendo que el equipo tome todas las decisiones."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 14,
+                question: "La teoría de Hersey del liderazgo situacional propugna que cada estilo de liderazgo se debería adecuar a:",
+                options: [
+                    "Cada persona y mantenerse en el tiempo, para establecer claramente unas pautas de comportamiento que motiven el trabajo.",
+                    "Las distintas situaciones laborales y al clima económico.",
+                    "La evolución profesional y de relación dentro del equipo de cada persona, cambiando a lo largo del tiempo.",
+                    "Las relaciones entre las personas exclusivamente."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 15,
+                question: "Según el modelo de Herzberg, los factores higiénicos, como un salario adecuado, o la buena relación con tu jefe son:",
+                options: [
+                    "La fuente de la verdadera motivación.",
+                    "Elementos que, de faltar, producirían desmotivación.",
+                    "Multiplicadores de la actividad.",
+                    "Relacionados con la pulcritud y el orden."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 16,
+                question: "En el continuo de Tannenbaum, cuando un Director dice 'Tenemos que tomar la decisión por consenso. Si votamos, y queda empate, nos seguimos reuniendo hasta llegar a un consenso, da lo mismo el tiempo que tardemos' ¿Qué estilo de liderazgo está empleando?",
+                options: [
+                    "Liderazgo autocrático",
+                    "Liderazgo participativo (consultivo antes de la decisión del líder)",
+                    "Liderazgo democrático (delegación de la decisión al grupo)",
+                    "Un comportamiento que no se corresponde con un liderazgo adecuado."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 17,
+                question: "¿Cuál de las '5 C's del trabajo en equipo', según Tom Peters, se refiere a que cada miembro aporte habilidades y conocimientos distintos que se suman?",
+                options: ["Confianza", "Coordinación", "Comunicación", "Complementariedad"],
+                correctAnswer: 3
+            },
+            {
+                id: 18,
+                question: "En la teoría de las necesidades de McClelland, ¿qué motivador dominante caracteriza a una persona que quiere controlar e influir sobre los demás y le gusta competir y ganar?",
+                options: ["Logro", "Afiliación", "Poder", "Competencia"],
+                correctAnswer: 2
+            },
+            {
+                id: 19,
+                question: "Según el PMBOK 7, ¿cuál es uno de los principios de la dirección de proyectos relacionado directamente con el equipo?",
+                options: [
+                    "Maximizar el valor sin considerar al equipo.",
+                    "Crear un entorno de equipo colaborativo.",
+                    "Evitar la adaptación y el cambio para mantener la estabilidad.",
+                    "Gestionar los riesgos de forma aislada al equipo."
+                ],
+                correctAnswer: 1
+            },
+            {
+                id: 20,
+                question: "El rol de Belbin 'Cerebro' (CE) es conocido por:",
+                options: [
+                    "Ser práctico y organizado, implementando ideas.",
+                    "Aportar imaginación, creatividad y resolver problemas difíciles.",
+                    "Ser extrovertido y explorar oportunidades externas.",
+                    "Ser meticuloso y asegurar que el trabajo se complete sin errores."
+                ],
+                correctAnswer: 1
+            },
+            {
+                id: 21,
+                question: "Conforme a la teoría MBTI, ¿qué característica de personalidad marca cómo tomamos decisiones?",
+                options: [
+                    "Extroversión (E) - Introversión (I)",
+                    "Sensación (S) - Intuición (N)",
+                    "Pensamiento/Racional (T) - Sentimiento/Emocional (F)",
+                    "Juicio/Calificador (J) - Percepción/Perceptivo (P)"
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 22,
+                question: "¿Cuál de los siguientes NO es un tipo de personalidad válido según la tipología MBTI?",
+                options: [
+                    "INTJ",
+                    "ESFP",
+                    "IRFP", 
+                    "ENFJ"
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 23,
+                question: "En el modelo de Vroom sobre motivación por expectativas, la 'Instrumentalidad' se refiere a:",
+                options: [
+                    "La probabilidad de que el esfuerzo conduzca al rendimiento deseado.",
+                    "El valor que el individuo asigna a la recompensa.",
+                    "La probabilidad de que el rendimiento deseado lleve a una recompensa específica.",
+                    "La equidad percibida en la recompensa."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 24,
+                question: "Según la jerarquía de necesidades de Maslow, ¿cuál de las siguientes necesidades es de orden superior?",
+                options: [
+                    "Fisiológicas (respiración, alimentación)",
+                    "Seguridad (empleo, salud)",
+                    "Afiliación (amistad, afecto)",
+                    "Autorrealización (creatividad, resolución de problemas)"
+                ],
+                correctAnswer: 3 
+            },
+            {
+                id: 25,
+                question: "El estilo de liderazgo 'Visionario' según Hays Group/Goleman se caracteriza por:",
+                options: [
+                    "Crear armonía conectando a las personas entre sí.",
+                    "Desarrollar profesionalmente a los miembros del equipo.",
+                    "Llevar al equipo hacia una visión futura compartida.",
+                    "Exigir que las tareas se realicen con excelencia inmediata."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 26,
+                question: "Una fuente de poder del Director de Proyecto basada en su posición formal en la organización es el poder de:",
+                options: [
+                    "Experto",
+                    "Referencia",
+                    "Legitimidad",
+                    "Información"
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 27,
+                question: "En la Rejilla Gerencial (Managerial Grid) de Blake y Mouton, un líder con alta preocupación por las personas y baja preocupación por la producción (1,9) corresponde al estilo:",
+                options: [
+                    "Empobrecido (Delego y olvido)",
+                    "Club de campo (Paternalista)",
+                    "Punto medio",
+                    "Autocrático (Orientado a la tarea)"
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 28,
+                question: "Una competencia clave del liderazgo del DP como 'Paraguas' implica:",
+                options: [
+                    "Tener objetivos claros y comunicarlos eficazmente.",
+                    "Ser proactivo y tomar la iniciativa.",
+                    "Proteger al equipo de interferencias externas y asumir responsabilidades por los fallos.",
+                    "Ser optimista y transmitir confianza."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 29,
+                question: "¿Qué es el 'feedback' en el proceso de comunicación?",
+                options: [
+                    "El mensaje original enviado por el emisor.",
+                    "El canal utilizado para transmitir el mensaje.",
+                    "La respuesta del receptor que indica cómo ha comprendido el mensaje.",
+                    "El ruido que interfiere con la comunicación."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 30,
+                question: "Según Katzenbach y Smith, un equipo se define como un pequeño número de personas con habilidades complementarias comprometidas con un propósito común, metas de desempeño y un enfoque por el cual se consideran mutuamente responsables. ¿Verdadero o Falso?",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correctAnswer: 0 
+            },
+            {
+                id: 31,
+                question: "El rol de Belbin 'Investigador de Recursos' (IR) se caracteriza por ser:",
+                options: [
+                    "Introvertido y analítico, enfocado en los detalles internos.",
+                    "Extrovertido, entusiasta y bueno para hacer contactos externos.",
+                    "Crítico y objetivo, evaluando todas las opciones con lógica.",
+                    "Disciplinado y práctico, convirtiendo ideas en acciones."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 32,
+                question: "En la teoría MBTI, la dicotomía 'Sensing (S) - iNtuiting (N)' describe cómo una persona:",
+                options: [
+                    "Dirige su energía.",
+                    "Procesa la información y percibe el mundo.",
+                    "Toma decisiones.",
+                    "Se orienta hacia el mundo exterior (estilo de vida)."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 33,
+                question: "Según la teoría de la equidad de Adams, la motivación de un empleado se ve afectada por:",
+                options: [
+                    "La cantidad absoluta de recompensa recibida.",
+                    "Únicamente sus necesidades internas no satisfechas.",
+                    "La comparación entre su ratio de aportaciones/resultados y el de otros referentes.",
+                    "El carisma del líder exclusivamente."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 34,
+                question: "El 'efecto teléfono' en la comunicación se refiere a:",
+                options: [
+                    "La mejora de la comunicación gracias a la tecnología.",
+                    "La distorsión de la información a medida que pasa por varios intermediarios.",
+                    "La comunicación exclusiva a través de llamadas telefónicas.",
+                    "Un método para asegurar que todos los miembros del equipo reciban la misma información."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 35,
+                question: "En el 'Chaos Report', ¿qué factor se considera crucial para el éxito de los proyectos y está relacionado con las habilidades interpersonales del equipo?",
+                options: [
+                    "Herramientas y infraestructura",
+                    "Madurez emocional (Emotional maturity)",
+                    "Planificación detallada exclusivamente",
+                    "Presupuesto ilimitado"
+                ],
+                correctAnswer: 1 
+            },
+             {
+                id: 36,
+                question: "El rol de Belbin 'Monitor-Evaluador' (ME) es fuerte en:",
+                options: [
+                    "Generar ideas nuevas y originales.",
+                    "Organizar el trabajo práctico y la implementación.",
+                    "Analizar problemas, evaluar ideas y sopesar pros y contras objetivamente.",
+                    "Mantener la cohesión del equipo y resolver conflictos interpersonales."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 37,
+                question: "La Teoría Y de McGregor supone que los empleados:",
+                options: [
+                    "Evitan el trabajo y la responsabilidad siempre que pueden.",
+                    "Necesitan ser controlados y dirigidos de cerca.",
+                    "Encuentran el trabajo tan natural como el juego y buscan responsabilidades.",
+                    "Solo se motivan por el dinero y la seguridad."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 38,
+                question: "Un líder que se centra en 'empoderar' a un miembro del equipo que es 'Capaz pero Desmotivado o Inseguro' (M3), según Hersey y Blanchard, usaría un estilo de liderazgo predominantemente:",
+                options: [
+                    "Directivo (Decir)",
+                    "Entrenador (Persuadir)",
+                    "Participativo (Participar/Apoyar)",
+                    "Delegador (Delegar)"
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 39,
+                question: "La comunicación no verbal, como el lenguaje corporal y las expresiones faciales, representa en la comunicación interpersonal:",
+                options: [
+                    "Un porcentaje minoritario del mensaje total.",
+                    "Un porcentaje significativo, a menudo mayor que las palabras.",
+                    "Algo irrelevante si el mensaje verbal es claro.",
+                    "Solo importante en culturas específicas."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 40,
+                question: "La etapa de 'Agotamiento' en el ciclo de vida de un proyecto se caracteriza por:",
+                options: [
+                    "Máximo optimismo e ilusión por el proyecto.",
+                    "Consolidación de normas y alta productividad del equipo.",
+                    "Pérdida de ilusión, posible caída del rendimiento y cierre del proyecto.",
+                    "Primeras dificultades y conflictos entre los miembros."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 41,
+                question: "El rol de Belbin 'Cohesionador' (CH) es fundamental para:",
+                options: [
+                    "Impulsar al equipo hacia la acción y el cumplimiento de plazos.",
+                    "Asegurar que todos los detalles se completen y el trabajo sea perfecto.",
+                    "Mantener la armonía del equipo, fomentar la cooperación y resolver tensiones.",
+                    "Aportar conocimientos técnicos especializados."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 42,
+                question: "Un líder con un estilo 'Autocrático', según el continuo de Tannenbaum:",
+                options: [
+                    "Delega la mayor parte de las decisiones en el equipo.",
+                    "Consulta al equipo antes de tomar una decisión, pero la decisión final es suya.",
+                    "Toma las decisiones unilateralmente y las comunica al equipo.",
+                    "Permite al equipo funcionar con total autonomía."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 43,
+                question: "¿Cuál es una característica de los equipos de alto desempeño según la 'Curva de Desempeño del Equipo'?",
+                options: [
+                    "Evitan cualquier tipo de conflicto o desacuerdo.",
+                    "Sus miembros trabajan de forma aislada y se centran solo en sus tareas individuales.",
+                    "Superan los resultados de un grupo de trabajo y de un equipo potencial, con un fuerte compromiso mutuo.",
+                    "Dependen exclusivamente de un líder fuerte que toma todas las decisiones."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 44,
+                question: "En el modelo de Herzberg, el 'trabajo en sí mismo' es considerado un:",
+                options: [
+                    "Factor higiénico.",
+                    "Factor motivador.",
+                    "Factor neutro.",
+                    "Factor de insatisfacción si es muy complejo."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 45,
+                question: "Una de las principales dificultades de un Director de Proyecto junior que ha sido ascendido desde un puesto técnico es:",
+                options: [
+                    "Tener demasiado tiempo libre y pocas responsabilidades.",
+                    "No tener suficientes conocimientos técnicos para el nuevo rol.",
+                    "Permitir que otros hagan las cosas a su modo y evitar hacer él mismo las tareas técnicas.",
+                    "La falta de apoyo por parte de la alta dirección."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 46,
+                question: "El 'Principio de Peter' sugiere que en una jerarquía:",
+                options: [
+                    "Las personas más competentes son siempre promocionadas a los puestos más altos.",
+                    "Los empleados tienden a ascender hasta alcanzar su nivel de incompetencia.",
+                    "La competencia se mide por la capacidad de seguir órdenes sin cuestionar.",
+                    "Las promociones deben basarse exclusivamente en la antigüedad."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 47,
+                question: "La 'Inteligencia Emocional' en un líder implica, entre otras cosas:",
+                options: [
+                    "Suprimir todas las emociones para parecer más profesional.",
+                    "Ser capaz de reconocer y gestionar las propias emociones y las de los demás.",
+                    "Tener un coeficiente intelectual muy alto.",
+                    "Ser extrovertido y muy hablador en todas las situaciones."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 48,
+                question: "El 'Liderazgo Transformacional' se enfoca en:",
+                options: [
+                    "Mantener el status quo y asegurar que se sigan los procedimientos.",
+                    "Intercambiar recompensas por desempeño (transacciones).",
+                    "Inspirar y motivar a los seguidores para que superen sus propios intereses por el bien del equipo o la organización.",
+                    "Resolver problemas técnicos complejos de forma individual."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 49,
+                question: "En la comunicación, ¿qué significa 'codificación'?",
+                options: [
+                    "La interpretación del mensaje por parte del receptor.",
+                    "La traducción de los pensamientos e ideas del emisor en un mensaje transmisible (palabras, gestos, etc.).",
+                    "La elección del canal de comunicación.",
+                    "La eliminación de barreras o ruidos en la comunicación."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 50,
+                question: "Uno de los 'rasgos deseables del líder' mencionado en los apuntes es la 'Autoconfianza'. Esto implica:",
+                options: [
+                    "Ser arrogante y no escuchar las opiniones de los demás.",
+                    "No dudar nunca y creer que siempre se tiene la razón.",
+                    "Tener seguridad en las propias capacidades y criterio, lo que permite defender ideas y no desconcentrarse fácilmente.",
+                    "Evitar cualquier situación de riesgo o desafío."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 51,
+                question: "Según el PMBOK7, el principio de 'Stewardship' (ser un gestor diligente, respetuoso y cuidadoso) implica:",
+                options: [
+                    "Priorizar los beneficios económicos a corto plazo por encima de todo.",
+                    "Actuar con responsabilidad para gestionar los recursos del proyecto de manera ética y eficiente, cuidando los intereses de los stakeholders.",
+                    "Delegar todas las responsabilidades en el equipo sin supervisión.",
+                    "Seguir estrictamente el plan original sin adaptarse a los cambios."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 52,
+                question: "El rol de Belbin 'Impulsor' (IS) es típicamente:",
+                options: [
+                    "Calmado, diplomático y evita la confrontación.",
+                    "Analítico, objetivo y prefiere trabajar solo.",
+                    "Dinámico, desafiante y orientado a la acción, aunque puede ser provocativo.",
+                    "Creativo, imaginativo y a menudo absorto en sus pensamientos."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 53,
+                question: "En la teoría MBTI, las personas con preferencia por 'Judging' (J) tienden a:",
+                options: [
+                    "Preferir la flexibilidad y dejar las opciones abiertas el mayor tiempo posible.",
+                    "Ser espontáneas y adaptarse fácilmente a los cambios de planes.",
+                    "Preferir un estilo de vida planificado, ordenado y tomar decisiones con prontitud.",
+                    "Disfrutar más del proceso que del resultado final."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 54,
+                question: "La 'motivación intrínseca' surge de:",
+                options: [
+                    "Recompensas externas como bonos o aumentos salariales.",
+                    "La presión de los compañeros o del jefe.",
+                    "El placer o satisfacción derivados de realizar la actividad en sí misma.",
+                    "El miedo a las consecuencias negativas si no se realiza la tarea."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 55,
+                question: "Una de las funciones del Director de Proyecto es ser un 'Facilitador'. Esto implica:",
+                options: [
+                    "Tomar todas las decisiones importantes del equipo.",
+                    "Eliminar obstáculos, promover la colaboración y ayudar al equipo a alcanzar sus objetivos.",
+                    "Controlar cada detalle del trabajo de los miembros del equipo.",
+                    "Imponer su punto de vista en todas las discusiones."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 56,
+                question: "¿Cuál de estos NO es un estilo de liderazgo según el modelo de Hays Group/Goleman?",
+                options: [
+                    "Visionario",
+                    "Afiliativo",
+                    "Transaccional", 
+                    "Coaching"
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 57,
+                question: "El concepto de 'KITA' (Kick In The A**) de Herzberg se refiere a:",
+                options: [
+                    "Una forma efectiva de motivación a largo plazo.",
+                    "Estímulos (positivos o negativos) que buscan un movimiento o acción, pero no necesariamente motivación genuina.",
+                    "Factores que siempre aumentan la satisfacción laboral.",
+                    "Un tipo de reconocimiento altamente valorado por los empleados."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 58,
+                question: "El 'aprendizaje por experiencia activa' (Kolb) implica un ciclo de:",
+                options: [
+                    "Solo estudio teórico y memorización.",
+                    "Experiencia concreta, observación reflexiva, conceptualización abstracta y experimentación activa.",
+                    "Únicamente la repetición de tareas hasta la perfección.",
+                    "Seguir instrucciones sin cuestionar y evitar errores."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 59,
+                question: "Un aspecto importante para mejorar la comunicación en un equipo es 'respetar al equipo'. Esto significa:",
+                options: [
+                    "Evitar dar feedback negativo para no herir sensibilidades.",
+                    "Transmitir que se está escuchando y que las dudas o preocupaciones son importantes.",
+                    "Dejar que el equipo resuelva todos sus problemas sin intervención del líder.",
+                    "Comunicarse solo a través de canales formales y escritos."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 60,
+                question: "El rol de Belbin 'Finalizador' (FI) tiene como punto fuerte:",
+                options: [
+                    "Generar muchas ideas nuevas y creativas.",
+                    "Establecer contactos externos y traer recursos.",
+                    "Asegurar que el trabajo se complete con atención al detalle, buscando la perfección y cumpliendo plazos.",
+                    "Coordinar al equipo y delegar tareas eficazmente."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 61,
+                question: "Según el estudio de Google (Proyecto Aristotle), ¿cuál fue uno de los factores MÁS importantes para la efectividad de un equipo?",
+                options: [
+                    "La ubicación conjunta de todos los miembros.",
+                    "El nivel de inteligencia individual de los miembros.",
+                    "La seguridad psicológica dentro del equipo.",
+                    "La cantidad de reuniones semanales."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 62,
+                question: "En MBTI, una persona con preferencia 'Introvertida (I)' típicamente:",
+                options: [
+                    "Obtiene energía al estar con mucha gente.",
+                    "Piensa antes de actuar y prefiere la reflexión.",
+                    "Disfruta siendo el centro de atención.",
+                    "Habla más de lo que escucha."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 63,
+                question: "El poder de 'Referencia' de un líder se basa en:",
+                options: [
+                    "Su capacidad para castigar o recompensar.",
+                    "Sus conocimientos técnicos o habilidades especiales.",
+                    "Su posición formal en la jerarquía de la organización.",
+                    "El carisma, respeto y admiración que inspira en los demás."
+                ],
+                correctAnswer: 3 
+            },
+            {
+                id: 64,
+                question: "El estilo de liderazgo 'Pace Setting' (Marcapasos) de Goleman, si se usa en exceso, puede:",
+                options: [
+                    "Mejorar siempre la moral del equipo.",
+                    "Fomentar la creatividad y la innovación a largo plazo.",
+                    "Desmotivar al equipo y crear un ambiente de alta presión si no se maneja bien.",
+                    "Ser ideal para desarrollar las habilidades de los miembros del equipo."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 65,
+                question: "Una 'comunicación eficaz' requiere que el receptor:",
+                options: [
+                    "Ignore cualquier ruido o distracción.",
+                    "Decodifique el mensaje tal como el emisor pretendía.",
+                    "Responda inmediatamente sin pensar.",
+                    "Esté de acuerdo con el mensaje del emisor."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 66,
+                question: "El rol de Belbin 'Coordinador' (CO) es efectivo si:",
+                options: [
+                    "Es el más creativo del equipo y aporta ideas disruptivas.",
+                    "Es maduro, seguro de sí mismo, clarifica objetivos y delega bien, sin ser manipulador.",
+                    "Se enfoca exclusivamente en los detalles técnicos del proyecto.",
+                    "Impone su autoridad y toma todas las decisiones importantes."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 67,
+                question: "La 'Valencia' en el modelo de expectativas de Vroom se refiere a:",
+                options: [
+                    "La creencia de que el esfuerzo llevará a un buen desempeño.",
+                    "La creencia de que un buen desempeño será recompensado.",
+                    "La importancia o el atractivo que el individuo atribuye a la posible recompensa.",
+                    "El nivel de habilidad del individuo para realizar la tarea."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 68,
+                question: "Para la formación efectiva de equipos, es crucial:",
+                options: [
+                    "Seleccionar miembros con personalidades y roles idénticos.",
+                    "Definir claramente los cometidos, objetivos y la posición del equipo en la organización.",
+                    "Evitar cualquier tipo de comunicación informal.",
+                    "Nombrar múltiples jefes de equipo para distribuir el poder."
+                ],
+                correctAnswer: 1 
+            },
+            {
+                id: 69,
+                question: "El enfoque conductista en la motivación (refuerzo, extinción, castigo) sugiere que:",
+                options: [
+                    "Las necesidades internas son el único motor de la conducta.",
+                    "El castigo es la forma más efectiva de cambiar el comportamiento a largo plazo.",
+                    "Las consecuencias de una conducta (refuerzos o castigos) influyen en su repetición futura.",
+                    "La motivación es un rasgo fijo de la personalidad que no puede ser influenciado."
+                ],
+                correctAnswer: 2 
+            },
+            {
+                id: 70,
+                question: "Un líder que adopta el rol de 'Entrenador' (Coach) se enfoca principalmente en:",
+                options: [
+                    "Dar órdenes directas y controlar la ejecución de tareas.",
+                    "El desarrollo profesional y personal de los miembros del equipo, ayudándoles a mejorar sus habilidades.",
+                    "Crear un ambiente socialmente agradable y evitar conflictos a toda costa.",
+                    "Establecer metas muy ambiciosas y presionar para su consecución."
+                ],
+                correctAnswer: 1 
+            },
+            // Preguntas 71-100
+            {
+                id: 71,
+                question: "En el modelo de motivación mediante estímulos de Vroom aplicada al entorno de trabajo, la eficacia de la realimentación (feedback) depende de que:",
+                options: [
+                    "Sea altamente probable que el esfuerzo realizado se transforme en el resultado deseado (Expectativa).",
+                    "La recompensa se adecue a las necesidades del trabajador (Valencia).",
+                    "La probabilidad de que se obtenga la recompensa en caso de realizar bien la tarea sea elevada (Instrumentalidad).",
+                    "Todas las anteriores son correctas, ya que el feedback incide en la percepción de estos tres componentes."
+                ],
+                correctAnswer: 3 // Basado en "Examenes de gestión de equipos de trabajo.pdf", página 5, Q18.
+            },
+            {
+                id: 72,
+                question: "Un rasgo deseable del líder, según los apuntes, debería ser:",
+                options: [
+                    "Desconfianza preventiva hacia el equipo.",
+                    "Orgullo excesivo de su propia experiencia, minimizando la de otros.",
+                    "Autoconfianza, basada en un conocimiento realista de sus capacidades.",
+                    "Todas las anteriores."
+                ],
+                correctAnswer: 2 // Basado en "Examenes de gestión de equipos de trabajo.pdf", página 7, Q13.
+            },
+            {
+                id: 73,
+                question: "De acuerdo con el modelo de Roles de Belbin, un punto débil del rol 'Cerebro' (CE) es:",
+                options: [
+                    "Ser demasiado obsesionado con los detalles y el orden.",
+                    "Ser resistente al cambio y a nuevas ideas.",
+                    "Ser individualista y a veces tener dificultades para comunicar sus ideas eficazmente.",
+                    "Ser hipercrítico y desmotivar al equipo."
+                ],
+                correctAnswer: 2 // Basado en "Examenes de gestión de equipos de trabajo.pdf", página 8, Q3. (Opciones adaptadas ligeramente para claridad)
+            },
+            {
+                id: 74,
+                question: "La 'delegación efectiva' implica que el líder:",
+                options: [
+                    "Asigna tareas sin proporcionar la autoridad necesaria para llevarlas a cabo.",
+                    "Se desentiende completamente de la tarea una vez delegada.",
+                    "Asigna responsabilidad y autoridad, proporciona apoyo y realiza seguimiento.",
+                    "Solo delega tareas rutinarias y sin importancia."
+                ],
+                correctAnswer: 2 // Principio general de liderazgo y gestión de equipos.
+            },
+            {
+                id: 75,
+                question: "¿Qué es un 'pseudoequipo' según la curva de desempeño del equipo?",
+                options: [
+                    "Un equipo que ha alcanzado el máximo nivel de rendimiento.",
+                    "Un grupo de personas que podrían tener un mejor desempeño si trabajaran juntas, pero no lo hacen.",
+                    "Un grupo que se autodenomina equipo pero no tiene un propósito común ni responsabilidad mutua.",
+                    "Un equipo en su fase inicial de formación."
+                ],
+                correctAnswer: 2 // PDF "Comunicación y desarrollo de equipos", página 16.
+            },
+            {
+                id: 76,
+                question: "En MBTI, la preferencia 'Feeling (F)' para tomar decisiones se basa en:",
+                options: [
+                    "Análisis lógico y principios objetivos.",
+                    "Valores personales, el impacto en las personas y la búsqueda de armonía.",
+                    "Hechos concretos y experiencia pasada.",
+                    "Intuición y posibilidades futuras."
+                ],
+                correctAnswer: 1 // PDF "Roles y personalidad", página 23.
+            },
+            {
+                id: 77,
+                question: "El liderazgo 'Servant First' (primero servidor), según Greenleaf, se diferencia del 'Leader First' (primero líder) en que:",
+                options: [
+                    "El 'Servant First' busca primero el poder y luego servir.",
+                    "El 'Leader First' siempre es más efectivo.",
+                    "El 'Servant First' tiene una motivación principal de servir a los demás, y el liderazgo surge de esa vocación.",
+                    "No hay diferencias significativas entre ambos."
+                ],
+                correctAnswer: 2 // PDF "Liderazgo 2 Estilos", página 20.
+            },
+            {
+                id: 78,
+                question: "Una de las desventajas de pasar a ser Director de Proyecto desde un puesto técnico puede ser:",
+                options: [
+                    "Tener un trabajo menos variado y más monótono.",
+                    "Menor sensación de logro personal.",
+                    "Desconectarse de la disciplina técnica específica que se dominaba.",
+                    "Menos responsabilidad y más autoridad."
+                ],
+                correctAnswer: 2 // PDF "2025 Liderazgo 1. El rol del DP", página 13.
+            },
+            {
+                id: 79,
+                question: "Según la encuesta de Opinion Research Corporation citada, ¿cuál es el valor MÁS importante para el liderazgo?",
+                options: [
+                    "Conocimiento técnico.",
+                    "Ética y moral.",
+                    "Liderar con el ejemplo.",
+                    "Reconocimiento de la labor del equipo."
+                ],
+                correctAnswer: 2 // PDF "Liderazgo 3 Rasgos", página 17 (Liderar con el ejemplo 26%).
+            },
+            {
+                id: 80,
+                question: "El 'ruido' en el proceso de comunicación se refiere a:",
+                options: [
+                    "El volumen alto del mensaje.",
+                    "Cualquier interferencia que distorsiona el mensaje o impide su correcta recepción.",
+                    "La retroalimentación negativa del receptor.",
+                    "Un canal de comunicación informal."
+                ],
+                correctAnswer: 1 // PDF "Comunicación y desarrollo de equipos", página 6.
+            },
+            {
+                id: 81,
+                question: "La etapa de 'Madurez' (Performing) en el desarrollo de equipos se caracteriza por:",
+                options: [
+                    "Altos niveles de conflicto y confusión sobre los roles.",
+                    "Optimismo inicial y dependencia del líder.",
+                    "El equipo está acoplado, controla el trabajo, sus miembros han aprendido a trabajar juntos y es muy productivo.",
+                    "Pérdida de ilusión y disolución del equipo."
+                ],
+                correctAnswer: 2 // PDF "Comunicación y desarrollo de equipos", página 17.
+            },
+            {
+                id: 82,
+                question: "Un líder que es 'Racionalmente apasionado' (rasgo de liderazgo):",
+                options: [
+                    "Siempre mantiene la calma y nunca muestra emociones.",
+                    "Se deja llevar por sus emociones sin control.",
+                    "Defiende con ardor sus propuestas pero escucha argumentos contrarios, mostrando implicación emocional controlada.",
+                    "Evita cualquier tipo de debate o confrontación de ideas."
+                ],
+                correctAnswer: 2 // PDF "Liderazgo 3 Rasgos", página 10.
+            },
+            {
+                id: 83,
+                question: "En MBTI, las personas con preferencia 'Perceiving (P)' suelen:",
+                options: [
+                    "Preferir tener todo planificado y estructurado.",
+                    "Tomar decisiones rápidamente para cerrar temas.",
+                    "Ser flexibles, espontáneas y disfrutar dejando opciones abiertas.",
+                    "Orientarse fuertemente a cumplir plazos estrictos."
+                ],
+                correctAnswer: 2 // PDF "Roles y personalidad", página 24.
+            },
+            {
+                id: 84,
+                question: "El concepto de 'Extinción' en el enfoque conductista de la motivación implica:",
+                options: [
+                    "Castigar una conducta no deseada para eliminarla.",
+                    "Recompensar una conducta deseada para que se repita.",
+                    "Eliminar el refuerzo que mantenía una conducta, con el objetivo de que esta disminuya o desaparezca.",
+                    "Ignorar por completo al empleado."
+                ],
+                correctAnswer: 2 // PDF "Liderazgo 4 Motivacion", página 17.
+            },
+            {
+                id: 85,
+                question: "Para un Director de Proyecto, 'gestionar lo complejo' se diferencia de 'liderar el cambio' en que lo primero se enfoca más en:",
+                options: [
+                    "Definir la visión y motivar a las personas.",
+                    "Planificar, organizar y controlar los aspectos técnicos y operativos.",
+                    "Fomentar la creatividad y la innovación radical.",
+                    "Desarrollar oportunidades a largo plazo."
+                ],
+                correctAnswer: 1 // PDF "2025 Liderazgo 1. El rol del DP", página 6 (Tabla comparativa).
+            },
+            {
+                id: 86,
+                question: "El rol de Belbin 'Especialista' (ES) aporta al equipo:",
+                options: [
+                    "Habilidades sociales para mantener la cohesión.",
+                    "Una visión estratégica y objetiva de las propuestas.",
+                    "Conocimientos y habilidades técnicas profundas en un área específica.",
+                    "Energía y empuje para superar obstáculos."
+                ],
+                correctAnswer: 2 // PDF "Roles y personalidad", página 16.
+            },
+            {
+                id: 87,
+                question: "Una de las 'Core practices' para la efectividad del equipo según McKinsey es 'Frequent retrospectives'. Esto implica:",
+                options: [
+                    "Reuniones diarias de seguimiento de tareas.",
+                    "Evaluar el desempeño individual de cada miembro al final del proyecto.",
+                    "Reflexionar periódicamente sobre lo que funciona y lo que no en el equipo, fomentando la mejora continua.",
+                    "Establecer objetivos muy detallados al inicio y no desviarse de ellos."
+                ],
+                correctAnswer: 2 // PDF "Introducción curso (3).pdf", página 21.
+            },
+            {
+                id: 88,
+                question: "La 'Teoría de los Grandes Eventos' sobre el liderazgo sugiere que:",
+                options: [
+                    "Los líderes nacen con cualidades innatas que no se pueden aprender.",
+                    "El liderazgo se desarrolla a través de la formación y el estudio.",
+                    "Las personas pueden desarrollar habilidades de liderazgo al enfrentar y superar situaciones críticas o desafíos importantes.",
+                    "El liderazgo depende exclusivamente del carisma personal."
+                ],
+                correctAnswer: 2 // PDF "2025 Liderazgo 1. El rol del DP", página 18-19.
+            },
+            {
+                id: 89,
+                question: "Según Alderfer, las necesidades de 'Existencia' (Existence) se corresponden en la pirámide de Maslow principalmente con las necesidades:",
+                options: [
+                    "De autorrealización.",
+                    "De reconocimiento y estima.",
+                    "Sociales o de afiliación.",
+                    "Fisiológicas y de seguridad."
+                ],
+                correctAnswer: 3 // PDF "Liderazgo 4 Motivacion", página 7.
+            },
+            {
+                id: 90,
+                question: "Si un Director de Proyecto no quiere encargar tareas inútiles a su equipo, ¿qué consejo sobre motivación estaría aplicando?",
+                options: [
+                    "Explicar claramente qué hay que hacer y retroalimentar.",
+                    "Permanecer accesible y hacer sentir importante al equipo.",
+                    "No encargar tareas no necesarias o inútiles.",
+                    "Preocuparse del desarrollo profesional."
+                ],
+                correctAnswer: 2 // PDF "Liderazgo 4 Motivacion", página 22.
+            },
+            {
+                id: 91,
+                question: "Un líder con un estilo 'Afiliativo' (Goleman) se centra en:",
+                options: [
+                    "Establecer una visión clara y movilizar al equipo hacia ella.",
+                    "Crear armonía, fomentar la conexión emocional entre las personas y construir lazos.",
+                    "Exigir la excelencia y marcar un ritmo de trabajo alto.",
+                    "Dar órdenes directas y esperar cumplimiento inmediato."
+                ],
+                correctAnswer: 1 // PDF "Liderazgo 2 Estilos", página 19.
+            },
+            {
+                id: 92,
+                question: "En el contexto del MBTI, ¿cuál de las siguientes afirmaciones sobre los 'Profesionales de SI (Sistemas de Información)' es mencionada en los apuntes?",
+                options: [
+                    "Predominan los perfiles Extrovertidos (E) y Emocionales (F).",
+                    "Hay una mayor proporción de perfiles Introvertidos (I) y Racionales (T) en comparación con la población general.",
+                    "Los perfiles Sensitivos (S) son más comunes que los Intuitivos (N) en esta profesión.",
+                    "No hay diferencias significativas en la distribución de perfiles MBTI respecto a la población general."
+                ],
+                correctAnswer: 1 // PDF "Roles y personalidad", página 26.
+            },
+            {
+                id: 93,
+                question: "El poder de 'Sanciones' (o coercitivo) se basa en:",
+                options: [
+                    "La capacidad de ofrecer recompensas atractivas.",
+                    "El conocimiento especializado del líder.",
+                    "La capacidad de imponer castigos o consecuencias negativas.",
+                    "La admiración que los seguidores sienten por el líder."
+                ],
+                correctAnswer: 2 // PDF "Liderazgo 2 Estilos", página 3.
+            },
+            {
+                id: 94,
+                question: "La 'claridad en las responsabilidades' es un factor para mejorar la comunicación porque:",
+                options: [
+                    "Permite que todos los miembros opinen sobre todas las tareas.",
+                    "Evita la necesidad de reuniones de equipo.",
+                    "Asegura que cada miembro sepa a quién dirigirse ante un problema o para una aclaración.",
+                    "Fomenta la competencia interna entre los miembros del equipo."
+                ],
+                correctAnswer: 2 // PDF "Comunicación y desarrollo de equipos", página 11.
+            },
+            {
+                id: 95,
+                question: "Un líder que se considera 'Proactivo' (rasgo de liderazgo):",
+                options: [
+                    "Espera a que surjan los problemas para actuar.",
+                    "Es enérgico, toma la iniciativa, realiza propuestas y moviliza al equipo.",
+                    "Delega todas las decisiones y responsabilidades.",
+                    "Se enfoca únicamente en mantener el status quo."
+                ],
+                correctAnswer: 1 // PDF "Liderazgo 3 Rasgos", página 7.
+            },
+            {
+                id: 96,
+                question: "En el modelo de Hersey y Blanchard, un miembro del equipo que es 'Incapaz y Desmotivado o Inseguro' (M1) requiere un estilo de liderazgo:",
+                options: [
+                    "Delegador (bajo apoyo, baja dirección).",
+                    "Participativo (alto apoyo, baja dirección).",
+                    "Entrenador (alto apoyo, alta dirección).",
+                    "Directivo (bajo apoyo, alta dirección)."
+                ],
+                correctAnswer: 3 // PDF "Liderazgo 2 Estilos", páginas 16-17 (M1 corresponde a E1 - Mandar/Decir, que es Alta Dirección y Bajo Apoyo en la gráfica clásica, o S1 Directing en la otra gráfica).
+            },
+            {
+                id: 97,
+                question: "La 'modestia' como rasgo de un líder implica:",
+                options: [
+                    "Falta de confianza en las propias capacidades.",
+                    "Evitar cualquier tipo de reconocimiento por los logros.",
+                    "Reconocer las propias limitaciones, aprender de otros (incluso de menor rango) y no buscar esfuerzos heroicos innecesarios.",
+                    "Ser sumiso y no defender las propias ideas."
+                ],
+                correctAnswer: 2 // PDF "Liderazgo 3 Rasgos", página 12.
+            },
+            {
+                id: 98,
+                question: "¿Qué es un 'stakeholder' en el contexto de un proyecto?",
+                options: [
+                    "Únicamente los miembros del equipo del proyecto.",
+                    "Solo los clientes o usuarios finales del proyecto.",
+                    "Cualquier individuo, grupo u organización que pueda afectar, ser afectado o percibirse a sí mismo como afectado por una decisión, actividad o resultado de un proyecto.",
+                    "Los accionistas de la empresa que financia el proyecto."
+                ],
+                correctAnswer: 2 // Concepto fundamental en gestión de proyectos, PMBOK.
+            },
+            {
+                id: 99,
+                question: "Una de las '5 C's' de Tom Peters es 'Compromiso'. Esto se refiere a:",
+                options: [
+                    "La obligación contractual de los miembros del equipo.",
+                    "La implicación y dedicación de los miembros con los objetivos del equipo y del proyecto.",
+                    "La necesidad de que todos los miembros piensen igual.",
+                    "La promesa de recompensas económicas al finalizar el proyecto."
+                ],
+                correctAnswer: 1 // PDF "Introducción curso (3).pdf", página 14.
+            },
+            {
+                id: 100,
+                question: "El 'Liderazgo Ético' se caracteriza por:",
+                options: [
+                    "Lograr los objetivos a cualquier costo.",
+                    "Tomar decisiones basadas únicamente en la rentabilidad económica.",
+                    "Actuar con integridad, justicia y respeto, promoviendo una conducta moral en el equipo y la organización.",
+                    "Seguir ciegamente las normas, incluso si son injustas."
+                ],
+                correctAnswer: 2 // Concepto general de liderazgo, y mencionado como un valor importante en "Liderazgo 3 Rasgos", página 17 (Ética y moral 19%).
             }
-            return array;
-        }
+            // --- FIN DE LA SECCIÓN DE PREGUNTAS ---
+        ];
 
-        function generateInitialQuestions() { // Renombrado de generateDetailedQuestions
-            const baseQuestions = [
-                // Rol del DP (5 preguntas)
-                {
-                    pregunta: "¿Cuál es una labor fundamental del DP relacionada con la supervisión y el cumplimiento de normas?",
-                    opciones: ["Policía (supervisor)", "Facilitador de recursos", "Entrenador técnico", "Negociador con stakeholders externos"],
-                    respuestaCorrecta: 0, tema: "Rol del DP"
-                },
-                {
-                    pregunta: "Según la distinción clásica, un líder se enfoca principalmente en:",
-                    opciones: ["Hacer las cosas correctas (eficacia)", "Hacer las cosas bien (eficiencia)", "Administrar los recursos existentes", "Controlar los procesos del sistema"],
-                    respuestaCorrecta: 0, tema: "Rol del DP"
-                },
-                {
-                    pregunta: "El PMI, en sus principios de gestión de proyectos, destaca que el liderazgo:",
-                    opciones: ["Puede ser demostrado por cualquier miembro del equipo", "Es una cualidad exclusiva del Director de Proyecto", "Se basa únicamente en la autoridad formal", "No necesita adaptarse a la situación"],
-                    respuestaCorrecta: 0, tema: "Rol del DP"
-                },
-                {
-                    pregunta: "La transición de un rol técnico a Director de Proyecto a menudo implica:",
-                    opciones: ["Menor involucramiento técnico directo y más gestión de personas", "Mayor especialización en una única área técnica", "Reducción de la responsabilidad general", "Menos necesidad de habilidades de comunicación"],
-                    respuestaCorrecta: 0, tema: "Rol del DP"
-                },
-                 {
-                    pregunta: "¿Cuál de las siguientes NO es una labor típica de un Director de Proyecto?",
-                    opciones: ["Ejecutar personalmente todas las tareas técnicas críticas", "Planificar el alcance y cronograma del proyecto", "Gestionar la comunicación con los interesados", "Resolver conflictos dentro del equipo"],
-                    respuestaCorrecta: 0, tema: "Rol del DP"
-                },
-                // Estilos de Liderazgo (7 preguntas)
-                {
-                    pregunta: "En el Continuo de Tannenbaum, un estilo donde el líder presenta el problema, recibe sugerencias y toma la decisión es más cercano a:",
-                    opciones: ["Participativo", "Autocrático puro", "Democrático puro (laissez-faire)", "Consultivo extremo, cediendo la decisión final"],
-                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
-                },
-                {
-                    pregunta: "La Teoría Y de McGregor asume que los empleados:",
-                    opciones: ["Encuentran el trabajo tan natural como el juego o el descanso", "Necesitan ser coaccionados y controlados para esforzarse", "Evitan la responsabilidad siempre que pueden", "Tienen relativamente poca ambición"],
-                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
-                },
-                {
-                    pregunta: "En la Rejilla Gerencial (Grid Gerencial) de Blake y Mouton, el estilo (9,9) representa un alto interés en:",
-                    opciones: ["Tanto en las personas como en la producción/tarea", "Principalmente en las personas, bajo en la tarea", "Principalmente en la tarea, bajo en las personas", "Bajo interés en ambos, personas y tarea"],
-                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
-                },
-                {
-                    pregunta: "Según Hersey y Blanchard, para un colaborador con madurez M1 (incapaz y no dispuesto/inseguro), el estilo de liderazgo más adecuado es:",
-                    opciones: ["E1 - Dirigir (alta tarea, baja relación)", "E2 - Persuadir (alta tarea, alta relación)", "E3 - Participar (baja tarea, alta relación)", "E4 - Delegar (baja tarea, baja relación)"],
-                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
-                },
-                {
-                    pregunta: "El estilo de liderazgo 'Coaching' según Goleman se centra en:",
-                    opciones: ["El desarrollo profesional a largo plazo de los miembros del equipo", "Establecer un ritmo de trabajo muy exigente", "Crear armonía y lazos emocionales", "Movilizar al equipo hacia una visión compartida"],
-                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
-                },
-                 {
-                    pregunta: "Un líder que toma todas las decisiones sin consultar al equipo está aplicando un estilo:",
-                    opciones: ["Autocrático", "Democrático", "Participativo", "Laissez-faire"],
-                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
-                },
-                {
-                    pregunta: "La Teoría X de McGregor sugiere que el líder debe:",
-                    opciones: ["Controlar y supervisar de cerca a los empleados", "Delegar ampliamente y fomentar la autonomía", "Centrarse en crear un ambiente de trabajo agradable", "Permitir que los empleados fijen sus propios objetivos"],
-                    respuestaCorrecta: 0, tema: "Estilos de Liderazgo"
-                },
-                // Rasgos del Líder (4 preguntas)
-                {
-                    pregunta: "Tener 'Objetivos claros' como rasgo de un líder implica que este:",
-                    opciones: ["Sabe cuál es el siguiente paso y puede explicar su relevancia", "Es flexible y cambia los objetivos frecuentemente según las circunstancias", "Se enfoca más en el proceso que en los resultados finales", "Delega la definición de objetivos completamente al equipo"],
-                    respuestaCorrecta: 0, tema: "Rasgos del Líder"
-                },
-                {
-                    pregunta: "Un líder 'Racionalmente apasionado' es aquel que:",
-                    opciones: ["Defiende con argumentos sus propuestas pero escucha alternativas", "Se deja llevar únicamente por sus emociones al decidir", "Evita cualquier muestra de implicación emocional en el proyecto", "Prioriza la pasión sobre la lógica en todas las situaciones"],
-                    respuestaCorrecta: 0, tema: "Rasgos del Líder"
-                },
-                {
-                    pregunta: "La 'Empatía' en un líder se manifiesta principalmente en:",
-                    opciones: ["Entender y considerar los sentimientos y perspectivas del equipo", "Ser siempre el miembro más popular del equipo", "Evitar cualquier tipo de conflicto o desacuerdo", "Imponer sus propias emociones como guía para el grupo"],
-                    respuestaCorrecta: 0, tema: "Rasgos del Líder"
-                },
-                 {
-                    pregunta: "Un líder proactivo se caracteriza por:",
-                    opciones: ["Tomar la iniciativa y anticiparse a los problemas", "Esperar instrucciones claras antes de actuar", "Reaccionar solo cuando surgen crisis", "Evitar riesgos a toda costa"],
-                    respuestaCorrecta: 0, tema: "Rasgos del Líder"
-                },
-                // Motivación (5 preguntas)
-                {
-                    pregunta: "En la Teoría de las Expectativas de Vroom, la 'Instrumentalidad' se refiere a la percepción de que:",
-                    opciones: ["Un buen rendimiento conducirá a obtener una recompensa deseada", "El esfuerzo personal conducirá a un buen rendimiento", "La recompensa ofrecida es valiosa para el individuo", "Las necesidades básicas deben ser satisfechas primero"],
-                    respuestaCorrecta: 0, tema: "Motivación"
-                },
-                {
-                    pregunta: "Un objetivo SMART debe ser 'Achievable' (Alcanzable), lo que significa que:",
-                    opciones: ["Es realista y se puede lograr con los recursos disponibles", "Es extremadamente fácil para no desmotivar", "Es muy ambicioso, incluso si parece imposible", "Se puede medir cuantitativamente su progreso"],
-                    respuestaCorrecta: 0, tema: "Motivación"
-                },
-                {
-                    pregunta: "Según Maslow, las necesidades de 'Afiliación' o sociales incluyen:",
-                    opciones: ["La amistad, el afecto y la pertenencia a un grupo", "La seguridad física y de empleo", "El reconocimiento, el estatus y el respeto de los demás", "El desarrollo del propio potencial y la autorrealización"],
-                    respuestaCorrecta: 0, tema: "Motivación"
-                },
-                {
-                    pregunta: "Herzberg clasifica el 'salario' como un:",
-                    opciones: ["Factor higiénico", "Factor motivador intrínseco", "Factor de logro", "Factor de crecimiento personal"],
-                    respuestaCorrecta: 0, tema: "Motivación"
-                },
-                 {
-                    pregunta: "La Teoría de la Equidad de Adams sugiere que la motivación se ve afectada por:",
-                    opciones: ["La comparación entre los propios inputs/outputs y los de otros", "Únicamente el nivel absoluto de recompensa recibido", "La dificultad intrínseca de la tarea asignada", "La relación con el supervisor directo"],
-                    respuestaCorrecta: 0, tema: "Motivación"
-                },
-                // Comunicación (3 preguntas)
-                {
-                    pregunta: "El 'feedback' o retroinformación en el proceso de comunicación es crucial porque:",
-                    opciones: ["Permite al emisor saber si su mensaje fue comprendido correctamente", "Elimina completamente todos los ruidos del canal", "Asegura que el receptor siempre esté de acuerdo con el mensaje", "Hace que la comunicación sea un proceso unidireccional más eficiente"],
-                    respuestaCorrecta: 0, tema: "Comunicación"
-                },
-                {
-                    pregunta: "Una forma de mejorar la escucha eficaz es:",
-                    opciones: ["Resumir los puntos clave de la conversación para confirmar entendimiento", "Interrumpir frecuentemente para demostrar que se está prestando atención", "Evitar el contacto visual para no intimidar al interlocutor", "Pensar en la respuesta mientras la otra persona está hablando"],
-                    respuestaCorrecta: 0, tema: "Comunicación"
-                },
-                 {
-                    pregunta: "El efecto 'teléfono roto' en la comunicación se refiere a:",
-                    opciones: ["La distorsión de la información al pasar por múltiples intermediarios", "La pérdida total de la señal en un canal de comunicación", "La incapacidad de encontrar un canal de comunicación adecuado", "El uso excesivo de jerga técnica que dificulta la comprensión"],
-                    respuestaCorrecta: 0, tema: "Comunicación"
-                },
-                // Desarrollo de Equipos (3 preguntas)
-                {
-                    pregunta: "En las etapas de desarrollo de equipos en proyectos, la fase de 'Acoplamiento' se caracteriza por:",
-                    opciones: ["Los miembros son conscientes de que deben entenderse y superar enfrentamientos", "Predomina el optimismo y las relaciones son cordiales pero superficiales", "El equipo está altamente productivo y controla el trabajo fluidamente", "Comienza a perderse la ilusión y pueden resurgir rivalidades"],
-                    respuestaCorrecta: 0, tema: "Desarrollo de Equipos"
-                },
-                {
-                    pregunta: "Una de las 5 C's del trabajo en equipo según Tom Peters es la 'Complementariedad', que se refiere a que:",
-                    opciones: ["Los miembros aportan habilidades y conocimientos diversos que se suman", "Todos los miembros deben tener exactamente las mismas habilidades", "El equipo debe ser completamente homogéneo en pensamiento", "La competencia interna es el principal motor del equipo"],
-                    respuestaCorrecta: 0, tema: "Desarrollo de Equipos"
-                },
-                {
-                    pregunta: "El Proyecto Aristóteles de Google encontró que el factor más importante para la efectividad de un equipo era:",
-                    opciones: ["La seguridad psicológica", "La inteligencia promedio de los miembros", "La ubicación conjunta de todos los miembros", "La cantidad de experiencia individual de cada uno"],
-                    respuestaCorrecta: 0, tema: "Desarrollo de Equipos"
-                },
-                // Roles y Personalidad (4 preguntas)
-                {
-                    pregunta: "Según Belbin, el rol de 'Cerebro' (CE) se caracteriza por:",
-                    opciones: ["Aportar imaginación, creatividad y nuevas ideas", "Ser práctico y convertir ideas en planes de acción (Implementador)", "Preocuparse por los detalles y la finalización de tareas (Finalizador)", "Fomentar la armonía y las buenas relaciones (Cohesionador)"],
-                    respuestaCorrecta: 0, tema: "Roles y Personalidad"
-                },
-                {
-                    pregunta: "Una debilidad típica del rol 'Impulsor' (IS) de Belbin es que puede:",
-                    opciones: ["Ser propenso a la provocación e impaciente con los demás", "Ser indeciso en momentos de crisis", "Tener dificultades para delegar trabajo", "Ser demasiado optimista y perder el interés rápidamente"],
-                    respuestaCorrecta: 0, tema: "Roles y Personalidad"
-                },
-                {
-                    pregunta: "En la tipología MBTI, la preferencia 'Sensación' (S) frente a 'iNtuición' (N) indica que una persona tiende a:",
-                    opciones: ["Confiar en la información concreta y práctica obtenida a través de los sentidos", "Confiar en las posibilidades, la inspiración y el significado subyacente", "Tomar decisiones basándose en la lógica y el análisis impersonal", "Tomar decisiones basándose en los valores y el impacto en las personas"],
-                    respuestaCorrecta: 0, tema: "Roles y Personalidad"
-                },
-                {
-                    pregunta: "Una persona con preferencia MBTI por 'Judging' (J) tiende a preferir:",
-                    opciones: ["Un estilo de vida planificado, ordenado y con decisiones tomadas", "Un estilo de vida flexible, espontáneo y manteniendo opciones abiertas", "Enfocar su energía en el mundo exterior de las personas y las cosas", "Enfocar su energía en el mundo interior de las ideas y los conceptos"],
-                    respuestaCorrecta: 0, tema: "Roles y Personalidad"
-                }
-            ]; // Total 31 preguntas base
-            
-            let generatedQs = [];
-            // Generar 100 preguntas iniciales (5 páginas)
-            for(let i = 0; i < 100; i++) {
-                let baseQ = baseQuestions[i % baseQuestions.length];
-                let newQ = JSON.parse(JSON.stringify(baseQ)); 
-                newQ.id = `q${i+1}`;
-                //newQ.pagina = Math.floor(i / questionsPerPage) + 1; // Se asignará después
-                
-                newQ.pregunta = `${i+1}. (Gen) ${baseQ.pregunta.substring(baseQ.pregunta.indexOf(" ") + 1)}`; 
-                if (i < baseQuestions.length) newQ.pregunta = `${i+1}. ${baseQ.pregunta}`;
-
-                let correctAnswerText = newQ.opciones[newQ.respuestaCorrecta];
-                newQ.opciones = shuffleArray([...newQ.opciones]); // Crear copia para barajar
-                newQ.respuestaCorrecta = newQ.opciones.indexOf(correctAnswerText);
-                
-                generatedQs.push(newQ);
-            }
-            return generatedQs;
-        }
-
-        function getQuestionsFromPDF() {
-            // Estas son las preguntas extraídas del PDF que proporcionaste
-            const pdfQuestions = [
-                {
-                    pregunta: "El 'Proyecto Aristotle' llevado a cabo por Google destaca la importancia de:",
-                    opciones: ["El liderazgo participativo", "La comunicación y la empatía entre los miembros del equipo", "La delegación de tareas", "Las actividades extralaborales como mecanismo de cohesión"],
-                    respuestaCorrecta: 1, tema: "Desarrollo de Equipos" // Opción b)
-                },
-                {
-                    pregunta: "El término \"normas grupales\" en el contexto del trabajo en equipo se refiere a:",
-                    opciones: ["Conjunto de normas éticas", "Manual que recoge las normas de comportamiento dentro del equipo", "Conjunto de normas no escritas que gobiernan el funcionamiento de un equipo", "Conjunto de instrucciones sobre comportamiento que transmite el jefe de proyecto en la reunión de inicio del proyecto"],
-                    respuestaCorrecta: 2, tema: "Desarrollo de Equipos" // Opción c)
-                },
-                {
-                    pregunta: "Conforme a la teoría MBTI, ¿qué característica de personalidad marca hacia dónde enfocamos nuestra energía?",
-                    opciones: ["Extroversión-introversión", "Sensitivos-Intuitivos", "Racionales-Emocionales", "Calificadores-Perceptivos"],
-                    respuestaCorrecta: 0, tema: "Roles y Personalidad" // Opción a)
-                },
-                {
-                    pregunta: "Señale la respuesta INCORRECTA según la teoría de tipos de personalidad MBTI:",
-                    opciones: ["La distribución de perfiles de personalidad en algunas profesiones (por ejemplo, ingenierías) varía respecto a la distribución en una población normal", "Una persona emocional no es capaz de tomar decisiones racionalmente", "Las personas extrovertidas son más comunicativas que las introvertidas", "Los calificadores se pueden estresar en un ambiente de trabajo donde la toma de decisiones se va posponiendo continuamente"],
-                    respuestaCorrecta: 1, tema: "Roles y Personalidad" // Opción b) es la incorrecta
-                },
-                {
-                    pregunta: "El test 'Reading the mind in the Eyes' me sirve para conocer el grado de:",
-                    opciones: ["Empatía", "Motivación", "Liderazgo", "Comunicación"],
-                    respuestaCorrecta: 0, tema: "Comunicación" // Opción a)
-                },
-                {
-                    pregunta: "En el ciclo de vida de un equipo, ¿a qué etapa nos estamos refiriendo si decimos que los miembros son conscientes de que están obligados a entenderse si quieren sacar el proyecto adelante?",
-                    opciones: ["Inicio", "Acoplamiento", "Madurez", "Agotamiento"],
-                    respuestaCorrecta: 1, tema: "Desarrollo de Equipos" // Opción b)
-                },
-                {
-                    pregunta: "Cuáles de los siguientes aspectos NO es considerado por Herzberg como auténticamente motivantes",
-                    opciones: ["Formación continua para el desarrollo de la carrera profesional", "Reconocimiento por la labor efectuada", "Buenas condiciones físicas de trabajo", "Sensación de Logro"],
-                    respuestaCorrecta: 2, tema: "Motivación" // Opción c)
-                },
-                {
-                    pregunta: "De acuerdo con la teoría de las relaciones humanas, ¿cuál de las siguientes afirmaciones es correcta:",
-                    opciones: ["El nivel de rendimiento de un trabajador se tiende a ajustar al nivel de su equipo de trabajo, como parte de su integración en el mismo", "El poder dentro del entorno grupal es la motivación principal en los trabajos colectivos.", "El rendimiento de un equipo es inversamente proporcional al nivel de las relaciones personales fuera del ambiente de trabajo", "La relación personal con los directivos es la fuente principal de motivación para el trabajo en grupo"],
-                    respuestaCorrecta: 0, tema: "Motivación" // Opción a)
-                },
-                {
-                    pregunta: "Si se pretende motivar por establecimiento de objetivos, estos deben ser:",
-                    opciones: ["Muchos, Diversos y Medibles", "Pocos, Sencillos de alcanzar y Cualitativos", "Muchos, Fáciles y Medibles", "Pocos, Complicados de alcanzar y Medibles"],
-                    respuestaCorrecta: 3, tema: "Motivación" // Opción d)
-                },
-                {
-                    pregunta: "De acuerdo con la teoría X/Y de McGregor, la teoría X indica que el trabajo se realiza a disgusto. Si considero que los miembros del equipo son básicamente X, el liderazgo deberá ser:",
-                    opciones: ["Centrado en mejorar la relación personal", "Se deben plantear objetivos y delegar responsabilidades", "Se debe controlar cuidadosamente la ejecución de las tareas para aprovechar toda su capacidad de trabajo.", "Ninguna de las anteriores"],
-                    respuestaCorrecta: 2, tema: "Estilos de Liderazgo" // Opción c)
-                },
-                {
-                    pregunta: "La teoría de Hersey del liderazgo situacional propugna que cada estilo de liderazgo se debería adecuar a:",
-                    opciones: ["Cada persona y mantenerse en el tiempo, para establecer claramente unas pautas de comportamiento que motiven el trabajo", "Las distintas situaciones laborales y al clima económico", "La evolución profesional y de relación dentro del equipo de cada persona, cambiando a lo largo del tiempo", "Las relaciones entre las personas"],
-                    respuestaCorrecta: 2, tema: "Estilos de Liderazgo" // Opción c)
-                },
-                {
-                    pregunta: "Según el modelo de Herzberg, los factores higiénicos, como un salario adecuado, o la buena relación con tu jefe son:",
-                    opciones: ["La fuente de la verdadera motivación", "Elementos que, de faltar, producirían desmotivación", "Multiplicadores de la actividad", "Relacionados con la pulcritud y el orden"],
-                    respuestaCorrecta: 1, tema: "Motivación" // Opción b)
-                },
-                {
-                    pregunta: "De acuerdo con el modelo de Roles de Belbin, un punto débil del rol IMPLEMENTADOR es:",
-                    opciones: ["Demasiado obsesionado con los detalles", "Resistente al cambio", "Individualista", "Hipercrítico"],
-                    respuestaCorrecta: 1, tema: "Roles y Personalidad" // Opción b)
-                },
-                {
-                    pregunta: "Según el modelo de Belbin, ¿qué tipo de perfil estará automotivado simplemente por asignarle tareas de su ámbito de trabajo?",
-                    opciones: ["Monitor-evaluador", "Coordinador", "Especialista", "Cohesionador"],
-                    respuestaCorrecta: 2, tema: "Roles y Personalidad" // Opción c)
-                },
-                {
-                    pregunta: "El ser un experto técnico en la temática del proyecto le da al director del proyecto:",
-                    opciones: ["Una capacidad para poder hacerse cargo de las tareas más complejas si estas son criticas para el cumplimiento del plazo o del presupuesto del proyecto", "Una fuente de poder por su conocimiento de la materia que hace que los miembros del equipo confíen en sus decisiones y tiendan a seguirlas", "Una fuente de poder por su conocimiento de la materia que se extingue rápidamente y que debe ser sustituida por otra en un plazo menor de un mes", "Una capacidad de hacerse cargo de las tareas más complejas asegurando el resultado"],
-                    respuestaCorrecta: 1, tema: "Rol del DP" // Opción b)
-                },
-                {
-                    pregunta: "Cuando ante una toma de decisiones en un proyecto, el Director dice \"Tenemos que tomar la decisión por consenso. Si votamos, y queda empate, nos seguimos reuniendo hasta llegar a un consenso, da lo mismo el tiempo que tardemos\" ¿Qué estilo de liderazgo está empleando de acuerdo con el continuo de Tannenbaum?",
-                    opciones: ["Liderazgo democrático", "Liderazgo participativo", "Liderazgo autocrático", "Su comportamiento no se corresponde con ningún estilo de liderazgo adecuado, sino con una perversión del liderazgo"],
-                    respuestaCorrecta: 3, tema: "Estilos de Liderazgo" // Opción d) según corrección de la pag. 8 del PDF
-                },
-                {
-                     pregunta: "En el modelo de motivación mediante estímulos de Vroom aplicada al entorno de trabajo, la eficacia de la realimentación depende de:",
-                     opciones: ["Que resulta altamente probable que el esfuerzo realizado se transforme en el resultado deseado", "Que la recompensa se adecue a las necesidades del trabajador", "Que la probabilidad de que se obtenga la recompensa en el caso de realizar bien la tarea sea elevada", "Todas las anteriores son correctas"],
-                     respuestaCorrecta: 3, tema: "Motivación" // Opción d)
-                },
-                {
-                     pregunta: "Un rasgo deseable del líder debería ser:",
-                     opciones: ["Desconfianza preventiva", "Orgulloso de su experiencia", "Autoconfianza", "Todos los anteriores"],
-                     respuestaCorrecta: 2, tema: "Rasgos del Líder" // Opción c)
-                },
-                {
-                    pregunta: "Conforme a la teoría MBTI, ¿qué característica de personalidad marca como tomar decisiones?",
-                    opciones: ["Extroversión-introversión", "Sensitivos-Intuitivos", "Racionales-Emocionales", "Calificadores-Perceptivos"],
-                    respuestaCorrecta: 2, tema: "Roles y Personalidad" // Opción c)
-                },
-                {
-                    pregunta: "¿Cuál de los siguientes No es un tipo de personalidad según la tipología MBTI?:",
-                    opciones: ["INTJ", "ESFP", "IRFP", "ENFJ"],
-                    respuestaCorrecta: 2, tema: "Roles y Personalidad" // Opción c)
-                }
-            ];
-            // Asegurar que estas preguntas tengan IDs únicos y numeración correcta
-            return pdfQuestions.map((q, index) => {
-                let correctAnswerText = q.opciones[q.respuestaCorrecta];
-                let shuffledOptions = shuffleArray([...q.opciones]);
-                return {
-                    ...q,
-                    id: `q_pdf_${index+1}`, // ID único para preguntas del PDF
-                    pregunta: `${101 + index}. ${q.pregunta}`, // Numeración a partir de 101
-                    opciones: shuffledOptions,
-                    respuestaCorrecta: shuffledOptions.indexOf(correctAnswerText)
-                };
-            });
-        }
-        
-        // Cargar todas las preguntas
-        const initialGeneratedQuestions = generateInitialQuestions(); // 100 preguntas
-        const pdfBasedQuestions = getQuestionsFromPDF(); // ~20 preguntas
-        questionsData = [...initialGeneratedQuestions, ...pdfBasedQuestions];
-
-        // Asignar número de página a cada pregunta y actualizar totalPages
-        questionsData.forEach((q, index) => {
-            q.pagina = Math.floor(index / questionsPerPage) + 1;
+        allQuestions.forEach(q => {
+            q.userAnswer = null;
+            q.isCorrect = null;
+            q.page = null; 
         });
-        totalPages = Math.ceil(questionsData.length / questionsPerPage);
+
+        const questionsPerPage = 10;
+        let currentPage = 1;
+        let totalPages = Math.ceil(allQuestions.length / questionsPerPage);
+        let pageCorrected = new Array(totalPages + 1).fill(false);
+        let pageScores = new Array(totalPages + 1).fill(0);
+
+        const quizArea = document.getElementById('quiz-area');
+        const feedbackArea = document.getElementById('feedback-area');
+        const totalScoreArea = document.getElementById('total-score-area');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const correctBtn = document.getElementById('correct-btn');
+        const progressIndicator = document.getElementById('progress-indicator');
+        const progressBarFill = document.getElementById('progress-bar-fill');
 
 
-        const quizContainer = document.getElementById('quiz-container');
-        const prevPageBtn = document.getElementById('prev-page-btn');
-        const nextPageBtn = document.getElementById('next-page-btn');
-        const resolvePageBtn = document.getElementById('resolve-page-btn');
-        const pageResultsContainer = document.getElementById('page-results-container');
-        const finalResultsContainer = document.getElementById('final-results-container');
-        const progressBar = document.getElementById('progressBar');
-        const totalQuestionsFinalSpan = document.getElementById('total-questions-final');
-        const totalCorrectFinalSpan = document.getElementById('total-correct-final');
-        const totalIncorrectFinalSpan = document.getElementById('total-incorrect-final');
-        const finalScoreSpan = document.getElementById('final-score');
+        function renderQuestions() {
+            quizArea.innerHTML = '';
+            correctBtn.disabled = false;
+            correctBtn.classList.remove('btn-disabled');
+            correctBtn.textContent = 'Corregir Página';
 
+            const start = (currentPage - 1) * questionsPerPage;
+            const end = start + questionsPerPage;
+            const currentQuestions = allQuestions.slice(start, end);
 
-        function displayPage(pageNumber) {
-            quizContainer.innerHTML = '';
-            if (!pageScores[pageNumber]) { 
-                 pageResultsContainer.innerHTML = '';
-            }
-            resolvePageBtn.style.display = 'block';
-            // finalResultsContainer.style.display = 'none'; // Ya no es necesario ocultarlo aquí así
+            currentQuestions.forEach((qData, indexInPage) => {
+                const questionIndexGlobal = start + indexInPage;
+                qData.page = currentPage; 
 
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-block';
+                questionDiv.innerHTML = `<p class="font-semibold mb-3">${questionIndexGlobal + 1}. ${qData.question}</p>`;
 
-            const startIndex = (pageNumber - 1) * questionsPerPage;
-            const endIndex = Math.min(startIndex + questionsPerPage, questionsData.length); // Asegurar no exceder
-            const pageQuestions = questionsData.slice(startIndex, endIndex);
-
-            pageQuestions.forEach((q) => {
-                const questionElement = document.createElement('div');
-                questionElement.classList.add('question-card');
-                questionElement.setAttribute('id', `card-${q.id}`);
-                questionElement.innerHTML = `<p class="question-text">${q.pregunta}</p>`;
-                
                 const optionsList = document.createElement('div');
-                q.opciones.forEach((opcion, i) => {
-                    const optionId = `${q.id}-op${i}`;
-                    const label = document.createElement('label');
-                    label.htmlFor = optionId;
-                    label.textContent = opcion;
-                    label.classList.add('option-label');
+                qData.options.forEach((option, optionIndex) => {
+                    const optionId = `q${questionIndexGlobal}_opt${optionIndex}`;
+                    const optionLabel = document.createElement('label');
+                    optionLabel.htmlFor = optionId;
+                    optionLabel.className = 'option-label';
+                    optionLabel.textContent = option;
+                    
+                    const optionInput = document.createElement('input');
+                    optionInput.type = 'radio';
+                    optionInput.name = `question_${questionIndexGlobal}`;
+                    optionInput.id = optionId;
+                    optionInput.value = optionIndex;
+                    optionInput.className = 'hidden option-input';
+                    
+                    if (qData.userAnswer === optionIndex) {
+                        optionInput.checked = true;
+                        optionLabel.classList.add('selected'); 
+                    }
 
-                    const radio = document.createElement('input');
-                    radio.type = 'radio';
-                    radio.name = q.id;
-                    radio.id = optionId;
-                    radio.value = i;
-                    radio.style.display = 'none'; 
-
-                    if (userAnswers[q.id] !== undefined && parseInt(userAnswers[q.id]) === i) {
-                        radio.checked = true;
-                        if (!pageScores[currentPage]) { 
-                           label.classList.add('selected');
+                    if (pageCorrected[currentPage]) {
+                        optionInput.disabled = true;
+                        if (qData.correctAnswer === optionIndex) {
+                            optionLabel.classList.add('correct');
+                        } else if (qData.userAnswer === optionIndex && qData.userAnswer !== qData.correctAnswer) {
+                            optionLabel.classList.add('incorrect');
                         }
+                    } else {
+                        optionInput.onchange = () => {
+                            qData.userAnswer = parseInt(optionInput.value);
+                            document.querySelectorAll(`input[name="question_${questionIndexGlobal}"] + label`).forEach(lbl => lbl.classList.remove('selected'));
+                            optionLabel.classList.add('selected');
+                        };
                     }
                     
-                    radio.addEventListener('change', () => {
-                        if (pageScores[currentPage]) return; 
-                        userAnswers[q.id] = radio.value;
-                        document.querySelectorAll(`input[name="${q.id}"]`).forEach(inp => {
-                            const lbl = document.querySelector(`label[for="${inp.id}"]`);
-                            if (lbl) lbl.classList.remove('selected');
-                        });
-                        label.classList.add('selected');
-                    });
-                    
-                    optionsList.appendChild(radio);
-                    optionsList.appendChild(label);
+                    optionsList.appendChild(optionInput);
+                    optionsList.appendChild(optionLabel);
                 });
-                questionElement.appendChild(optionsList);
-                quizContainer.appendChild(questionElement);
-            });
-            
-            if (pageScores[pageNumber]) {
-                showCorrectionsForPage(pageNumber);
-                 // Si es la última página y ya está resuelta, también mostrar resultados finales
-                if (pageNumber === totalPages && Object.keys(pageScores).length === totalPages) {
-                    showFinalResults();
+                questionDiv.appendChild(optionsList);
+
+                if (pageCorrected[currentPage]) {
+                    const pFeedback = document.createElement('p');
+                    pFeedback.className = 'mt-2 text-sm';
+                    if (qData.isCorrect) {
+                        pFeedback.innerHTML = `<span class="feedback-correct">¡Correcto!</span>`;
+                    } else if (qData.userAnswer !== null) {
+                        pFeedback.innerHTML = `<span class="feedback-incorrect">Incorrecto.</span> La respuesta correcta era: <strong>${qData.options[qData.correctAnswer]}</strong>`;
+                    } else {
+                         pFeedback.innerHTML = `No respondida. La respuesta correcta era: <strong>${qData.options[qData.correctAnswer]}</strong>`;
+                    }
+                    questionDiv.appendChild(pFeedback);
                 }
-            }
-
-
-            updateNavigationButtons();
-            updateProgressBar();
-        }
-        
-        function showCorrectionsForPage(pageNumber) {
-            const startIndex = (pageNumber - 1) * questionsPerPage;
-            const endIndex = Math.min(startIndex + questionsPerPage, questionsData.length);
-            const pageQuestions = questionsData.slice(startIndex, endIndex);
-
-            pageQuestions.forEach(q => {
-                const questionCard = document.getElementById(`card-${q.id}`);
-                if (!questionCard) return;
-                const optionLabels = questionCard.querySelectorAll('.option-label');
-                const userAnswer = userAnswers[q.id];
-
-                optionLabels.forEach((label, i) => {
-                    label.classList.remove('selected');
-                    const inputRadio = questionCard.querySelector(`#${q.id}-op${i}`);
-                    if(inputRadio) inputRadio.disabled = true; 
-
-                    if (i === q.respuestaCorrecta) {
-                        label.classList.add('correct');
-                    }
-                    if (userAnswer !== undefined && parseInt(userAnswer) === i && parseInt(userAnswer) !== q.respuestaCorrecta) {
-                        label.classList.add('incorrect');
-                    }
-                });
+                quizArea.appendChild(questionDiv);
             });
-            if(pageScores[pageNumber]){
-                const { correct, total } = pageScores[pageNumber];
-                 pageResultsContainer.innerHTML = `
-                <div class="page-results">
-                    <h3 class="text-xl font-semibold text-sky-700 mb-2">Resultados de la Página ${pageNumber}</h3>
-                    <p>Has acertado ${correct} de ${total} preguntas.</p>
-                </div>`;
+            updateNavigation();
+            updateProgressBar();
+
+            if (pageCorrected[currentPage]) {
+                correctBtn.disabled = true;
+                correctBtn.classList.add('btn-disabled');
+                correctBtn.textContent = 'Página Corregida';
+                displayPageScore(currentPage); 
+            } else {
+                 feedbackArea.innerHTML = ''; 
             }
         }
 
-
-        function updateNavigationButtons() {
-            prevPageBtn.style.display = currentPage > 1 ? 'block' : 'none';
+        function updateNavigation() {
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.classList.toggle('btn-disabled', currentPage === 1);
+            
             if (currentPage === totalPages) {
-                nextPageBtn.style.display = 'none';
-                resolvePageBtn.textContent = 'Resolver Examen y Ver Resultados Finales';
+                if (pageCorrected[currentPage]) {
+                    nextBtn.textContent = 'Ver Puntuación Total';
+                    nextBtn.disabled = false;
+                } else {
+                    nextBtn.textContent = 'Siguiente'; 
+                    nextBtn.disabled = true; 
+                }
             } else {
-                nextPageBtn.style.display = 'block';
-                nextPageBtn.textContent = 'Siguiente Página';
-                resolvePageBtn.textContent = 'Resolver Página';
+                nextBtn.textContent = 'Siguiente';
+                nextBtn.disabled = !pageCorrected[currentPage];
             }
-            if (pageScores[currentPage]) {
-                resolvePageBtn.disabled = true;
-            } else {
-                resolvePageBtn.disabled = false;
-            }
+             nextBtn.classList.toggle('btn-disabled', nextBtn.disabled);
+            progressIndicator.textContent = `Página ${currentPage} de ${totalPages}`;
         }
         
         function updateProgressBar() {
-            // Calcula el número de páginas completadas (resueltas)
-            const pagesCompleted = Object.keys(pageScores).length;
-            // El progreso se basa en la página actual para la navegación, no solo las resueltas
-            const navProgress = (currentPage / totalPages) * 100;
-            
-            progressBar.style.width = `${navProgress}%`;
-            progressBar.textContent = `${Math.round(navProgress)}%`;
-            
-            if (navProgress === 100) {
-                progressBar.classList.add('full');
-            } else {
-                progressBar.classList.remove('full');
-            }
+            const progress = (currentPage / totalPages) * 100;
+            progressBarFill.style.width = `${progress}%`;
         }
 
-        function resolveCurrentPage() {
-            if (pageScores[currentPage]) return; 
+        function displayPageScore(page) {
+            const questionsOnThisPage = Math.min(questionsPerPage, allQuestions.length - (page - 1) * questionsPerPage);
+            feedbackArea.innerHTML = `<p class="text-xl font-semibold">Resultados de la Página ${page}: Has acertado ${pageScores[page]} de ${questionsOnThisPage} preguntas.</p>`;
+        }
 
-            let correctAnswers = 0;
-            const startIndex = (currentPage - 1) * questionsPerPage;
-            const endIndex = Math.min(startIndex + questionsPerPage, questionsData.length);
-            const pageQuestions = questionsData.slice(startIndex, endIndex);
-            let totalOnPage = pageQuestions.length;
-
-
-            pageQuestions.forEach(q => {
-                const userAnswer = userAnswers[q.id];
-                if (userAnswer !== undefined && parseInt(userAnswer) === q.respuestaCorrecta) {
-                    correctAnswers++;
+        function calculateTotalScore() {
+            let totalCorrect = 0;
+            allQuestions.forEach(q => {
+                if (q.isCorrect) {
+                    totalCorrect++;
                 }
             });
-
-            pageScores[currentPage] = { correct: correctAnswers, total: totalOnPage };
-            showCorrectionsForPage(currentPage); 
+            quizArea.innerHTML = ''; 
+            feedbackArea.innerHTML = ''; 
+            totalScoreArea.innerHTML = `Puntuación Total del Examen: <span class="text-blue-600">${totalCorrect} de ${allQuestions.length}</span>`;
             
-            resolvePageBtn.disabled = true;
-
-            // Comprobar si todas las páginas han sido resueltas para mostrar resultados finales
-            if (Object.keys(pageScores).length === totalPages) {
-                showFinalResults();
-            } else if (currentPage === totalPages) {
-                 // Es la última página, el botón dice "Resolver Examen...",
-                 // así que mostramos los resultados finales. La función los calculará.
-                showFinalResults();
-            }
+            nextBtn.style.display = 'none';
+            prevBtn.style.display = 'none';
+            correctBtn.style.display = 'none';
+            progressIndicator.style.display = 'none';
+            document.querySelector('.progress-bar-container').style.display = 'none';
         }
 
-        function showFinalResults() {
-            let totalCorrectOverall = 0;
-            let totalQuestionsOverall = 0;
+        correctBtn.addEventListener('click', () => {
+            if (pageCorrected[currentPage]) return;
 
-            for (let i = 1; i <= totalPages; i++) {
-                const startIndex = (i - 1) * questionsPerPage;
-                const endIndex = Math.min(startIndex + questionsPerPage, questionsData.length);
-                const numQuestionsOnPage = questionsData.slice(startIndex, endIndex).length;
-
-                if (pageScores[i]) {
-                    totalCorrectOverall += pageScores[i].correct;
-                    totalQuestionsOverall += pageScores[i].total; 
+            const start = (currentPage - 1) * questionsPerPage;
+            const end = start + questionsPerPage;
+            const currentQuestions = allQuestions.slice(start, end);
+            
+            let scoreThisPage = 0;
+            currentQuestions.forEach(qData => {
+                if (qData.userAnswer === qData.correctAnswer) {
+                    qData.isCorrect = true;
+                    scoreThisPage++;
                 } else {
-                    // Si la página no fue explícitamente resuelta, se cuentan sus preguntas pero 0 aciertos.
-                    totalQuestionsOverall += numQuestionsOnPage;
+                    qData.isCorrect = false;
                 }
-            }
-             // Asegurar que el total de preguntas sea el correcto
-            if (totalQuestionsOverall !== questionsData.length) {
-                totalQuestionsOverall = questionsData.length;
-            }
-
-
-            const totalIncorrectOverall = totalQuestionsOverall - totalCorrectOverall;
-            const finalScorePercentage = totalQuestionsOverall > 0 ? (totalCorrectOverall / totalQuestionsOverall) * 100 : 0;
-
-            totalQuestionsFinalSpan.textContent = totalQuestionsOverall;
-            totalCorrectFinalSpan.textContent = totalCorrectOverall;
-            totalIncorrectFinalSpan.textContent = totalIncorrectOverall;
-            finalScoreSpan.textContent = finalScorePercentage.toFixed(2);
-
-            const finalResultsContentClone = finalResultsContainer.cloneNode(true);
-            finalResultsContentClone.style.display = 'block';
-            
-            // Limpiar pageResultsContainer antes de añadir para evitar duplicados de resultados finales
-            const existingFinalResults = pageResultsContainer.querySelector('#final-results-container');
-            if (existingFinalResults) {
-                pageResultsContainer.removeChild(existingFinalResults);
-            }
-            // Añadir resultados de la página actual si existen
-            if(pageScores[currentPage]){
-                const { correct, total } = pageScores[currentPage];
-                const currentPageResultDiv = document.createElement('div');
-                currentPageResultDiv.classList.add('page-results');
-                currentPageResultDiv.innerHTML = `
-                    <h3 class="text-xl font-semibold text-sky-700 mb-2">Resultados de la Página ${currentPage}</h3>
-                    <p>Has acertado ${correct} de ${total} preguntas.</p>
-                `;
-                pageResultsContainer.innerHTML = ''; // Limpiar antes de añadir el de la página actual
-                pageResultsContainer.appendChild(currentPageResultDiv);
-            }
-
-
-            pageResultsContainer.appendChild(finalResultsContentClone);
-
-
-            resolvePageBtn.style.display = 'none'; 
-            nextPageBtn.style.display = 'none';
-            finalResultsContainer.style.display = 'none';
-            const restartBtnClone = pageResultsContainer.querySelector('#restart-quiz-btn');
-            if(restartBtnClone) {
-                 restartBtnClone.addEventListener('click', restartQuiz);
-            }
-        }
-
-        function restartQuiz() {
-            currentPage = 1;
-            userAnswers = {};
-            pageScores = {};
-            pageResultsContainer.innerHTML = ''; 
-            finalResultsContainer.style.display = 'none'; 
-            const clonedResults = pageResultsContainer.querySelector('#final-results-container');
-            if (clonedResults) {
-                pageResultsContainer.removeChild(clonedResults);
-            }
-            
-            // Barajar de nuevo todas las preguntas para un nuevo intento
-            questionsData.forEach(q => {
-                 if (q.id.startsWith('q_pdf_')) { // No barajar opciones de preguntas del PDF si ya están fijas
-                    // O si se desea barajar:
-                    // let correctAnswerText = q.opciones[q.respuestaCorrecta];
-                    // q.opciones = shuffleArray([...q.opciones]);
-                    // q.respuestaCorrecta = q.opciones.indexOf(correctAnswerText);
-                 } else { // Barajar opciones de preguntas generadas
-                    let correctAnswerText = q.opciones[q.respuestaCorrecta];
-                    q.opciones = shuffleArray([...q.opciones]);
-                    q.respuestaCorrecta = q.opciones.indexOf(correctAnswerText);
-                 }
             });
+
+            pageScores[currentPage] = scoreThisPage;
+            pageCorrected[currentPage] = true;
             
-            displayPage(currentPage);
-            resolvePageBtn.style.display = 'block'; 
-        }
+            renderQuestions(); 
+            updateNavigation(); 
+        });
 
+        nextBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                 if (pageCorrected[currentPage]) { 
+                    currentPage++;
+                    renderQuestions();
+                }
+            } else if (currentPage === totalPages && pageCorrected[totalPages]) {
+                calculateTotalScore();
+            }
+        });
 
-        prevPageBtn.addEventListener('click', () => {
+        prevBtn.addEventListener('click', () => {
             if (currentPage > 1) {
                 currentPage--;
-                displayPage(currentPage);
+                renderQuestions();
             }
         });
 
-        nextPageBtn.addEventListener('click', () => {
-            if (currentPage < totalPages) {
-                currentPage++;
-                displayPage(currentPage);
-            }
-        });
-
-        resolvePageBtn.addEventListener('click', () => {
-            resolveCurrentPage();
-        });
-        
-        document.getElementById('restart-quiz-btn').addEventListener('click', restartQuiz);
-
-        // Iniciar el examen
-        displayPage(currentPage);
+        // Initial render
+        renderQuestions();
     </script>
+
 </body>
 </html>
