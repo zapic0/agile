@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Gráfica de Diseño y Dirección Ágil de Proyectos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .mnemonic {
+            background-color: #e6fffa; /* Light teal background */
+            border-left: 4px solid #38b2ac; /* Teal left border */
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+        }
+        .mnemonic-title {
+            font-weight: 600;
+            color: #2c7a7b; /* Darker teal */
+        }
+        .section-title {
+            border-bottom: 2px solid #63b3ed; /* Blue border */
+            padding-bottom: 8px;
+            margin-bottom: 24px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin-bottom: 20px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-title {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .nav-link {
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #3182ce; /* Blue */
+            background-color: #ebf8ff; /* Lighter Blue */
+        }
+        h3 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 600;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        h4 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+         ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-bottom: 1rem;
+        }
+        li {
+            margin-bottom: 0.5rem;
+        }
+        #navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .sub-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2b6cb0; /* Darker Blue */
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <nav id="navbar" class="p-4 mb-8">
+        <div class="container mx-auto">
+            <ul class="flex flex-wrap justify-center space-x-2 sm:space-x-4">
+                <li><a href="#agile_intro" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Intro Ágil</a></li>
+                <li><a href="#lean_ux" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Lean UX</a></li>
+                <li><a href="#design_thinking" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Design Thinking</a></li>
+                <li><a href="#design_sprint" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Design Sprint</a></li>
+                <li><a href="#scrum" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Scrum</a></li>
+                <li><a href="#agile_contracts" class="nav-link font-semibold px-3 py-2 rounded-md text-sm sm:text-base">Contratos Ágiles</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 sm:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl sm:text-5xl font-bold text-blue-600">Guía Gráfica de Diseño y Dirección Ágil de Proyectos</h1>
+            <p class="text-lg text-slate-600 mt-2">Conceptos clave, metodologías y reglas mnemotécnicas del mundo ágil.</p>
+            <a href="agile-examen.html" class="exam-link">¡Prueba tus conocimientos con el Examen Interactivo!</a>
+        </header>
+
+        <!-- Sección: Introducción a Ágil y Manifiesto -->
+        <section id="agile_intro" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title text-blue-700">Principios y Valores Ágiles</h2>
+            <p class="mb-4">La agilidad se centra en la adaptabilidad, la colaboración, la entrega de valor temprana y continua, y la mejora constante.</p>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="p-4 bg-blue-50 rounded-lg shadow">
+                    <h4 class="card-title text-blue-700">Valores del Manifiesto Ágil (4)</h4>
+                    <ul class="list-disc pl-5">
+                        <li><strong>Individuos e interacciones</strong> sobre procesos y herramientas.</li>
+                        <li><strong>Producto/servicio funcionando</strong> sobre documentación extensiva.</li>
+                        <li><strong>Colaboración con el cliente</strong> sobre negociación de contratos.</li>
+                        <li><strong>Respuesta ante el cambio</strong> sobre seguir un plan.</li>
+                    </ul>
+                    <div class="mnemonic">
+                        <p class="mnemonic-title">Regla Mnemotécnica (Valores):</p>
+                        <p>"<span class="font-semibold text-teal-700">I</span>nteractuando <span class="font-semibold text-teal-700">P</span>roducimos, <span class="font-semibold text-teal-700">C</span>olaborando y <span class="font-semibold text-teal-700">R</span>espondiendo."</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-sky-50 rounded-lg shadow">
+                    <h4 class="card-title text-sky-700">Principios Clave del Manifiesto Ágil (Selección de 12)</h4>
+                    <ul class="list-disc pl-5 text-sm">
+                        <li>Satisfacer al cliente (entrega temprana y continua de valor).</li>
+                        <li>Aceptar requisitos cambiantes.</li>
+                        <li>Entregar frecuentemente producto funcional.</li>
+                        <li>Negocio y desarrolladores trabajan juntos diariamente.</li>
+                        <li>Construir proyectos en torno a individuos motivados (confianza y apoyo).</li>
+                        <li>Conversación cara a cara es la comunicación más eficiente.</li>
+                        <li>Producto funcionando es la medida principal de progreso.</li>
+                        <li>Desarrollo sostenible (ritmo constante).</li>
+                        <li>Atención continua a la excelencia técnica y buen diseño.</li>
+                        <li>Simplicidad (maximizar trabajo no realizado) es esencial.</li>
+                        <li>Equipos autoorganizados.</li>
+                        <li>Reflexión y ajuste regular del equipo.</li>
+                    </ul>
+                    <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Idea general de los Principios):</p>
+                        <p>"<span class="font-semibold text-teal-700">S</span>iempre <span class="font-semibold text-teal-700">A</span>gil, <span class="font-semibold text-teal-700">E</span>ntregando <span class="font-semibold text-teal-700">N</span>ovedades, <span class="font-semibold text-teal-700">C</span>on <span class="font-semibold text-teal-700">M</span>otivación, <span class="font-semibold text-teal-700">C</span>ara a cara, <span class="font-semibold text-teal-700">P</span>rogresando, <span class="font-semibold text-teal-700">S</span>ostenible, <span class="font-semibold text-teal-700">E</span>xcelente, <span class="font-semibold text-teal-700">S</span>imple, <span class="font-semibold text-teal-700">A</span>uto-organizado y <span class="font-semibold text-teal-700">R</span>eflexivo."</p>
+                    </div>
+                </div>
+            </div>
+            <p class="mt-6 italic text-sm">La agilidad busca un equilibrio, valorando los elementos de la derecha, pero priorizando los de la izquierda en el Manifiesto.</p>
+        </section>
+
+        <!-- Sección: Lean UX -->
+        <section id="lean_ux" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title text-green-700">Lean UX (User Experience)</h2>
+            <p class="mb-4">Adapta los principios Lean al diseño de experiencias de usuario, enfocándose en la iteración rápida, colaboración y aprendizaje continuo a través de la experimentación para entregar valor real.</p>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="p-4 bg-green-50 rounded-lg shadow">
+                    <h4 class="card-title text-green-700">Principios Clave de Lean UX</h4>
+                    <ul class="list-disc pl-5 text-sm">
+                        <li>Equipos pequeños y cross-funcionales.</li>
+                        <li>Enfoque en resultados (outcomes), no en entregables (outputs).</li>
+                        <li>Hacer sobre analizar (prototipado rápido).</li>
+                        <li>Eliminar el desperdicio (actividades sin valor).</li>
+                        <li>Entendimiento compartido (colaboración y comunicación).</li>
+                        <li>Trabajar en pequeños lotes (validación en ciclos cortos).</li>
+                        <li>Descubrimiento continuo (involucrar al cliente).</li>
+                        <li>Visualizar el trabajo (transparencia).</li>
+                        <li>Permiso para fallar (aprendizaje).</li>
+                    </ul>
+                    <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Principios Lean UX):</p>
+                        <p>"<span class="font-semibold text-teal-700">E</span>quipos <span class="font-semibold text-teal-700">R</span>esultados, <span class="font-semibold text-teal-700">H</span>aciendo <span class="font-semibold text-teal-700">E</span>liminan, <span class="font-semibold text-teal-700">E</span>ntendiendo <span class="font-semibold text-teal-700">L</span>otes, <span class="font-semibold text-teal-700">D</span>escubren, <span class="font-semibold text-teal-700">V</span>isualizan y <span class="font-semibold text-teal-700">F</span>allan (para aprender)."</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-lime-50 rounded-lg shadow">
+                    <h4 class="card-title text-lime-700">Proceso Lean UX (Iterativo)</h4>
+                     <p class="text-center">[Imagen de ciclo iterativo: Formular problema -> Suposiciones -> Hipótesis -> Diseño Colaborativo -> MVP -> Experimentar/Medir -> Feedback -> Iterar/Aprender]</p>
+                    <ol class="list-decimal pl-5 text-sm">
+                        <li><strong>Formular el problema:</strong> Definición clara.</li>
+                        <li><strong>Declarar suposiciones:</strong> Creencias sobre usuarios/tecnología.</li>
+                        <li><strong>Crear hipótesis:</strong> Enunciados testeables ("Creemos que... sabremos cuándo...").</li>
+                        <li><strong>Diseño colaborativo:</strong> Ideas y prototipos en equipo.</li>
+                        <li><strong>Crear un MVP (Producto Mínimo Viable):</strong> Versión más simple para probar hipótesis.</li>
+                        <li><strong>Experimentar y medir:</strong> Poner MVP ante usuarios, recopilar datos.</li>
+                        <li><strong>Feedback:</strong> Obtener retroalimentación continua.</li>
+                        <li><strong>Iterar y aprender:</strong> Refinar producto, ajustar hipótesis.</li>
+                    </ol>
+                    <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Proceso Lean UX):</p>
+                        <p>"<span class="font-semibold text-teal-700">P</span>roblema, <span class="font-semibold text-teal-700">S</span>uposiciones, <span class="font-semibold text-teal-700">H</span>ipótesis. <span class="font-semibold text-teal-700">D</span>iseñamos <span class="font-semibold text-teal-700">M</span>ínimo <span class="font-semibold text-teal-700">E</span>xperimentando <span class="font-semibold text-teal-700">F</span>eedback para <span class="font-semibold text-teal-700">I</span>terar."</p>
+                    </div>
+                </div>
+            </div>
+             <p class="mt-4 text-sm italic">Lean UX se integra bien con metodologías ágiles como Scrum, enfocándose en la entrega de valor al cliente y la adaptación continua.</p>
+        </section>
+
+        <!-- Sección: Design Thinking -->
+        <section id="design_thinking" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title text-purple-700">Design Thinking</h2>
+            <p class="mb-4">Metodología centrada en el ser humano para la resolución de problemas y la innovación. Se basa en entender profundamente al usuario para generar soluciones deseables, viables y rentables.</p>
+             <p class="text-center mb-4">[Imagen de las 5 fases de Design Thinking: Empatizar, Definir, Idear, Prototipar, Testear, en un flujo iterativo]</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="p-4 bg-purple-50 rounded-lg shadow col-span-1 md:col-span-2 lg:col-span-3">
+                    <h4 class="card-title text-purple-700">Fases del Design Thinking (Proceso Iterativo)</h4>
+                    <ol class="list-decimal pl-5 grid md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <li><strong>Empatizar:</strong> Investigar y entender las necesidades del usuario y su contexto. (Técnicas: entrevistas, mapas de empatía, user journeys).</li>
+                        <li><strong>Definir:</strong> Sintetizar la información recopilada para identificar los problemas centrales y las necesidades clave del usuario.</li>
+                        <li><strong>Idear:</strong> Generar una amplia gama de ideas y posibles soluciones ("pensar fuera de la caja").</li>
+                        <li><strong>Prototipar:</strong> Construir versiones tempranas y de bajo coste de las soluciones (desde papel hasta interactivas).</li>
+                        <li><strong>Testear:</strong> Probar los prototipos con usuarios para obtener feedback y refinar las soluciones.</li>
+                    </ol>
+                    <div class="mnemonic mt-4">
+                        <p class="mnemonic-title">Regla Mnemotécnica (Fases Design Thinking):</p>
+                        <p>"<span class="font-semibold text-teal-700">E</span>l <span class="font-semibold text-teal-700">D</span>iseñador <span class="font-semibold text-teal-700">I</span>nnova <span class="font-semibold text-teal-700">P</span>robando <span class="font-semibold text-teal-700">T</span>odo." (Empatizar, Definir, Idear, Prototipar, Testear)</p>
+                    </div>
+                </div>
+            </div>
+             <h4 class="card-title text-purple-700 mt-6">Aptitudes Clave en Design Thinking</h4>
+            <ul class="list-disc pl-5 grid md:grid-cols-2 gap-x-4">
+                <li>Colaborativas</li>
+                <li>Observadoras (perspectiva global)</li>
+                <li>Empáticas (hacia usuarios y equipo)</li>
+                <li>Les gusta experimentar (aprender de errores)</li>
+                <li>Integradoras (conectar ideas)</li>
+                <li>Optimistas (confianza en mejorar)</li>
+                <li>Pacientes (no resolver prematuramente)</li>
+                <li>Personalizan (inventan, no copian)</li>
+            </ul>
+            <div class="mnemonic">
+                <p class="mnemonic-title">Regla Mnemotécnica (Aptitudes DT):</p>
+                <p>"<span class="font-semibold text-teal-700">C</span>on <span class="font-semibold text-teal-700">O</span>bservación y <span class="font-semibold text-teal-700">E</span>mpatía, e<span class="font-semibold text-teal-700">X</span>perimentamos <span class="font-semibold text-teal-700">I</span>ntegrando <span class="font-semibold text-teal-700">O</span>ptimismo, <span class="font-semibold text-teal-700">P</span>aciencia y <span class="font-semibold text-teal-700">P</span>ersonalización."</p>
+            </div>
+        </section>
+
+        <!-- Sección: Design Sprint -->
+        <section id="design_sprint" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title text-indigo-700">Design Sprint (Google)</h2>
+            <p class="mb-4">Metodología ágil de 5 días para validar ideas y resolver grandes desafíos, creando un prototipo y probándolo con clientes.</p>
+            <p class="text-center mb-4">[Imagen de línea de tiempo de 5 días: Lunes-Mapear, Martes-Bocetar, Miércoles-Decidir, Jueves-Prototipar, Viernes-Testear]</p>
+            <div class="p-4 bg-indigo-50 rounded-lg shadow">
+                <h4 class="card-title text-indigo-700">Fases Diarias del Design Sprint</h4>
+                <ol class="list-decimal pl-5">
+                    <li><strong>Día 1 (Lunes - Mapear/Comprender):</strong> Entender el problema, definir el objetivo a largo plazo y mapear el desafío. (Técnicas: Entrevistas a expertos, User Journey Map, "How Might We" notes).</li>
+                    <li><strong>Día 2 (Martes - Bocetar/Divergir):</strong> Explorar soluciones individualmente, generando bocetos detallados. (Técnicas: Lightning Demos, Crazy 8s, Solution Sketch).</li>
+                    <li><strong>Día 3 (Miércoles - Decidir):</strong> Criticar las soluciones y decidir colectivamente cuál prototipar. (Técnicas: Heat Map, Solution Presentation, Straw Poll, Decider Vote).</li>
+                    <li><strong>Día 4 (Jueves - Prototipar):</strong> Construir un prototipo realista de la solución elegida. Enfocarse en la "fachada".</li>
+                    <li><strong>Día 5 (Viernes - Testear/Validar):</strong> Probar el prototipo con usuarios reales (típicamente 5) y obtener feedback cualitativo.</li>
+                </ol>
+                <div class="mnemonic mt-4">
+                    <p class="mnemonic-title">Regla Mnemotécnica (Fases Design Sprint):</p>
+                    <p>"<span class="font-semibold text-teal-700">M</span>añana <span class="font-semibold text-teal-700">B</span>uscaremos <span class="font-semibold text-teal-700">D</span>ecisiones <span class="font-semibold text-teal-700">P</span>ara <span class="font-semibold text-teal-700">T</span>estear." (Mapear, Bocetar, Decidir, Prototipar, Testear)</p>
+                </div>
+            </div>
+            <h4 class="card-title text-indigo-700 mt-6">Técnicas de Design Thinking Usadas en Design Sprint:</h4>
+            <ul class="list-disc pl-5 text-sm">
+                <li>Día 1: Mapas de empatía, User Journey Map, Entrevistas.</li>
+                <li>Día 2: Sketches en papel, Storyboards (implícitos en la solución).</li>
+                <li>Día 4: Prototipos interactivos (o de la fidelidad necesaria).</li>
+                <li>Día 5: Test con usuarios, entrevistas y cuestionarios.</li>
+            </ul>
+        </section>
+
+        <!-- Sección: Scrum -->
+        <section id="scrum" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title text-orange-700">Scrum</h2>
+            <p class="mb-4">Framework ágil para desarrollar, entregar y mantener productos complejos, caracterizado por ciclos cortos (Sprints), roles definidos, artefactos y eventos regulares.</p>
+            <p class="text-center mb-4">[Imagen del ciclo de Scrum: Product Backlog -> Sprint Planning -> Sprint Backlog -> Sprint (Daily Scrum) -> Incremento -> Sprint Review -> Sprint Retrospective]</p>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="p-4 bg-orange-50 rounded-lg shadow">
+                    <h4 class="card-title text-orange-700">Roles Scrum (3)</h4>
+                    <ul class="list-disc pl-5">
+                        <li><strong>Product Owner:</strong> Maximiza el valor del producto, gestiona el Product Backlog. Representa al cliente/stakeholders.</li>
+                        <li><strong>Scrum Master:</strong> Sirve al equipo y PO, facilita Scrum, elimina impedimentos. Líder servicial.</li>
+                        <li><strong>Equipo de Desarrollo:</strong> Entrega incrementos de producto. Autoorganizado, multidisciplinar (3-9 personas).</li>
+                    </ul>
+                    <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Roles Scrum):</p>
+                        <p>"El <span class="font-semibold text-teal-700">P</span>ropietario <span class="font-semibold text-teal-700">S</span>irve al <span class="font-semibold text-teal-700">E</span>quipo." (Product Owner, Scrum Master, Equipo)</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-yellow-50 rounded-lg shadow">
+                    <h4 class="card-title text-yellow-700">Artefactos Scrum (3)</h4>
+                    <ul class="list-disc pl-5">
+                        <li><strong>Product Backlog:</strong> Lista priorizada de todo lo que se necesita en el producto. Dinámica. (Gestionada por PO).</li>
+                        <li><strong>Sprint Backlog:</strong> Plan para el Sprint. Elementos del Product Backlog seleccionados + plan para entregarlos. (Gestionado por Equipo Desarrollo).</li>
+                        <li><strong>Incremento:</strong> Suma de todos los elementos del Product Backlog completados durante un Sprint y Sprints anteriores. Debe ser usable.</li>
+                    </ul>
+                     <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Artefactos Scrum):</p>
+                        <p>"<span class="font-semibold text-teal-700">P</span>roducto, <span class="font-semibold text-teal-700">S</span>print, <span class="font-semibold text-teal-700">I</span>ncremento."</p>
+                    </div>
+                </div>
+                 <div class="p-4 bg-red-50 rounded-lg shadow">
+                    <h4 class="card-title text-red-700">Eventos Scrum (Ceremonias - 5)</h4>
+                    <ul class="list-disc pl-5 text-sm">
+                        <li><strong>El Sprint:</strong> Contenedor de los demás eventos. Time-boxed (1 mes o menos).</li>
+                        <li><strong>Sprint Planning:</strong> Planificación del trabajo a realizar en el Sprint.</li>
+                        <li><strong>Daily Scrum (Stand-up):</strong> Reunión diaria corta (15 min) para sincronizar y planificar el día.</li>
+                        <li><strong>Sprint Review:</strong> Inspección del Incremento y adaptación del Product Backlog. Colaborativa.</li>
+                        <li><strong>Sprint Retrospective:</strong> Reflexión del equipo sobre cómo mejorar el proceso en el próximo Sprint.</li>
+                    </ul>
+                     <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Eventos Scrum):</p>
+                        <p>"El <span class="font-semibold text-teal-700">S</span>uper <span class="font-semibold text-teal-700">P</span>lan <span class="font-semibold text-teal-700">D</span>iario se <span class="font-semibold text-teal-700">R</span>evisa y <span class="font-semibold text-teal-700">R</span>eflexiona." (Sprint, Planning, Daily, Review, Retrospective)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-6 p-4 bg-amber-50 rounded-lg shadow">
+                <h4 class="card-title text-amber-700">Conceptos Clave en Scrum</h4>
+                <ul class="list-disc pl-5 grid md:grid-cols-2 gap-x-4 text-sm">
+                    <li><strong>User Stories:</strong> Descripciones cortas de funcionalidades desde la perspectiva del usuario ("Como [rol], quiero [acción] para [beneficio]").</li>
+                    <li><strong>Definition of Done (DoD):</strong> Criterios compartidos para que un trabajo se considere completo.</li>
+                    <li><strong>Timeboxing:</strong> Duración máxima fija para eventos.</li>
+                    <li><strong>Priorización:</strong> El Product Backlog se ordena por valor, riesgo, etc.</li>
+                    <li><strong>Velocidad (Velocity):</strong> Medida de la cantidad de trabajo que un equipo puede completar en un Sprint.</li>
+                    <li><strong>Gráfico Burndown:</strong> Muestra el trabajo restante en un Sprint.</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- Sección: Comparativa Ágil vs Predictiva y Contratos -->
+        <section id="agile_contracts" class="mb-16 card">
+            <h2 class="text-3xl font-semibold section-title text-cyan-700">Gestión Ágil: Comparativa y Contratos</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="p-4 bg-cyan-50 rounded-lg shadow">
+                    <h4 class="card-title text-cyan-700">Ágil vs. Predictiva (Tradicional)</h4>
+                    <p class="mb-2"><strong>Predictiva (Cascada):</strong></p>
+                    <ul class="list-disc pl-5 text-sm">
+                        <li>Alcance fijo, tiempo y coste variables (o intentan fijar todo - "triángulo de hierro").</li>
+                        <li>Orientación a plan. Planificación detallada al inicio.</li>
+                        <li>Cambios costosos y se evitan. Secuencial.</li>
+                        <li>Énfasis en documentación extensiva.</li>
+                    </ul>
+                    <p class="mt-3 mb-2"><strong>Ágil:</strong></p>
+                    <ul class="list-disc pl-5 text-sm">
+                        <li>Tiempo (iteraciones) y coste (equipo) más fijos, alcance variable y evolutivo.</li>
+                        <li>Orientación a valor y adaptación.</li>
+                        <li>Cambios bienvenidos y gestionados. Iterativo e incremental.</li>
+                        <li>Énfasis en producto funcionando y colaboración.</li>
+                    </ul>
+                    <p class="text-center mt-2">[Diagrama de Triángulo de Hierro vs. Triángulo Ágil Invertido]</p>
+                </div>
+                <div class="p-4 bg-teal-50 rounded-lg shadow">
+                    <h4 class="card-title text-teal-700">Tipos de Contratos Ágiles</h4>
+                    <p class="mb-2">Buscan colaboración, flexibilidad y compartir riesgos/beneficios.</p>
+                    <ul class="list-disc pl-5 text-sm">
+                        <li><strong>Tiempo y Materiales (T&M):</strong> Pago por esfuerzo/tiempo. Riesgo en cliente. Puede ser iterativo (pago por Sprint).</li>
+                        <li><strong>Alcance No Vinculante / Precio Fijo:</strong> Importe fijo, alcance variable. Cláusulas como "Change for Free" o "Money for Nothing".</li>
+                        <li><strong>Coste Objetivo (Target Cost):</strong> Se define coste objetivo; desviaciones se comparten. Fomenta el win-win.</li>
+                    </ul>
+                     <div class="mnemonic">
+                        <p class="mnemonic-title">Mnemotecnia (Contratos Ágiles):</p>
+                        <p>"<span class="font-semibold text-teal-700">T</span>iempo y <span class="font-semibold text-teal-700">M</span>ateriales, <span class="font-semibold text-teal-700">A</span>lcance <span class="font-semibold text-teal-700">F</span>lexible, <span class="font-semibold text-teal-700">C</span>oste <span class="font-semibold text-teal-700">O</span>bjetivo."</p>
+                    </div>
+                    <p class="mt-3 text-xs italic">Clave: Transparencia, confianza, colaboración, Definition of Done clara.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-16 py-8 border-t border-slate-300">
+            <p class="text-slate-600">&copy; 2025 Guía Gráfica de Diseño y Dirección Ágil de Proyectos.</p>
+        </footer>
+    </div>
+    <script>
+        // Script para suavizar el scroll en los enlaces de ancla
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

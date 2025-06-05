@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen Interactivo de Diseño y Dirección Ágil de Proyectos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f7f4; /* Un fondo ligeramente verdoso */
+        }
+        .question-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .question-text {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #047857; /* Verde oscuro */
+        }
+        .option-label {
+            display: block;
+            padding: 10px;
+            border: 1px solid #e2e8f0; /* Gris claro */
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .option-label:hover {
+            background-color: #d1fae5; /* Verde muy claro al pasar el ratón */
+        }
+        .option-label.selected {
+            background-color: #a7f3d0; /* Verde claro seleccionado */
+            border-color: #10b981; /* Verde primario */
+        }
+        .option-label.correct {
+            background-color: #dcfce7; 
+            border-color: #22c55e; 
+            color: #15803d; 
+        }
+        .option-label.incorrect {
+            background-color: #fee2e2; 
+            border-color: #ef4444; 
+            color: #b91c1c; 
+        }
+        .btn-primary {
+            background-color: #059669; /* Verde */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #047857; /* Verde más oscuro */
+        }
+         .btn-primary[disabled] {
+            background-color: #6ee7b7; /* Verde más claro cuando está deshabilitado */
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background-color: #64748b; 
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+        .btn-secondary:hover {
+            background-color: #475569; 
+        }
+        .page-results {
+            background-color: #d1fae5; 
+            border: 1px solid #34d399; 
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 20px;
+            background-color: #10b981; /* Verde */
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            border-radius: 8px 0 0 8px;
+            transition: width 0.3s ease-in-out;
+        }
+        .progress-bar.full {
+             border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+    <div class="container mx-auto max-w-3xl">
+        <header class="text-center mb-10">
+            <h1 class="text-3xl sm:text-4xl font-bold text-emerald-700">Examen Interactivo de Diseño y Dirección Ágil de Proyectos</h1>
+            <p class="text-md text-slate-600 mt-2">Evalúa tus conocimientos sobre metodologías ágiles.</p>
+        </header>
+
+        <div id="progressBarContainer" class="progress-bar-container">
+            <div id="progressBar" class="progress-bar" style="width: 0%;">0%</div>
+        </div>
+
+        <div id="quiz-container">
+            <!-- Las preguntas se cargarán aquí por JavaScript -->
+        </div>
+
+        <div id="navigation-buttons" class="mt-8 flex justify-between items-center">
+            <button id="prev-page-btn" class="btn-secondary" style="display: none;">Anterior</button>
+            <button id="next-page-btn" class="btn-primary">Siguiente Página</button>
+            <button id="resolve-page-btn" class="btn-primary" style="display: none;">Resolver Página</button>
+        </div>
+        
+        <div id="page-results-container" class="mt-6">
+            <!-- Los resultados de la página se mostrarán aquí -->
+        </div>
+
+        <div id="final-results-container" class="mt-10 p-6 bg-emerald-100 rounded-lg shadow-md text-center" style="display: none;">
+            <h2 class="text-2xl font-semibold text-emerald-700 mb-4">Resultados Finales del Examen</h2>
+            <p class="text-lg">Total de Preguntas: <span id="total-questions-final"></span></p>
+            <p class="text-lg text-green-600">Aciertos: <span id="total-correct-final"></span></p>
+            <p class="text-lg text-red-600">Fallos: <span id="total-incorrect-final"></span></p>
+            <p class="text-xl font-bold mt-4">Puntuación Final: <span id="final-score"></span>%</p>
+            <button id="restart-quiz-btn" class="btn-primary mt-6">Reiniciar Examen</button>
+        </div>
+        <a href="guia_agil_proyectos.html" class="mt-8 inline-block text-emerald-600 hover:text-emerald-800 hover:underline">← Volver a la Guía Ágil de Proyectos</a>
+    </div>
+
+    <script>
+        const questionsPerPage = 20;
+        let currentPage = 1;
+        let totalPages = 5; 
+        let userAnswers = {}; 
+        let pageScores = {}; 
+        let questionsData = []; 
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function generateAgileQuestions() {
+            // Array con 100 preguntas únicas.
+            const uniqueBaseQuestions = [
+                // Principios y Valores Ágiles (15 Preguntas)
+                {
+                    pregunta: "¿Cuál de los siguientes es un valor fundamental del Manifiesto Ágil?",
+                    opciones: ["Individuos e interacciones sobre procesos y herramientas", "Documentación exhaustiva sobre software funcionando", "Seguir un plan sobre respuesta ante el cambio", "Negociación contractual sobre colaboración con el cliente"],
+                    respuestaCorrecta: 0, tema: "Valores Ágiles"
+                },
+                {
+                    pregunta: "El Manifiesto Ágil valora más el 'Software funcionando' que:",
+                    opciones: ["La documentación exhaustiva", "Los procesos y herramientas", "La negociación contractual", "Seguir un plan detallado"],
+                    respuestaCorrecta: 0, tema: "Valores Ágiles"
+                },
+                {
+                    pregunta: "'Colaboración con el cliente sobre negociación de contratos' es un valor que promueve:",
+                    opciones: ["Una relación de partnership y confianza con el cliente", "Contratos cerrados y detallados desde el inicio", "Minimizar la interacción con el cliente para evitar cambios", "Documentar todas las interacciones para futuras disputas"],
+                    respuestaCorrecta: 0, tema: "Valores Ágiles"
+                },
+                {
+                    pregunta: "¿Qué significa 'Respuesta ante el cambio sobre seguir un plan' en el contexto ágil?",
+                    opciones: ["La capacidad de adaptarse a nuevos requisitos es más importante que adherirse rígidamente a un plan inicial", "Los planes no son necesarios en proyectos ágiles", "Los cambios solo se aceptan si no afectan el plan original", "El plan inicial es inmutable una vez definido"],
+                    respuestaCorrecta: 0, tema: "Valores Ágiles"
+                },
+                {
+                    pregunta: "Según los principios ágiles, ¿cuál es la mayor prioridad?",
+                    opciones: ["Satisfacer al cliente mediante la entrega temprana y continua de valor", "Cumplir estrictamente con el presupuesto inicial", "Finalizar el proyecto en el menor tiempo posible, incluso sacrificando calidad", "Producir la documentación más completa posible"],
+                    respuestaCorrecta: 0, tema: "Principios Ágiles"
+                },
+                {
+                    pregunta: "El principio ágil 'Aceptar los requisitos cambiantes, incluso en etapas tardías' se basa en que:",
+                    opciones: ["El cambio puede proporcionar una ventaja competitiva al cliente", "Los cambios siempre son gratuitos y no impactan el cronograma", "Es mejor evitar los cambios una vez iniciado el desarrollo", "Los requisitos iniciales suelen ser perfectos y no necesitan cambios"],
+                    respuestaCorrecta: 0, tema: "Principios Ágiles"
+                },
+                 {
+                    pregunta: "La entrega frecuente de producto funcional (cada pocas semanas o meses) es un principio ágil que busca:",
+                    opciones: ["Obtener feedback temprano y reducir riesgos", "Aumentar la presión sobre el equipo de desarrollo", "Retrasar la entrega final del producto completo", "Minimizar la necesidad de pruebas continuas"],
+                    respuestaCorrecta: 0, tema: "Principios Ágiles"
+                },
+                {
+                    pregunta: "'Los responsables de negocio y los desarrolladores deben trabajar juntos de forma cotidiana' es un principio que fomenta:",
+                    opciones: ["Una mejor comunicación, alineación y toma de decisiones rápida", "La separación estricta de roles y responsabilidades", "Que los desarrolladores tomen todas las decisiones de negocio", "Reuniones formales y esporádicas entre negocio y desarrollo"],
+                    respuestaCorrecta: 0, tema: "Principios Ágiles"
+                },
+                {
+                    pregunta: "El principio de 'construir proyectos en torno a individuos motivados' implica:",
+                    opciones: ["Darles el entorno, apoyo y confianza necesarios para ejecutar el trabajo", "Seleccionar solo a individuos que no necesiten motivación externa", "Establecer un sistema de recompensas y castigos muy estricto", "Microgestionar a cada individuo para asegurar la productividad"],
+                    respuestaCorrecta: 0, tema: "Principios Ágiles"
+                },
+                {
+                    pregunta: "¿Cuál es considerado el método más eficiente y efectivo de comunicar información en un equipo ágil?",
+                    opciones: ["La conversación cara a cara", "El correo electrónico detallado", "La documentación exhaustiva en un sistema centralizado", "Las videollamadas programadas con agenda estricta"],
+                    respuestaCorrecta: 0, tema: "Principios Ágiles"
+                },
+                 {
+                    pregunta: "En Agile, 'el producto/servicio funcionando es la medida principal del progreso'. ¿Qué implica esto?",
+                    opciones: ["Se prioriza la entrega de incrementos funcionales sobre métricas de avance en tareas o documentación", "El progreso se mide por el porcentaje de tareas completadas en un Gantt", "La cantidad de líneas de código escritas es el indicador clave", "Las horas invertidas por el equipo determinan el avance"],
+                    respuestaCorrecta: 0, tema: "Principios Ágiles"
+                },
+                {
+                    pregunta: "El desarrollo sostenible en Agile, donde se mantiene un ritmo constante, busca evitar:",
+                    opciones: ["El agotamiento del equipo (burnout) y la disminución de la calidad a largo plazo", "La entrega frecuente de funcionalidades", "La adaptación a los cambios del cliente", "La colaboración continua entre negocio y desarrolladores"],
+                    respuestaCorrecta: 0, tema: "Principios Ágiles"
+                },
+                {
+                    pregunta: "La atención continua a la excelencia técnica y al buen diseño en Agile contribuye a:",
+                    opciones: ["Mejorar la agilidad, facilitando cambios futuros y manteniendo la calidad", "Aumentar innecesariamente la complejidad del producto", "Retrasar la entrega de valor al cliente", "Limitar la creatividad del equipo de desarrollo"],
+                    respuestaCorrecta: 0, tema: "Principios Ágiles"
+                },
+                {
+                    pregunta: "Las mejores arquitecturas, requisitos y diseños emergen de:",
+                    opciones: ["Equipos autoorganizados (autogestionados)", "Un arquitecto jefe que toma todas las decisiones técnicas", "Documentos de diseño detallados aprobados al inicio", "La imposición de estándares por parte de la dirección"],
+                    respuestaCorrecta: 0, tema: "Principios Ágiles"
+                },
+                {
+                    pregunta: "La reflexión regular del equipo sobre cómo ser más efectivo (retrospectivas) es crucial para:",
+                    opciones: ["La mejora continua del proceso y del equipo", "Culpar a los miembros por los errores cometidos", "Añadir más procesos y burocracia al equipo", "Mantener el mismo proceso sin cambios durante todo el proyecto"],
+                    respuestaCorrecta: 0, tema: "Principios Ágiles"
+                },
+                // Lean UX (15 Preguntas)
+                {
+                    pregunta: "Lean UX adapta los principios Lean al diseño de experiencias de usuario. ¿Cuál es uno de sus focos principales?",
+                    opciones: ["Aprendizaje rápido a través de la experimentación y feedback", "Creación de documentación de diseño exhaustiva antes de desarrollar", "Seguimiento estricto de un plan de diseño inicial sin desviaciones", "Minimizar la colaboración para acelerar las decisiones de diseño"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "En Lean UX, ¿por qué se prefiere 'hacer sobre analizar'?",
+                    opciones: ["Para obtener feedback real más rápido mediante prototipos en lugar de debates prolongados", "Porque el análisis detallado no aporta valor en el diseño", "Para evitar la participación de los stakeholders en las decisiones", "Porque los diseñadores deben trabajar de forma aislada"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "El concepto de 'eliminar el desperdicio' en Lean UX se refiere a:",
+                    opciones: ["Reducir actividades que no añaden valor al usuario o al aprendizaje, como documentación excesiva no validada", "Descartar todas las ideas que no provengan del diseñador principal", "No invertir tiempo en pruebas con usuarios para ahorrar costes", "Utilizar únicamente las herramientas de diseño más baratas"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "'Trabajar en pequeños lotes' es un principio de Lean UX que ayuda a:",
+                    opciones: ["Reducir el riesgo creando y validando soluciones en ciclos cortos", "Acumular una gran cantidad de trabajo antes de cualquier validación", "Entregar el producto completo en una única fase", "Asegurar que todos los miembros del equipo trabajen en paralelo en diferentes funcionalidades"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "En el proceso Lean UX, una 'hipótesis' se formula para:",
+                    opciones: ["Transformar suposiciones en enunciados testeables que guíen la experimentación", "Documentar los requisitos finales del producto", "Establecer el plan de marketing del producto", "Definir el presupuesto exacto del proyecto de diseño"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "¿Cuál es el rol principal de un MVP (Producto Mínimo Viable) en Lean UX?",
+                    opciones: ["Probar una hipótesis fundamental con el mínimo esfuerzo y aprender de ello", "Ser la primera versión completa del producto lista para la venta masiva", "Incluir todas las funcionalidades que el equipo pueda imaginar", "Reemplazar la necesidad de hablar con los usuarios"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "El diseño colaborativo en Lean UX fomenta:",
+                    opciones: ["La participación de todos los miembros del equipo (diseño, desarrollo, negocio) en la generación de ideas", "Que un único diseñador tome todas las decisiones creativas", "La creación de prototipos de muy alta fidelidad desde el inicio", "La externalización completa del proceso de diseño"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "La 'visión impulsada por resultados' (outcomes) en Lean UX significa que el éxito se mide por:",
+                    opciones: ["El impacto positivo en el comportamiento del usuario y los objetivos de negocio", "La cantidad de características entregadas (outputs)", "El cumplimiento del cronograma y presupuesto originales", "La belleza estética del diseño final"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "Una característica de la retroalimentación (feedback) en Lean UX es que:",
+                    opciones: ["Es continua, colaborativa y se obtiene de usuarios reales", "Se recoge únicamente al final del proyecto", "Solo se considera el feedback cuantitativo (métricas)", "Es gestionada exclusivamente por el departamento de marketing"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "Integrar Lean UX con Scrum implica a menudo:",
+                    opciones: ["Realizar actividades de descubrimiento y validación de UX dentro de los Sprints o en paralelo", "Separar completamente el trabajo de UX del trabajo de desarrollo en Sprints distintos", "Eliminar el rol del Product Owner, ya que UX define el producto", "Realizar un BDUF (Big Design Up Front) antes de iniciar los Sprints"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "Al formular un problema en Lean UX, es importante:",
+                    opciones: ["Definirlo claramente desde la perspectiva del usuario y del negocio", "Asegurarse de que la solución ya esté implícita en la definición", "Limitar la definición a los aspectos técnicos", "Evitar la participación del equipo de desarrollo en esta fase"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "Las suposiciones en Lean UX son:",
+                    opciones: ["Creencias sobre los usuarios, el mercado o la tecnología que deben ser validadas", "Hechos comprobados sobre el proyecto", "Los requisitos finales aprobados por el cliente", "Las limitaciones presupuestarias del proyecto"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "El 'permiso para fallar' en Lean UX es importante porque:",
+                    opciones: ["El fallo se ve como una oportunidad de aprendizaje crucial para la iteración", "Significa que la calidad no es importante", "Permite al equipo no asumir responsabilidad por los resultados", "Reduce la necesidad de probar las ideas"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "Visualizar el trabajo en Lean UX, por ejemplo con tableros Kanban, ayuda a:",
+                    opciones: ["Fomentar la transparencia, la participación y la retroalimentación del equipo", "Ocultar el progreso real a los stakeholders", "Añadir burocracia innecesaria al proceso", "Limitar la comunicación directa entre los miembros"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                {
+                    pregunta: "En Lean UX, ¿qué se busca al 'involucrar al cliente de manera regular'?",
+                    opciones: ["Entender continuamente sus necesidades y validar las soluciones propuestas", "Obtener la aprobación formal para cada pequeño cambio de diseño", "Transferir la responsabilidad del diseño completamente al cliente", "Limitar el número de interacciones para no sobrecargar al cliente"],
+                    respuestaCorrecta: 0, tema: "Lean UX"
+                },
+                // Design Thinking (15 Preguntas)
+                {
+                    pregunta: "Design Thinking es una metodología centrada en:",
+                    opciones: ["El ser humano, buscando entender profundamente sus necesidades para innovar", "La tecnología, priorizando las soluciones más avanzadas técnicamente", "El negocio, enfocándose únicamente en la rentabilidad económica", "Los procesos, siguiendo un conjunto de pasos rígidos y secuenciales"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "La fase de 'Empatizar' en Design Thinking implica principalmente:",
+                    opciones: ["Investigar y sumergirse en el contexto del usuario para comprender sus experiencias y motivaciones", "Definir el problema específico que se va a resolver", "Generar tantas ideas de solución como sea posible", "Construir un prototipo funcional de la idea"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "Un 'Mapa de Empatía' es una herramienta utilizada en Design Thinking para:",
+                    opciones: ["Visualizar lo que un usuario dice, hace, piensa y siente", "Definir los requisitos técnicos del producto", "Planificar el cronograma del proyecto de diseño", "Evaluar la viabilidad económica de una solución"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "En la fase de 'Idear' de Design Thinking, ¿qué se busca?",
+                    opciones: ["Generar una gran cantidad y diversidad de ideas, fomentando el pensamiento divergente", "Seleccionar la única idea viable para prototipar inmediatamente", "Criticar y descartar ideas que no parezcan factibles a primera vista", "Analizar en detalle la viabilidad técnica de cada idea"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "¿Por qué es importante prototipar en Design Thinking?",
+                    opciones: ["Para hacer las ideas tangibles, aprender de forma barata y rápida, y obtener feedback de los usuarios", "Para tener un producto final listo para lanzar al mercado", "Para demostrar la perfección de la idea original sin necesidad de cambios", "Para reemplazar la necesidad de entender al usuario previamente"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "La fase de 'Testear' en Design Thinking se realiza para:",
+                    opciones: ["Obtener retroalimentación de los usuarios sobre los prototipos y refinar las soluciones", "Vender el prototipo a los primeros clientes", "Confirmar que el prototipo funciona técnicamente sin errores", "Presentar la solución final a los directivos para su aprobación"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "El proceso de Design Thinking se describe como 'iterativo y no lineal'. ¿Qué significa esto?",
+                    opciones: ["Las fases se pueden revisitar y repetir según sea necesario para refinar la solución", "Se debe seguir cada fase en un orden estricto sin volver atrás", "El proceso es caótico y no tiene una estructura definida", "Solo se realiza una única iteración completa del proceso"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "Ser 'observador' en Design Thinking implica:",
+                    opciones: ["Prestar atención a los detalles del comportamiento y contexto del usuario, cuestionando lo evidente", "Limitarse a escuchar lo que los usuarios dicen explícitamente", "Ignorar los aspectos no verbales de la comunicación", "Basar las conclusiones únicamente en datos cuantitativos"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "La aptitud de 'paciencia' en Design Thinking es relevante porque:",
+                    opciones: ["Permite identificar y definir claramente el problema antes de saltar a soluciones", "Acelera el proceso de generación de ideas", "Reduce la necesidad de realizar pruebas con usuarios", "Fomenta la toma de decisiones impulsivas"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "Un 'User Journey Map' es una herramienta útil en la fase de 'Empatizar' para:",
+                    opciones: ["Visualizar el proceso que un usuario realiza para lograr un objetivo, incluyendo sus acciones, pensamientos y emociones", "Crear un perfil demográfico detallado del usuario", "Bosquejar la interfaz de usuario de una aplicación", "Priorizar las funcionalidades del producto"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "En Design Thinking, al 'definir' el problema, es crucial centrarse en:",
+                    opciones: ["Las necesidades y puntos de dolor reales del usuario, no en las suposiciones del equipo", "Las soluciones técnicas más fáciles de implementar", "Las características que la competencia ya ofrece", "Las limitaciones presupuestarias del proyecto"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "La creación de 'Personas' en Design Thinking ayuda a:",
+                    opciones: ["Representar arquetipos de usuarios con sus características, necesidades y motivaciones", "Definir los roles y responsabilidades dentro del equipo de diseño", "Establecer los indicadores clave de rendimiento (KPIs) del proyecto", "Documentar los casos de prueba para el producto final"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "El pensamiento divergente es especialmente importante en la fase de Design Thinking de:",
+                    opciones: ["Idear", "Definir", "Prototipar", "Testear"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "Un prototipo de baja fidelidad en Design Thinking (ej. en papel) es útil para:",
+                    opciones: ["Explorar y validar conceptos de forma rápida y barata en etapas tempranas", "Realizar pruebas de rendimiento técnico del sistema", "Presentar el diseño final a los inversores", "Reemplazar la documentación técnica detallada"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                {
+                    pregunta: "Si durante la fase de 'Testear' se descubre que un prototipo no satisface las necesidades del usuario, ¿cuál sería un paso lógico siguiente en Design Thinking?",
+                    opciones: ["Volver a fases anteriores (Idear, Prototipar, o incluso Empatizar/Definir) para iterar", "Abandonar el proyecto inmediatamente", "Lanzar el prototipo al mercado tal como está", "Ignorar el feedback y continuar con el plan original"],
+                    respuestaCorrecta: 0, tema: "Design Thinking"
+                },
+                // Design Sprint (15 Preguntas)
+                {
+                    pregunta: "¿Cuál es la duración típica de un Design Sprint de Google Ventures?",
+                    opciones: ["5 días", "1 día", "2 semanas", "1 mes"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "El objetivo del Día 2 (Martes - Bocetar) en un Design Sprint es:",
+                    opciones: ["Generar una amplia gama de soluciones posibles de forma individual", "Definir el problema y el objetivo a largo plazo", "Decidir qué solución se va a prototipar", "Construir un prototipo funcional"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "La técnica 'How Might We...' (HMW) se utiliza en Design Sprint para:",
+                    opciones: ["Replantear los problemas como oportunidades de diseño durante la fase de Mapear/Comprender", "Votar por la mejor solución esbozada", "Crear un prototipo de alta fidelidad", "Realizar entrevistas con los usuarios finales"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "¿Qué sucede el Día 3 (Miércoles - Decidir) de un Design Sprint?",
+                    opciones: ["El equipo critica las soluciones y elige colectivamente la que se va a prototipar", "Se realizan entrevistas con expertos para entender el problema", "Cada miembro del equipo crea bocetos detallados de sus ideas", "Se prueba el prototipo con usuarios reales"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "El prototipo creado el Día 4 (Jueves) de un Design Sprint debe ser:",
+                    opciones: ["Lo suficientemente realista como para obtener feedback genuino de los usuarios, pero construido rápidamente", "Un producto completamente desarrollado y listo para producción", "Un conjunto de bocetos en papel de baja fidelidad", "Un informe detallado de la solución elegida"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "¿Cuántos usuarios se recomienda típicamente para las pruebas del Día 5 (Viernes) en un Design Sprint?",
+                    opciones: ["5 usuarios", "1 usuario", "20 usuarios", "Tantos como sea posible"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "El rol del 'Decisor' en un Design Sprint es crucial para:",
+                    opciones: ["Tomar la decisión final cuando el equipo no llega a un consenso, especialmente el miércoles", "Facilitar todas las actividades del sprint", "Crear todos los bocetos de soluciones", "Realizar todas las entrevistas con los usuarios"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "Las 'Lightning Demos' en un Design Sprint sirven para:",
+                    opciones: ["Que el equipo se inspire rápidamente revisando soluciones existentes a problemas similares o diferentes", "Presentar el prototipo final a los stakeholders", "Realizar una demostración técnica del software", "Una sesión rápida de brainstorming al final del día"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "El 'User Journey Map' creado el lunes en un Design Sprint ayuda a:",
+                    opciones: ["Visualizar la experiencia actual del usuario e identificar puntos de dolor y oportunidades", "Definir la arquitectura técnica de la solución", "Estimar el coste total del proyecto", "Asignar tareas a los miembros del equipo"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "Si un Design Sprint tiene éxito, ¿cuál es el resultado esperado al final de la semana?",
+                    opciones: ["Una idea validada (o invalidada) con un prototipo probado y aprendizajes claros", "Un producto completamente desarrollado y listo para lanzar", "Un plan de proyecto detallado para los próximos 6 meses", "Un equipo perfectamente alineado sin necesidad de más discusión"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                 {
+                    pregunta: "El concepto de 'Storyboarding' en el Design Sprint ayuda a:",
+                    opciones: ["Planificar la secuencia de pantallas o interacciones que conformarán el prototipo", "Escribir historias de usuario detalladas para el backlog", "Crear un guion para un video promocional del producto", "Documentar las decisiones tomadas por el equipo cada día"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "Un 'Heat Map Vote' es una técnica usada el miércoles del Design Sprint para:",
+                    opciones: ["Permitir a los miembros del equipo indicar silenciosamente las partes interesantes de las soluciones propuestas", "Evaluar la temperatura de la sala de reuniones", "Priorizar las tareas para la creación del prototipo", "Seleccionar a los usuarios para las pruebas del viernes"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "La creación del prototipo el jueves se enfoca en la 'fachada' (lo que el usuario ve e interactúa). ¿Por qué?",
+                    opciones: ["Para simular la experiencia de usuario de forma realista sin necesidad de construir la lógica completa", "Porque la estética es lo único que importa en un prototipo", "Para que sea más fácil de programar por el equipo técnico", "Porque no hay tiempo suficiente para construir nada más"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "Las entrevistas del viernes en un Design Sprint son principalmente para:",
+                    opciones: ["Observar la interacción del usuario con el prototipo y obtener feedback cualitativo", "Vender el producto al usuario entrevistado", "Realizar una encuesta de satisfacción general", "Reclutar nuevos miembros para el equipo"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                {
+                    pregunta: "¿Qué tipo de problema es más adecuado para un Design Sprint?",
+                    opciones: ["Un gran desafío o una nueva idea con alta incertidumbre que necesita validación rápida", "Pequeñas mejoras incrementales a un producto existente y maduro", "Proyectos con requisitos completamente definidos y sin ambigüedad", "Tareas de mantenimiento rutinarias"],
+                    respuestaCorrecta: 0, tema: "Design Sprint"
+                },
+                // Scrum (25 Preguntas)
+                {
+                    pregunta: "En Scrum, el Product Owner es responsable de:",
+                    opciones: ["Definir y priorizar el Product Backlog para maximizar el valor", "Facilitar los eventos de Scrum y eliminar impedimentos", "Asegurar que el equipo de desarrollo cumpla con los plazos", "Realizar las pruebas técnicas del incremento"],
+                    respuestaCorrecta: 0, tema: "Scrum Roles"
+                },
+                {
+                    pregunta: "El Scrum Master actúa como un:",
+                    opciones: ["Líder servicial que ayuda al equipo a aplicar Scrum correctamente", "Jefe de proyecto que asigna tareas y controla el progreso", "Representante del cliente dentro del equipo", "Experto técnico que resuelve los problemas de desarrollo"],
+                    respuestaCorrecta: 0, tema: "Scrum Roles"
+                },
+                {
+                    pregunta: "El Equipo de Desarrollo en Scrum tiene como característica ser:",
+                    opciones: ["Autoorganizado y multifuncional", "Dirigido y controlado por el Scrum Master", "Compuesto únicamente por programadores", "Variable en tamaño, pudiendo cambiar en cada Sprint"],
+                    respuestaCorrecta: 0, tema: "Scrum Roles"
+                },
+                {
+                    pregunta: "El Product Backlog es:",
+                    opciones: ["Una lista ordenada y emergente de todo lo que podría ser necesario en el producto", "Un plan detallado de tareas para el Sprint actual", "Un documento fijo que no puede cambiarse una vez iniciado el proyecto", "El conjunto de todos los incrementos de producto completados"],
+                    respuestaCorrecta: 0, tema: "Scrum Artefactos"
+                },
+                {
+                    pregunta: "¿Quién es el único responsable de gestionar el Product Backlog?",
+                    opciones: ["El Product Owner", "El Scrum Master", "El Equipo de Desarrollo en conjunto", "Los stakeholders"],
+                    respuestaCorrecta: 0, tema: "Scrum Artefactos"
+                },
+                {
+                    pregunta: "El Sprint Backlog es creado durante:",
+                    opciones: ["El Sprint Planning", "La Daily Scrum", "La Sprint Review", "La Sprint Retrospective"],
+                    respuestaCorrecta: 0, tema: "Scrum Artefactos"
+                },
+                {
+                    pregunta: "Un Incremento de producto en Scrum debe ser:",
+                    opciones: ["Potencialmente entregable y cumplir con la Definition of Done", "Una versión parcial que no necesariamente funciona", "Un prototipo de baja fidelidad", "Aprobado formalmente por todos los stakeholders antes de considerarse Incremento"],
+                    respuestaCorrecta: 0, tema: "Scrum Artefactos"
+                },
+                {
+                    pregunta: "La duración de un Sprint en Scrum es típicamente de:",
+                    opciones: ["Un mes o menos", "Exactamente dos semanas, sin excepción", "Entre dos y tres meses", "Definida por el cliente al inicio del proyecto"],
+                    respuestaCorrecta: 0, tema: "Scrum Eventos"
+                },
+                {
+                    pregunta: "¿Cuál es el objetivo del Sprint Planning?",
+                    opciones: ["Seleccionar los elementos del Product Backlog para el Sprint y crear un plan para entregarlos", "Revisar el trabajo completado en el Sprint anterior", "Inspeccionar y adaptar el proceso del equipo Scrum", "Sincronizar el trabajo diario del Equipo de Desarrollo"],
+                    respuestaCorrecta: 0, tema: "Scrum Eventos"
+                },
+                {
+                    pregunta: "La Daily Scrum tiene un timebox de:",
+                    opciones: ["15 minutos", "1 hora", "30 minutos", "No tiene timebox"],
+                    respuestaCorrecta: 0, tema: "Scrum Eventos"
+                },
+                {
+                    pregunta: "Durante la Daily Scrum, cada miembro del Equipo de Desarrollo usualmente responde a tres preguntas. ¿Cuál NO es una de ellas?",
+                    opciones: ["¿Qué tareas te asignará el Scrum Master hoy?", "¿Qué hice ayer para ayudar al equipo a alcanzar el Objetivo del Sprint?", "¿Qué haré hoy para ayudar al equipo a alcanzar el Objetivo del Sprint?", "¿Veo algún impedimento que evite que el equipo o yo alcancemos el Objetivo del Sprint?"],
+                    respuestaCorrecta: 0, tema: "Scrum Eventos"
+                },
+                {
+                    pregunta: "El propósito de la Sprint Review es:",
+                    opciones: ["Inspeccionar el Incremento con los stakeholders y adaptar el Product Backlog si es necesario", "Que el equipo demuestre su rendimiento individual al Scrum Master", "Realizar una sesión de planificación detallada para el próximo Sprint", "Una reunión formal de aprobación o rechazo del trabajo del Sprint"],
+                    respuestaCorrecta: 0, tema: "Scrum Eventos"
+                },
+                {
+                    pregunta: "La Sprint Retrospective se enfoca en:",
+                    opciones: ["Inspeccionar cómo fue el último Sprint respecto a personas, relaciones, procesos y herramientas, e identificar mejoras", "Demostrar el producto a los clientes", "Planificar el trabajo del siguiente Sprint", "Actualizar el Sprint Backlog con nuevas tareas"],
+                    respuestaCorrecta: 0, tema: "Scrum Eventos"
+                },
+                {
+                    pregunta: "Una User Story en Scrum se escribe típicamente desde la perspectiva de:",
+                    opciones: ["El usuario final, describiendo una funcionalidad y su valor", "El desarrollador, detallando la implementación técnica", "El Scrum Master, definiendo las reglas del proceso", "El Product Owner, especificando los criterios de aceptación"],
+                    respuestaCorrecta: 0, tema: "Scrum Conceptos"
+                },
+                {
+                    pregunta: "La Definition of Done (DoD) es crucial porque:",
+                    opciones: ["Asegura un entendimiento común de la calidad y completitud del trabajo", "Define el alcance total del proyecto", "Es creada y mantenida únicamente por el Product Owner", "Reemplaza la necesidad de un Sprint Backlog"],
+                    respuestaCorrecta: 0, tema: "Scrum Conceptos"
+                },
+                {
+                    pregunta: "El 'timeboxing' en Scrum se aplica a:",
+                    opciones: ["Todos los eventos de Scrum para asegurar que sean concisos y productivos", "Únicamente a la duración del Sprint", "Solo a las tareas del Equipo de Desarrollo", "A las reuniones con los stakeholders fuera de los eventos de Scrum"],
+                    respuestaCorrecta: 0, tema: "Scrum Conceptos"
+                },
+                {
+                    pregunta: "La 'velocidad' (velocity) de un equipo Scrum es una medida de:",
+                    opciones: ["La cantidad de trabajo del Product Backlog que el equipo puede convertir en un Incremento funcional durante un Sprint", "Cuán rápido pueden los miembros individuales completar sus tareas", "El número de horas trabajadas por el equipo en un Sprint", "La satisfacción del Product Owner con el progreso del equipo"],
+                    respuestaCorrecta: 0, tema: "Scrum Conceptos"
+                },
+                {
+                    pregunta: "Un gráfico Burndown de Sprint muestra:",
+                    opciones: ["El trabajo restante en el Sprint Backlog a lo largo del tiempo", "El valor de negocio acumulado entregado", "El número de impedimentos resueltos por el Scrum Master", "La moral del equipo durante el Sprint"],
+                    respuestaCorrecta: 0, tema: "Scrum Conceptos"
+                },
+                {
+                    pregunta: "¿Es el Scrum Master el 'jefe' del Equipo de Desarrollo?",
+                    opciones: ["No, actúa como un líder servicial y facilitador, no como un jefe tradicional", "Sí, es responsable de asignar tareas y evaluar el rendimiento individual", "Sí, pero solo en aspectos técnicos", "No, ese rol corresponde al Product Owner"],
+                    respuestaCorrecta: 0, tema: "Scrum Roles"
+                },
+                {
+                    pregunta: "Si el Equipo de Desarrollo determina que no puede completar todos los elementos del Sprint Backlog, ¿qué debería hacer?",
+                    opciones: ["Colaborar con el Product Owner para renegociar el alcance del Sprint lo antes posible", "Trabajar horas extra indefinidamente hasta completarlo todo", "Ocultar el problema hasta la Sprint Review", "Pedir al Scrum Master que elimine tareas sin consultar al Product Owner"],
+                    respuestaCorrecta: 0, tema: "Scrum Procesos"
+                },
+                 {
+                    pregunta: "El refinamiento del Product Backlog (Backlog Grooming) es una actividad donde:",
+                    opciones: ["El Product Owner y el Equipo de Desarrollo colaboran para añadir detalle, estimaciones y orden a los elementos del Product Backlog", "El Scrum Master actualiza unilateralmente las prioridades del Product Backlog", "Se eliminan todos los elementos que no se podrán completar en el próximo Sprint", "Los stakeholders votan para decidir qué funcionalidades se construirán"],
+                    respuestaCorrecta: 0, tema: "Scrum Procesos"
+                },
+                {
+                    pregunta: "¿Puede cambiar el Sprint Backlog durante un Sprint?",
+                    opciones: ["Sí, el Equipo de Desarrollo puede modificarlo para alcanzar el Objetivo del Sprint, pero el Objetivo del Sprint no cambia", "No, una vez definido en el Sprint Planning, es inmutable", "Sí, el Product Owner puede añadir nuevos elementos en cualquier momento", "Sí, pero solo si el Scrum Master lo aprueba formalmente"],
+                    respuestaCorrecta: 0, tema: "Scrum Artefactos"
+                },
+                {
+                    pregunta: "¿Cuál es el tamaño recomendado para un Equipo de Desarrollo en Scrum?",
+                    opciones: ["Suficientemente pequeño para ser ágil y suficientemente grande para completar trabajo significativo (típicamente 3-9 personas)", "No más de 5 personas para máxima eficiencia", "Al menos 10 personas para cubrir todas las especialidades", "El tamaño no importa siempre que haya un Scrum Master dedicado"],
+                    respuestaCorrecta: 0, tema: "Scrum Roles"
+                },
+                {
+                    pregunta: "El resultado de una Sprint Retrospective es, idealmente:",
+                    opciones: ["Al menos una mejora procesal identificada que el equipo implementará en el próximo Sprint", "Una lista de culpables por los problemas ocurridos", "Un plan detallado para todas las futuras Sprints", "La decisión de cambiar la duración del Sprint"],
+                    respuestaCorrecta: 0, tema: "Scrum Eventos"
+                },
+                 {
+                    pregunta: "La transparencia es un pilar de Scrum. ¿Qué artefacto ayuda principalmente a la transparencia del trabajo planificado para el producto?",
+                    opciones: ["El Product Backlog, visible para todos los interesados", "El informe de estado diario del Scrum Master", "Las actas detalladas de todas las reuniones", "El plan de proyecto inicial"],
+                    respuestaCorrecta: 0, tema: "Scrum Pilares"
+                },
+                // Gestión Ágil, Contratos, PMI Agile (15 Preguntas)
+                {
+                    pregunta: "Una de las principales diferencias del 'triángulo ágil invertido' respecto al tradicional (hierro) es que en ágil:",
+                    opciones: ["El alcance es variable, mientras que el tiempo (iteraciones) y el coste (equipo) tienden a ser más fijos", "El alcance, tiempo y coste son todos fijos desde el inicio", "El tiempo es variable, mientras que el alcance y el coste son fijos", "El coste es el único elemento flexible"],
+                    respuestaCorrecta: 0, tema: "Gestión Ágil"
+                },
+                {
+                    pregunta: "Los proyectos con alta incertidumbre, requisitos cambiantes y complejidad se benefician más de enfoques:",
+                    opciones: ["Ágiles", "Predictivos (cascada)", "Híbridos con énfasis en predictivo", "Secuenciales estrictos"],
+                    respuestaCorrecta: 0, tema: "PMI Agile"
+                },
+                {
+                    pregunta: "Un ciclo de vida 'incremental' según el PMI Agile Practice Guide se caracteriza por:",
+                    opciones: ["Entregas frecuentes de subconjuntos de la solución general", "Una única entrega al final, pero con múltiples iteraciones internas para refinar", "Requisitos fijos y una sola fase de ejecución", "La repetición de actividades hasta que la solución es correcta, sin entregas parciales"],
+                    respuestaCorrecta: 0, tema: "PMI Agile"
+                },
+                {
+                    pregunta: "El liderazgo de servicio (Servant Leadership), promovido en entornos ágiles, implica que el líder:",
+                    opciones: ["Se enfoca en las necesidades del equipo, ayudándoles a crecer y eliminando obstáculos", "Toma todas las decisiones importantes y las comunica al equipo", "Controla de cerca el trabajo de cada miembro del equipo", "Prioriza sus propias necesidades y objetivos sobre los del equipo"],
+                    respuestaCorrecta: 0, tema: "PMI Agile"
+                },
+                {
+                    pregunta: "Según el PMI Agile, ¿qué característica es deseable en la composición de un equipo ágil?",
+                    opciones: ["Ser multifuncional, con miembros dedicados y colocados físicamente juntos si es posible", "Ser muy grande para abarcar todas las especialidades posibles", "Tener una jerarquía clara con un jefe de equipo técnico", "Que los miembros roten frecuentemente entre diferentes proyectos"],
+                    respuestaCorrecta: 0, tema: "PMI Agile"
+                },
+                {
+                    pregunta: "En un contrato ágil de 'Coste Objetivo' (Target Cost):",
+                    opciones: ["Cliente y proveedor definen un coste objetivo y comparten los ahorros o sobrecostes según un acuerdo", "El proveedor factura todas las horas trabajadas sin un límite superior", "El precio es fijo independientemente del alcance final entregado", "El cliente solo paga si el producto es un éxito rotundo en el mercado"],
+                    respuestaCorrecta: 0, tema: "Contratos Ágiles"
+                },
+                {
+                    pregunta: "La cláusula 'Money for Nothing' en un contrato ágil de precio fijo y alcance variable permite:",
+                    opciones: ["Al cliente finalizar el contrato anticipadamente si considera que ha obtenido suficiente valor, pagando una compensación al proveedor", "Al proveedor cobrar el total del contrato aunque no entregue nada", "Al cliente obtener funcionalidades extra sin coste adicional", "Al proveedor incrementar el precio si el alcance aumenta"],
+                    respuestaCorrecta: 0, tema: "Contratos Ágiles"
+                },
+                {
+                    pregunta: "La cláusula 'Change for Free' en un contrato ágil implica que:",
+                    opciones: ["Se pueden cambiar requisitos por otros de esfuerzo similar sin coste adicional, manteniendo el esfuerzo total", "Todos los cambios de alcance son gratuitos para el cliente", "El proveedor puede cambiar los plazos libremente", "No se permiten cambios una vez firmado el contrato"],
+                    respuestaCorrecta: 0, tema: "Contratos Ágiles"
+                },
+                {
+                    pregunta: "Para que los contratos ágiles funcionen, es fundamental:",
+                    opciones: ["Un alto grado de confianza, colaboración y transparencia entre cliente y proveedor", "Una especificación de requisitos exhaustiva y cerrada desde el inicio", "Un mecanismo legal estricto para la resolución de disputas", "Minimizar la comunicación directa para evitar malentendidos"],
+                    respuestaCorrecta: 0, tema: "Contratos Ágiles"
+                },
+                {
+                    pregunta: "¿Cuál es un desafío común al pasar de una gestión predictiva a una ágil?",
+                    opciones: ["El cambio cultural necesario en la organización y la resistencia al cambio", "La falta de herramientas de software para la gestión ágil", "La excesiva simplicidad de los métodos ágiles para proyectos complejos", "La incompatibilidad de Agile con equipos grandes"],
+                    respuestaCorrecta: 0, tema: "Gestión Ágil"
+                },
+                {
+                    pregunta: "El concepto de 'trabajo definible' vs. 'trabajo en incertidumbre' sugiere que Agile es más adecuado para:",
+                    opciones: ["Trabajo en incertidumbre, donde la exploración y adaptación son necesarias", "Trabajo definible, con procedimientos claros y bajo riesgo", "Proyectos que no requieren colaboración de expertos", "Proyectos que pueden ser completamente automatizados"],
+                    respuestaCorrecta: 0, tema: "Gestión Ágil"
+                },
+                {
+                    pregunta: "Un filtro de idoneidad ágil considera la 'cultura' organizacional. ¿Qué aspecto cultural favorece la agilidad?",
+                    opciones: ["Confianza en el equipo y poder de toma de decisiones descentralizado", "Una estructura jerárquica rígida y control centralizado", "Aversión al riesgo y al fracaso", "Comunicación formal y estrictamente a través de canales establecidos"],
+                    respuestaCorrecta: 0, tema: "PMI Agile"
+                },
+                {
+                    pregunta: "Respecto al tamaño del equipo, el PMI Agile Practice Guide sugiere que los equipos ágiles son más efectivos cuando son:",
+                    opciones: ["Pequeños (típicamente menos de 10 personas)", "Grandes (más de 20 personas) para mayor capacidad", "De tamaño variable según la fase del proyecto", "Individuales, para máxima responsabilidad"],
+                    respuestaCorrecta: 0, tema: "PMI Agile"
+                },
+                {
+                    pregunta: "Un enfoque híbrido en la gestión de proyectos combina:",
+                    opciones: ["Elementos de metodologías predictivas y ágiles para adaptarse mejor al contexto del proyecto", "Únicamente diferentes metodologías ágiles entre sí", "Solo metodologías predictivas de diferentes industrias", "Design Thinking con gestión de operaciones Lean exclusivamente"],
+                    respuestaCorrecta: 0, tema: "PMI Agile"
+                },
+                {
+                    pregunta: "La 'paradoja de la predictibilidad' mencionada por Mary Poppendieck sugiere que en entornos cambiantes, la predictibilidad se logra mejor mediante:",
+                    opciones: ["Comenzar pronto, aprender constantemente, diferir compromisos y entregar pronto", "Una planificación inicial exhaustiva y un control de cambios estricto", "Fijar todos los requisitos desde el inicio y no permitir desviaciones", "Aumentar el tamaño del equipo para absorber la incertidumbre"],
+                    respuestaCorrecta: 0, tema: "Gestión Ágil"
+                }
+            ]; // Total 100 preguntas únicas
+
+            // Simplemente formatear para el examen: asignar ID, página y barajar opciones
+            return uniqueBaseQuestions.map((q, i) => {
+                let correctAnswerText = q.opciones[q.respuestaCorrecta];
+                // Copiamos el array de opciones para no modificar el original si se reutiliza la función
+                let shuffledOptions = shuffleArray([...q.opciones]); 
+                return {
+                    ...q,
+                    id: `q_agile_${i + 1}`,
+                    pregunta: `${i + 1}. ${q.pregunta}`, // Añadir numeración
+                    opciones: shuffledOptions,
+                    respuestaCorrecta: shuffledOptions.indexOf(correctAnswerText), // Actualizar índice de la correcta
+                    pagina: Math.floor(i / questionsPerPage) + 1
+                };
+            });
+        }
+        
+        questionsData = generateAgileQuestions();
+        totalPages = Math.ceil(questionsData.length / questionsPerPage);
+
+        const quizContainer = document.getElementById('quiz-container');
+        const prevPageBtn = document.getElementById('prev-page-btn');
+        const nextPageBtn = document.getElementById('next-page-btn');
+        const resolvePageBtn = document.getElementById('resolve-page-btn');
+        const pageResultsContainer = document.getElementById('page-results-container');
+        const finalResultsContainer = document.getElementById('final-results-container');
+        const progressBar = document.getElementById('progressBar');
+        const totalQuestionsFinalSpan = document.getElementById('total-questions-final');
+        const totalCorrectFinalSpan = document.getElementById('total-correct-final');
+        const totalIncorrectFinalSpan = document.getElementById('total-incorrect-final');
+        const finalScoreSpan = document.getElementById('final-score');
+
+
+        function displayPage(pageNumber) {
+            quizContainer.innerHTML = '';
+            if (!pageScores[pageNumber]) { 
+                 pageResultsContainer.innerHTML = '';
+            }
+            resolvePageBtn.style.display = 'block';
+            
+            const startIndex = (pageNumber - 1) * questionsPerPage;
+            const endIndex = Math.min(startIndex + questionsPerPage, questionsData.length);
+            const pageQuestions = questionsData.slice(startIndex, endIndex);
+
+            pageQuestions.forEach((q) => {
+                const questionElement = document.createElement('div');
+                questionElement.classList.add('question-card');
+                questionElement.setAttribute('id', `card-${q.id}`);
+                questionElement.innerHTML = `<p class="question-text">${q.pregunta}</p>`;
+                
+                const optionsList = document.createElement('div');
+                q.opciones.forEach((opcion, i) => {
+                    const optionId = `${q.id}-op${i}`;
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    label.textContent = opcion;
+                    label.classList.add('option-label');
+
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = q.id;
+                    radio.id = optionId;
+                    radio.value = i;
+                    radio.style.display = 'none'; 
+
+                    if (userAnswers[q.id] !== undefined && parseInt(userAnswers[q.id]) === i) {
+                        radio.checked = true;
+                        if (!pageScores[currentPage]) { 
+                           label.classList.add('selected');
+                        }
+                    }
+                    
+                    radio.addEventListener('change', () => {
+                        if (pageScores[currentPage]) return; 
+                        userAnswers[q.id] = radio.value;
+                        document.querySelectorAll(`input[name="${q.id}"]`).forEach(inp => {
+                             const lbl = document.querySelector(`label[for="${inp.id}"]`);
+                            if (lbl) lbl.classList.remove('selected');
+                        });
+                        label.classList.add('selected');
+                    });
+                    
+                    optionsList.appendChild(radio);
+                    optionsList.appendChild(label);
+                });
+                questionElement.appendChild(optionsList);
+                quizContainer.appendChild(questionElement);
+            });
+            
+            if (pageScores[pageNumber]) {
+                showCorrectionsForPage(pageNumber);
+                if (pageNumber === totalPages && Object.keys(pageScores).length === totalPages) {
+                    showFinalResults();
+                }
+            }
+
+            updateNavigationButtons();
+            updateProgressBar();
+        }
+        
+        function showCorrectionsForPage(pageNumber) {
+            const startIndex = (pageNumber - 1) * questionsPerPage;
+            const endIndex = Math.min(startIndex + questionsPerPage, questionsData.length);
+            const pageQuestions = questionsData.slice(startIndex, endIndex);
+
+            pageQuestions.forEach(q => {
+                const questionCard = document.getElementById(`card-${q.id}`);
+                if (!questionCard) return;
+                const optionLabels = questionCard.querySelectorAll('.option-label');
+                const userAnswer = userAnswers[q.id];
+
+                optionLabels.forEach((label, i) => {
+                    label.classList.remove('selected');
+                    const inputRadio = questionCard.querySelector(`#${q.id}-op${i}`);
+                    if(inputRadio) inputRadio.disabled = true; 
+
+                    if (i === q.respuestaCorrecta) {
+                        label.classList.add('correct');
+                    }
+                    if (userAnswer !== undefined && parseInt(userAnswer) === i && parseInt(userAnswer) !== q.respuestaCorrecta) {
+                        label.classList.add('incorrect');
+                    }
+                });
+            });
+            if(pageScores[pageNumber]){
+                const { correct, total } = pageScores[pageNumber];
+                 pageResultsContainer.innerHTML = `
+                <div class="page-results">
+                    <h3 class="text-xl font-semibold text-emerald-700 mb-2">Resultados de la Página ${pageNumber}</h3>
+                    <p>Has acertado ${correct} de ${total} preguntas.</p>
+                </div>`;
+            }
+        }
+
+        function updateNavigationButtons() {
+            prevPageBtn.style.display = currentPage > 1 ? 'block' : 'none';
+            if (currentPage === totalPages) {
+                nextPageBtn.style.display = 'none';
+                resolvePageBtn.textContent = 'Resolver Examen y Ver Resultados Finales';
+            } else {
+                nextPageBtn.style.display = 'block';
+                nextPageBtn.textContent = 'Siguiente Página';
+                resolvePageBtn.textContent = 'Resolver Página';
+            }
+            if (pageScores[currentPage]) {
+                resolvePageBtn.disabled = true;
+            } else {
+                resolvePageBtn.disabled = false;
+            }
+        }
+        
+        function updateProgressBar() {
+            const navProgress = (currentPage / totalPages) * 100;
+            progressBar.style.width = `${navProgress}%`;
+            progressBar.textContent = `${Math.round(navProgress)}%`;
+            if (navProgress === 100) progressBar.classList.add('full');
+            else progressBar.classList.remove('full');
+        }
+
+        function resolveCurrentPage() {
+            if (pageScores[currentPage]) return; 
+
+            let correctAnswers = 0;
+            const startIndex = (currentPage - 1) * questionsPerPage;
+            const endIndex = Math.min(startIndex + questionsPerPage, questionsData.length);
+            const pageQuestions = questionsData.slice(startIndex, endIndex);
+            let totalOnPage = pageQuestions.length;
+
+            pageQuestions.forEach(q => {
+                const userAnswer = userAnswers[q.id];
+                if (userAnswer !== undefined && parseInt(userAnswer) === q.respuestaCorrecta) {
+                    correctAnswers++;
+                }
+            });
+
+            pageScores[currentPage] = { correct: correctAnswers, total: totalOnPage };
+            showCorrectionsForPage(currentPage); 
+            resolvePageBtn.disabled = true;
+
+            if (Object.keys(pageScores).length === totalPages) {
+                showFinalResults();
+            } else if (currentPage === totalPages) {
+                showFinalResults();
+            }
+        }
+
+        function showFinalResults() {
+            let totalCorrectOverall = 0;
+            let totalQuestionsOverall = 0;
+
+            for (let i = 1; i <= totalPages; i++) {
+                const startIndex = (i - 1) * questionsPerPage;
+                const endIndex = Math.min(startIndex + questionsPerPage, questionsData.length);
+                const numQuestionsOnPage = questionsData.slice(startIndex, endIndex).length;
+                if (pageScores[i]) {
+                    totalCorrectOverall += pageScores[i].correct;
+                    totalQuestionsOverall += pageScores[i].total; 
+                } else {
+                    totalQuestionsOverall += numQuestionsOnPage;
+                }
+            }
+            if (totalQuestionsOverall !== questionsData.length) {
+                totalQuestionsOverall = questionsData.length;
+            }
+
+            const totalIncorrectOverall = totalQuestionsOverall - totalCorrectOverall;
+            const finalScorePercentage = totalQuestionsOverall > 0 ? (totalCorrectOverall / totalQuestionsOverall) * 100 : 0;
+
+            totalQuestionsFinalSpan.textContent = totalQuestionsOverall;
+            totalCorrectFinalSpan.textContent = totalCorrectOverall;
+            totalIncorrectFinalSpan.textContent = totalIncorrectOverall;
+            finalScoreSpan.textContent = finalScorePercentage.toFixed(2);
+
+            const finalResultsContentClone = finalResultsContainer.cloneNode(true);
+            finalResultsContentClone.style.display = 'block';
+            
+            const existingFinalResults = pageResultsContainer.querySelector('#final-results-container');
+            if (existingFinalResults) pageResultsContainer.removeChild(existingFinalResults);
+            
+            if(pageScores[currentPage] && pageResultsContainer.querySelector('.page-results')){
+                // Si hay resultados de la página actual, los mantenemos y añadimos los finales después
+            } else if (pageScores[currentPage]) {
+                 const { correct, total } = pageScores[currentPage];
+                const currentPageResultDiv = document.createElement('div');
+                currentPageResultDiv.classList.add('page-results');
+                currentPageResultDiv.innerHTML = `
+                    <h3 class="text-xl font-semibold text-emerald-700 mb-2">Resultados de la Página ${currentPage}</h3>
+                    <p>Has acertado ${correct} de ${total} preguntas.</p>
+                `;
+                pageResultsContainer.innerHTML = ''; 
+                pageResultsContainer.appendChild(currentPageResultDiv);
+            } else {
+                 pageResultsContainer.innerHTML = ''; // Limpiar si no hay resultados de página actual
+            }
+            pageResultsContainer.appendChild(finalResultsContentClone);
+
+            resolvePageBtn.style.display = 'none'; 
+            nextPageBtn.style.display = 'none';
+            finalResultsContainer.style.display = 'none';
+            const restartBtnClone = pageResultsContainer.querySelector('#restart-quiz-btn');
+            if(restartBtnClone) restartBtnClone.addEventListener('click', restartQuiz);
+        }
+
+        function restartQuiz() {
+            currentPage = 1;
+            userAnswers = {};
+            pageScores = {};
+            pageResultsContainer.innerHTML = ''; 
+            finalResultsContainer.style.display = 'none'; 
+            const clonedResults = pageResultsContainer.querySelector('#final-results-container');
+            if (clonedResults) pageResultsContainer.removeChild(clonedResults);
+            
+            // Volver a generar y barajar las preguntas para un nuevo intento.
+            // Esto asegura que si las preguntas base se barajaron o seleccionaron aleatoriamente,
+            // el nuevo intento podría tener un orden o selección diferente si la lógica lo permitiera.
+            // En este caso, solo barajamos las opciones de las preguntas ya definidas.
+            questionsData.forEach(q => {
+                let correctAnswerText = q.opciones[q.respuestaCorrecta]; // Asumiendo que la respuesta correcta original está en la opción correcta
+                // Es importante que 'q.opciones' sea el array original antes de barajar si queremos re-barajarlo.
+                // Si 'q.opciones' ya está barajado y no guardamos el original, necesitamos una estrategia diferente
+                // o aceptar que las opciones se barajan una vez al inicio.
+                // Para este ejemplo, asumimos que `generateAgileQuestions` ya las entrega con opciones barajadas
+                // y la respuestaCorrecta es el índice a esa lista barajada.
+                // Si queremos re-barajar para el reinicio:
+                // let originalCorrectOptionText = questionsDataOriginal.find(oq => oq.id === q.id).opciones[questionsDataOriginal.find(oq => oq.id === q.id).respuestaCorrecta];
+                // q.opciones = shuffleArray([...q.opcionesOriginales]); // Necesitaríamos guardar las opciones originales
+                // q.respuestaCorrecta = q.opciones.indexOf(originalCorrectOptionText);
+            });
+            // Para simplificar el reinicio, solo limpiaremos las respuestas y puntuaciones.
+            // Si se quiere un nuevo set de preguntas o nuevo orden de opciones, se debería llamar a generateAgileQuestions() de nuevo
+            // y potencialmente tener una copia maestra de las preguntas sin barajar.
+            // Por ahora, el reinicio usa el mismo conjunto de preguntas y orden de opciones que se generó la primera vez.
+            // PERO, la función `generateAgileQuestions` ahora devuelve opciones ya barajadas en cada llamada,
+            // así que llamar a `questionsData = generateAgileQuestions();` al reiniciar sí ofrecería un nuevo orden de opciones.
+
+            questionsData = generateAgileQuestions(); // Esto regenerará y re-barajará las opciones.
+
+            displayPage(currentPage);
+            resolvePageBtn.style.display = 'block'; 
+        }
+
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayPage(currentPage);
+            }
+        });
+
+        nextPageBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayPage(currentPage);
+            }
+        });
+
+        resolvePageBtn.addEventListener('click', () => {
+            resolveCurrentPage();
+        });
+        
+        document.getElementById('restart-quiz-btn').addEventListener('click', restartQuiz);
+
+        displayPage(currentPage);
+    </script>
+</body>
+</html>
